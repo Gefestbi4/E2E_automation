@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+    environment:
+      GRID_MAX_SESSIONS: 10
+      GRID_TIMEOUT: 300000
+
+  node-chrome:
+    image: selenium/node-chrome-debug:latest
+    depends_on:
+      - hub
+    ports:
+      - "5900:5900"
+    environment:
+      SELENIUM_HUB_HOST: hub
+      SELENIUM_NODE_MAX_SESSIONS: 5
+      START_XVFB: "true"
+    volumes:
+      - /dev/shm:/dev/shm
+
+  node-firefox:
+    image: selenium/node-firefox-debug:latest
+    depends_on:
+      - hub
+    ports:
+      - "5901:5900"
+    environment:
+      SELENIUM_HUB_HOST: hub
+      SELENIUM_NODE_MAX_SESSIONS: 5
+      START_XVFB: "true"
+    volumes:
+      - /dev/shm:/dev/shm
+
+  allure:
+    image: frankescobar/allure-docker-service
+    container_name: allure-server
+    ports:
+      - "5050:5050"
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 1
+      KEEP_HISTORY: "true"
+      PROJECT_ID: "python_project"
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-reports:/app/default-reports
+  # Для просмотра результатов Allure на локальной машине нужно открыть в браузере http://localhost:5050/
+
+  # Node Safari (Только для macOS!)
+  # node-safari:
+  #   image: selenium/node-safari:latest
+  #   platform: darwin/amd64
+  #   depends_on:
+  #     - hub
+  #   environment:
+  #     SELENIUM_HUB_HOST: hub
+  #     SELENIUM_NODE_MAX_SESSIONS: 1
+  #   volumes:
+  #     - /dev/shm:/dev/shm
