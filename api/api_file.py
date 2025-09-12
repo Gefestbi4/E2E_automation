@@ -1,38 +1,41 @@
 from api_client import ApiClient
+import allure
 
 class FileApi(ApiClient):
     def upload_file(self, file_path):
         """
         Загружает файл на сервер.
-        :param file_path: Путь к загружаемому файлу.
-        :return: ID загруженного файла.
+        :param file_path: Путь к файлу.
+        :return: Ответ сервера в формате JSON.
         """
-        files = {'file': open(file_path, 'rb')}
-        return self.post('/upload', files=files)
+        with open(file_path, 'rb') as f:
+            files = {'file': f}
+            return self.post('/upload', files=files)
 
     def get_file_url(self, file_id):
         """
-        Возвращает ссылку на загруженный файл.
-        :param file_id: ID загруженного файла.
-        :return: Ссылка на загруженный файл.
+        Получает URL файла по ID.
+        :param file_id: ID файла.
+        :return: URL файла.
         """
         return self.get(f'/file/{file_id}')['url']
 
     def delete_file(self, file_id):
         """
-        Удаляет загруженный файл.
-        :param file_id: ID загруженного файла.
+        Удаляет файл по ID.
+        :param file_id: ID файла.
         """
-        self.delete(f'/file/{file_id}')
-        self.delete(self.get_file_url(file_id))
-        self.get_file_url(file_id)  # Проверка удаления файла
-        raise Exception('File not deleted')
+        return self.delete(f'/file/{file_id}')
 
     def download_file(self, file_id):
         """
-        Скачивает загруженный файл.
-        :param file_id: ID загруженного файла.
-        :return: Загруженный файл в виде байтов.
+        Скачивает файл по ID.
+        :param file_id: ID файла.
+        :return: Содержимое файла в байтах.
         """
-        return self.get(self.get_file_url(file_id)).content
-
+        file_url = self.get_file_url(file_id)
+        with allure.step(f"Скачивание файла по URL: {file_url}"):
+            response = self.session.get(file_url)
+            response.raise_for_status()
+            allure.attach(response.content, 'Downloaded File', allure.attachment_type.DEFAULT)
+            return response.content
