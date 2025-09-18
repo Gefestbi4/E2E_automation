@@ -1,4 +1,5 @@
-from api_client import ApiClient
+from .api_client import ApiClient
+
 
 class UserApi(ApiClient):
     def create_user(self, email, password, name):
@@ -7,7 +8,7 @@ class UserApi(ApiClient):
         :param email: Email пользователя.
         :param password: Пароль пользователя.
         :param name: Имя пользователя.
-        :return: ID созданного пользователя.
+        :return: JSON-ответ с данными созданного пользователя.
         """
         user_data = {
             'email': email,
@@ -16,37 +17,28 @@ class UserApi(ApiClient):
         }
         return self.post('/users', data=user_data)
 
-    def update_user(self, user_id, email=None, password=None, name=None):
-        """
-        Обновляет данные пользователя.
-        :param user_id: ID пользователя.
-        :param email: Новый email пользователя (optional).
-        :param password: Новый пароль пользователя (optional).
-        :param name: Новое имя пользователя (optional).
-        :return: Ответ сервера в формате JSON.
-        """
-        user_data = {}
-        if email:
-            user_data['email'] = email
-        if password:
-            user_data['password'] = password
-        if name:
-            user_data['name'] = name
-        return self.patch(f'/users/{user_id}', data=user_data)
-
-    def get_user_data(self, user_id):
+    def get_user(self, user_id):
         """
         Получает данные пользователя по ID.
         :param user_id: ID пользователя.
-        :return: Ответ сервера в формате JSON.
+        :return: JSON-ответ с данными пользователя.
         """
         return self.get(f'/users/{user_id}')
+
+    def update_user(self, user_id, data):
+        """
+        Обновляет данные пользователя.
+        :param user_id: ID пользователя.
+        :param data: Словарь с обновляемыми полями.
+        :return: JSON-ответ с обновленными данными пользователя.
+        """
+        return self.put(f'/users/{user_id}', data=data)
 
     def delete_user(self, user_id):
         """
         Удаляет пользователя по ID.
         :param user_id: ID пользователя.
-        :return: Ответ сервера в формате JSON или None, если тело ответа пустое.
+        :return: None.
         """
         return self.delete(f'/users/{user_id}')
 

@@ -1,6 +1,7 @@
 
 from pymongo import MongoClient
 import allure
+import json
 
 class MongoDBClient:
     def __init__(self, connection_string, db_name):
@@ -12,7 +13,6 @@ class MongoDBClient:
         self.client = MongoClient(connection_string)
         self.db = self.client[db_name]
 
-    @allure.step("Поиск одного документа в коллекции '{collection_name}'")
     def find_one(self, collection_name, query):
         """
         Находит один документ в коллекции.
@@ -20,9 +20,15 @@ class MongoDBClient:
         :param query: Запрос для поиска.
         :return: Найденный документ или None.
         """
-        return self.db[collection_name].find_one(query)
+        with allure.step(f"MongoDB: Поиск одного документа в '{collection_name}'"):
+            allure.attach(json.dumps(query, indent=2), "Query", allure.attachment_type.JSON)
+            document = self.db[collection_name].find_one(query)
+            if document:
+                # ObjectId не сериализуется в JSON, поэтому преобразуем его в строку
+                document['_id'] = str(document['_id'])
+                allure.attach(json.dumps(document, indent=2), "Found Document", allure.attachment_type.JSON)
+            return document
 
-    @allure.step("Поиск нескольких документов в коллекции '{collection_name}'")
     def find(self, collection_name, query):
         """
         Находит все документы, соответствующие запросу.
@@ -30,9 +36,10 @@ class MongoDBClient:
         :param query: Запрос для поиска.
         :return: Курсор с результатами.
         """
-        return self.db[collection_name].find(query)
+        with allure.step(f"MongoDB: Поиск документов в '{collection_name}'"):
+            allure.attach(json.dumps(query, indent=2), "Query", allure.attachment_type.JSON)
+            return self.db[collection_name].find(query)
 
-    @allure.step("Вставка документа в коллекцию '{collection_name}'")
     def insert_one(self, collection_name, document):
         """
         Вставляет один документ в коллекцию.
@@ -40,9 +47,12 @@ class MongoDBClient:
         :param document: Документ для вставки.
         :return: ID вставленного документа.
         """
-        return self.db[collection_name].insert_one(document).inserted_id
+        with allure.step(f"MongoDB: Вставка документа в '{collection_name}'"):
+            allure.attach(json.dumps(document, indent=2), "Document to Insert", allure.attachment_type.JSON)
+            inserted_id = self.db[collection_name].insert_one(document).inserted_id
+            allure.attach(str(inserted_id), "Inserted ID", allure.attachment_type.TEXT)
+            return inserted_id
 
-    @allure.step("Удаление одного документа из коллекции '{collection_name}'")
     def delete_one(self, collection_name, query):
         """
         Удаляет один документ из коллекции.
@@ -50,12 +60,14 @@ class MongoDBClient:
         :param query: Запрос для удаления.
         :return: Результат операции удаления.
         """
-        return self.db[collection_name].delete_one(query)
+        with allure.step(f"MongoDB: Удаление одного документа из '{collection_name}'"):
+            allure.attach(json.dumps(query, indent=2), "Query", allure.attachment_type.JSON)
+            return self.db[collection_name].delete_one(query)
 
-    @allure.step("Закрытие соединения с MongoDB")
     def close(self):
         """Закрывает соединение с базой данных."""
-        self.client.close()
+        with allure.step("Закрытие соединения с MongoDB"):
+            self.client.close()
 
     def __enter__(self):
         return self
