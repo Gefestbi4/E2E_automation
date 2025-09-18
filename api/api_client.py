@@ -13,7 +13,6 @@ class ApiClient:
         if api_key:
             self.session.headers['Authorization'] = f'Bearer {api_key}'
 
-    @allure.step("API GET-запрос на эндпоинт: {endpoint}")
     def get(self, endpoint, params=None):
         """
         Отправляет GET-запрос.
@@ -28,7 +27,6 @@ class ApiClient:
             allure.attach(response.text, 'Response Body', allure.attachment_type.JSON)
             return response.json()
 
-    @allure.step("API POST-запрос на эндпоинт: {endpoint}")
     def post(self, endpoint, data=None):
         """
         Отправляет POST-запрос.
@@ -43,7 +41,6 @@ class ApiClient:
             allure.attach(response.text, 'Response Body', allure.attachment_type.JSON)
             return response.json()
 
-    @allure.step("API PUT-запрос на эндпоинт: {endpoint}")
     def put(self, endpoint, data=None):
         """
         Отправляет PUT-запрос.
@@ -58,7 +55,6 @@ class ApiClient:
             allure.attach(response.text, 'Response Body', allure.attachment_type.JSON)
             return response.json()
 
-    @allure.step("API PATCH-запрос на эндпоинт: {endpoint}")
     def patch(self, endpoint, data=None):
         """
         Отправляет PATCH-запрос.
@@ -73,7 +69,6 @@ class ApiClient:
             allure.attach(response.text, 'Response Body', allure.attachment_type.JSON)
             return response.json()
 
-    @allure.step("API DELETE-запрос на эндпоинт: {endpoint}")
     def delete(self, endpoint):
         """
         Отправляет DELETE-запрос.
