@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Кияшко Николай - Senior QA Engineer</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="theme-toggle">
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Переключить тему">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+      <div class="header-content">
+        <h1 class="name">Кияшко Николай</h1>
+        <h2 class="title">Senior QA Engineer</h2>
+        <p class="experience">6 лет опыта ручного тестирования мобильных и веб приложений</p>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="contact-section">
+        <h3>Контакты</h3>
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="contact-label">📧 Email:</span>
+            <a href="mailto:gefestbi4@gmail.com">gefestbi4@gmail.com</a>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">📱 Телефон:</span>
+            <a href="tel:+79036074567">+7 903 607 4567</a>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label">📋 Telegram:</span>
+            <a href="https://t.me/NikolayKiyashko" target="_blank">@NikolayKiyashko</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="github-section">
+        <h3>Мой GitHub</h3>
+        <div class="github-info">
+          <div class="github-item">
+            <span class="github-label">💻 Репозиторий:</span>
+            <a href="https://github.com/Gefestbi4/E2E_automation" target="_blank">E2E_automation</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="experience-section">
+        <h3>Опыт работы</h3>
+        <div class="experience-timeline">
+          <div class="job clickable" data-job="senior-cloudike" onclick="openModal('senior-cloudike')">
+            <div class="job-period">2022 - настоящее время</div>
+            <div class="job-details">
+              <h4>Senior QA Engineer <span class="click-hint">👆 Подробнее</span></h4>
+              <p class="company">Cloudike Inc</p>
+            </div>
+          </div>
+          <div class="job clickable" data-job="middle-cloudike" onclick="openModal('middle-cloudike')">
+            <div class="job-period">2021 - 2022</div>
+            <div class="job-details">
+              <h4>Middle QA Engineer <span class="click-hint">👆 Подробнее</span></h4>
+              <p class="company">Cloudike Inc</p>
+            </div>
+          </div>
+          <div class="job clickable" data-job="junior-cloudike" onclick="openModal('junior-cloudike')">
+            <div class="job-period">2020 - 2021</div>
+            <div class="job-details">
+              <h4>Junior QA Engineer <span class="click-hint">👆 Подробнее</span></h4>
+              <p class="company">Cloudike Inc</p>
+            </div>
+          </div>
+          <div class="job clickable" data-job="junior-top10" onclick="openModal('junior-top10')">
+            <div class="job-period">2019 - 2020</div>
+            <div class="job-details">
+              <h4>Junior QA Engineer <span class="click-hint">👆 Подробнее</span></h4>
+              <p class="company">TOP 10 Education Project Silicon Valley</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="skills-section">
+        <h3>Навыки и компетенции</h3>
+        <div class="skills-grid">
+          <div class="skill-category">
+            <h4>Тестирование</h4>
+            <ul>
+              <li>Ручное тестирование</li>
+              <li>Функциональное тестирование</li>
+              <li>Регрессионное тестирование</li>
+              <li>Тестирование UI/UX</li>
+              <li>Smoke & Sanity тестирование</li>
+            </ul>
+          </div>
+          <div class="skill-category">
+            <h4>Платформы</h4>
+            <ul>
+              <li>Мобильные приложения (iOS/Android)</li>
+              <li>Веб-приложения</li>
+              <li>Десктоп приложения</li>
+              <li>Облачные сервисы</li>
+            </ul>
+          </div>
+          <div class="skill-category">
+            <h4>Инструменты</h4>
+            <ul>
+              <li><strong>Bug tracking системы:</strong> Jira, YouTrack</li>
+              <li><strong>Тест-кейс менеджмент:</strong> Sitechko, TestRail etc.</li>
+              <li><strong>Инструменты эмуляции:</strong> Android Studio, Xcode</li>
+              <li><strong>Автоматизация:</strong> Python + Selenium + Allure, Requests</li>
+              <li>Browser DevTools</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Модальные окна -->
+  <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div id="modal-body">
+        <!-- Содержимое модального окна будет добавляться динамически -->
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js?v=3" defer></script>
+</body>
+
+</html>

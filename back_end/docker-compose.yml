@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Сервис нашего FastAPI приложения
+  app:
+    build: .
+    env_file:
+      - ./project/.env
+    depends_on:
+      - db
+    # Мы не публикуем порты наружу, т.к. доступ будет через nginx
+    # ports:
+    #   - "8000:8000"
+
+  # Сервис базы данных PostgreSQL
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=nikolay
+      - POSTGRES_PASSWORD=500875
+      - POSTGRES_DB=db_offers
+    ports:
+      - "5432:5432" # Пробрасываем порт для локального подключения к БД
+
+  # Сервис балансировщика Nginx
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80" # Принимает внешний трафик на порт 80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+
+# **Важно:** Убедитесь, что `DATABASE_URL` в вашем `.env` файле теперь указывает на сервис `db` из `docker-compose`:
+#`DATABASE_URL=postgresql://user:password@db:5432/dbname`
+
+#Теперь, чтобы запустить, например, 3 экземпляра вашего приложения за балансировщиком Nginx, выполните команду:
+#docker-compose up --build --scale app=3
+# Что произойдет:
+#docker-compose соберет образ вашего приложения.
+#Запустит один контейнер с PostgreSQL.
+#Запустит три контейнера с вашим FastAPI-приложением (app).
+#Запустит один контейнер с Nginx.
+#Все запросы, приходящие на порт 80 вашего хоста, будут попадать в Nginx, который, в свою очередь, будет распределять их между тремя запущенными экземплярами app.
+# Если один из контейнеров app упадет, Nginx перестанет направлять на него трафик. Если вы захотите обработать еще больше запросов, вы просто увеличите число в команде --scale app=5.
