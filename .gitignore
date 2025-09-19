@@ -1,0 +1,19 @@
+# Ignore compiled Python files
+*.py[cod]
+
+# Ignore OS generated files
+.DS_Store
+
+# Ignore Python virtual environment
+venv/
+
+# Ignore Python cache files
+__pycache__/
+
+# Ignore build artifacts
+dist/
+build/
+
+# Ignore IDE and editor files
+.idea/
+.vscode/
