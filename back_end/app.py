@@ -4,10 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 import time
 import redis
-
-from .config import settings
-from .routers import router
-from .models import create_db_and_tables
+from config import settings
+from routers import router
+from models import create_db_and_tables
 
 # Инициализация Sentry, если DSN предоставлен
 if settings.SENTRY_DSN:

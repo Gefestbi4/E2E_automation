@@ -19,6 +19,16 @@ class Offer(Base):
     comment = Column(Text)
 
 
+# Модель таблицы users
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    name = Column(String)
+    hashed_password = Column(String)
+
+
 # Функция для создания таблиц в БД (можно вызвать один раз при старте)
 def create_db_and_tables():
     Base.metadata.create_all(bind=engine)

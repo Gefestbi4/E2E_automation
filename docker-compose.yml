@@ -1,7 +1,9 @@
 
 services:
   backend:
-    build: ./back_end
+    build:
+      context: .
+      dockerfile: back_end/Dockerfile
     ports:
       - 5000:5000
     environment:
@@ -14,7 +16,7 @@ services:
   frontend:
     build: ./front_end
     ports:
-      - 3000:3000
+      - 3000:80
     environment:
       - API_HOST=backend
       - API_PORT=5000
