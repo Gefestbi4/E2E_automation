@@ -1,0 +1,89 @@
+version: '3'
+
+services:
+  backend:
+    build: ./back_end
+    ports:
+      - 5000:5000
+    environment:
+      - DB_HOST=mongodb
+      - DB_PORT=27017
+      - DB_NAME=my_database
+      - DB_USER=my_user
+      - DB_PASSWORD=my_password
+
+  frontend:
+    build: ./front_end
+    ports:
+      - 3000:3000
+    environment:
+      - API_HOST=backend
+      - API_PORT=5000
+
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=my_database
+      - MONGO_INITDB_ROOT_USERNAME=my_user
+      - MONGO_INITDB_ROOT_PASSWORD=my_password
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=my_database
+      - POSTGRES_USER=my_user
+      - POSTGRES_PASSWORD=my_password
+
+  selenium-hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+    environment:
+      GRID_MAX_SESSIONS: 10
+      GRID_TIMEOUT: 300000
+
+  node-chrome:
+    image: selenium/node-chrome-debug:latest
+    depends_on:
+      - selenium-hub
+    ports:
+      - "5900:5900"
+    environment:
+      SELENIUM_HUB_HOST: selenium-hub
+      SELENIUM_NODE_MAX_SESSIONS: 5
+      START_XVFB: "true"
+    volumes:
+      - /dev/shm:/dev/shm
+
+  node-firefox:
+    image: selenium/node-firefox-debug:latest
+    depends_on:
+      - selenium-hub
+    ports:
+      - "5901:5900"
+    environment:
+      SELENIUM_HUB_HOST: selenium-hub
+      SELENIUM_NODE_MAX_SESSIONS: 5
+      START_XVFB: "true"
+    volumes:
+      - /dev/shm:/dev/shm
+
+  allure:
+    image: frankescobar/allure-docker-service:2.13.8
+    container_name: allure-server
+    ports:
+      - "5050:5050"
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 1
+      KEEP_HISTORY: "true"
+      PROJECT_ID: "E2E_automation"
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-reports:/app/default-reports
+
+# You can access the frontend at http://localhost:3000, the backend at http://localhost:5000, and the Allure server at http://localhost:5050

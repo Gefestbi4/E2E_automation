@@ -44,7 +44,7 @@ services:
     environment:
       CHECK_RESULTS_EVERY_SECONDS: 1
       KEEP_HISTORY: "true"
-      PROJECT_ID: "python_project"
+      PROJECT_ID: "E2E_automation"
     volumes:
       - ./allure-results:/app/allure-results
       - ./allure-reports:/app/default-reports
