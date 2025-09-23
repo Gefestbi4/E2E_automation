@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, Float, String, Text
 from sqlalchemy.orm import sessionmaker, declarative_base
-
-from .config import settings
+from config import settings
 
 # Создаем подключение к базе данных
 engine = create_engine(settings.DATABASE_URL)

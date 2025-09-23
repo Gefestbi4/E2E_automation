@@ -1,8 +1,9 @@
 import requests
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
-from . import models, schemas
-from .config import settings
+import models
+import schemas
+from config import settings
 
 router = APIRouter()
 

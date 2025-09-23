@@ -86,4 +86,5 @@ async def rate_limit_middleware(request: Request, call_next):
     return response
 
 # uvicorn app:app --reload
-# Сервер будет доступен по адресу http://127.0.0.1:8000. Документация API (Swagger UI) будет по адресу http://127.0.0.1:8000/docs.
+# Сервер будет доступен по адресу http://127.0.0.1:8000.
+# Документация API (Swagger UI) будет по адресу http://127.0.0.1:8000/docs.

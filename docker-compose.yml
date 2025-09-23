@@ -3,15 +3,19 @@ services:
   backend:
     build:
       context: .
-      dockerfile: back_end/Dockerfile
+      dockerfile: ./back_end/Dockerfile
     ports:
-      - 5000:5000
-    environment:
-      - DB_HOST=mongodb
-      - DB_PORT=27017
-      - DB_NAME=my_database
-      - DB_USER=my_user
-      - DB_PASSWORD=my_password
+      - "5000:5000"
+    env_file:
+      - Environments.env
+    command: ["uvicorn", "back_end.user_api_app:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+    volumes:
+      - ./back_end:/app/back_end
+      - ./database:/app/database
+      - ./api:/app/api
+    depends_on:
+      - mongodb
+      - postgres
 
   frontend:
     build: ./front_end
@@ -87,4 +91,6 @@ services:
       - ./allure-results:/app/allure-results
       - ./allure-reports:/app/default-reports
 
-# You can access the frontend at http://localhost:3000, the backend at http://localhost:5000, and the Allure server at http://localhost:5050
+# You can access the frontend at http://localhost:3000, 
+# the backend at http://localhost:5000, 
+# and the Allure server at http://localhost:5050
