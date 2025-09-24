@@ -1,0 +1,7 @@
+# Database Testing Dependencies
+pytest==8.4.2
+psycopg2-binary==2.9.10
+pymongo==4.15.1
+python-dotenv==1.1.1
+allure-pytest==2.15.0
+allure-python-commons==2.15.0

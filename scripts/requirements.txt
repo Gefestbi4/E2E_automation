@@ -1,0 +1,6 @@
+# Scripts Dependencies
+requests==2.32.5
+python-dotenv==1.1.1
+selenium==4.35.0
+allure-python-commons==2.15.0
+matplotlib==3.8.4

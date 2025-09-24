@@ -1,0 +1,123 @@
+from tests_E2E.pages.base_page import BasePage
+from tests_E2E.pages.Locators import LoginPageLocators
+import allure
+import time
+
+
+class LoginPage(BasePage):
+    """Класс для работы со страницей авторизации"""
+    
+    def __init__(self, browser, url):
+        super().__init__(browser, url)
+        self.base_url = url.replace('/login.html', '')
+    
+    @allure.step("Enter login")
+    def enter_login(self, email):
+        """Ввод email в поле авторизации"""
+        self.send_keys_to_element(*LoginPageLocators.EMAIL_INPUT, email)
+    
+    @allure.step("Enter password")
+    def enter_password(self, password):
+        """Ввод пароля в поле авторизации"""
+        self.send_keys_to_element(*LoginPageLocators.PASSWORD_INPUT, password)
+    
+    @allure.step("Click on Sign In button")
+    def submit_sign_in_btn(self):
+        """Нажатие на кнопку авторизации"""
+        self.click_element_clickable(*LoginPageLocators.LOGIN_SUBMIT_BUTTON)
+    
+    @allure.step("Sign in with given email and password")
+    def sign_in(self, email, password):
+        """Полный процесс авторизации"""
+        self.enter_login(email)
+        self.enter_password(password)
+        self.submit_sign_in_btn()
+    
+    @allure.step("Clear login form")
+    def clear_form(self):
+        """Очистка формы авторизации"""
+        email_field = self.find_element(*LoginPageLocators.EMAIL_INPUT)
+        password_field = self.find_element(*LoginPageLocators.PASSWORD_INPUT)
+        
+        email_field.clear()
+        password_field.clear()
+    
+    @allure.step("Get login status message")
+    def get_status_message(self):
+        """Получение сообщения о статусе авторизации"""
+        status_element = self.find_element(*LoginPageLocators.LOGIN_STATUS)
+        return status_element.text.strip()
+    
+    @allure.step("Wait for login status message")
+    def wait_for_status_message(self, timeout=10):
+        """Ожидание появления сообщения о статусе"""
+        self.wait_for_element_visible(*LoginPageLocators.LOGIN_STATUS, timeout)
+        return self.get_status_message()
+    
+    @allure.step("Check if form is valid")
+    def is_form_valid(self):
+        """Проверка валидности формы"""
+        email_field = self.find_element(*LoginPageLocators.EMAIL_INPUT)
+        password_field = self.find_element(*LoginPageLocators.PASSWORD_INPUT)
+        
+        email_valid = email_field.get_attribute("validity") and email_field.get_attribute("validity").get("valid", False)
+        password_filled = password_field.get_attribute("value") != ""
+        
+        return email_valid and password_filled
+    
+    @allure.step("Get form validation errors")
+    def get_validation_errors(self):
+        """Получение ошибок валидации формы"""
+        errors = []
+        
+        email_field = self.find_element(*LoginPageLocators.EMAIL_INPUT)
+        password_field = self.find_element(*LoginPageLocators.PASSWORD_INPUT)
+        
+        if not email_field.get_attribute("validity").get("valid", False):
+            errors.append("Email field is invalid")
+        
+        if not password_field.get_attribute("value"):
+            errors.append("Password field is empty")
+        
+        return errors
+    
+    @allure.step("Wait for URL change")
+    def wait_for_url_change(self, expected_url, timeout=10):
+        """Ожидание изменения URL"""
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            current_url = self.browser.current_url
+            if expected_url in current_url:
+                return True
+            time.sleep(0.5)
+        return False
+    
+    @allure.step("Check if user is redirected to tests page")
+    def is_redirected_to_tests(self):
+        """Проверка перенаправления на страницу тестов"""
+        current_url = self.browser.current_url
+        return "/tests.html" in current_url
+    
+    @allure.step("Get current page title")
+    def get_page_title(self):
+        """Получение заголовка страницы"""
+        title_element = self.find_element(*LoginPageLocators.PAGE_TITLE)
+        return title_element.text.strip()
+    
+    @allure.step("Check if login button is enabled")
+    def is_login_button_enabled(self):
+        """Проверка активности кнопки авторизации"""
+        button = self.find_element(*LoginPageLocators.LOGIN_SUBMIT_BUTTON)
+        return not button.get_attribute("disabled")
+    
+    @allure.step("Fill form with test data")
+    def fill_form_with_test_data(self, email="test@example.com", password="testpassword123"):
+        """Заполнение формы тестовыми данными"""
+        self.enter_login(email)
+        self.enter_password(password)
+    
+    @allure.step("Submit form and wait for response")
+    def submit_and_wait(self, timeout=10):
+        """Отправка формы и ожидание ответа"""
+        self.submit_sign_in_btn()
+        return self.wait_for_status_message(timeout)

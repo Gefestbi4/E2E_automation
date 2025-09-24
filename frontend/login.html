@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Авторизация</title>
+  <link href="style.css?v=2" rel="stylesheet" type="text/css" />
+  <meta name="api-base" content="http://localhost:5000">
+</head>
+<body>
+  <div class="container" style="max-width:520px;">
+    <header class="header" style="padding:30px 24px;text-align:left;">
+      <h2 class="title" style="margin:0;">Вход</h2>
+    </header>
+    <main class="main-content" style="padding:24px;">
+      <form id="login-form" class="feedback-section" test-id="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required test-id="email-input">
+        </div>
+        <div class="form-group">
+          <label for="password">Пароль</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required test-id="password-input">
+        </div>
+        <button type="submit" id="login-btn" test-id="login-submit-btn">Войти</button>
+        <p id="login-status" test-id="login-status"></p>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('login-form');
+      const status = document.getElementById('login-status');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        status.textContent = 'Вход...';
+        status.style.color = '#333';
+
+        const formData = new FormData(form);
+        const payload = {
+          email: formData.get('email'),
+          password: formData.get('password')
+        };
+        const apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000').replace(/\/?$/, '');
+
+        try {
+          const resp = await fetch(`${apiBase}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await resp.json();
+          if (resp.ok && data?.access_token) {
+            localStorage.setItem('auth_token', data.access_token);
+            window.location.href = '/tests.html';
+          } else {
+            status.textContent = `Ошибка: ${data?.detail || 'Не удалось авторизоваться'}`;
+            status.style.color = 'red';
+          }
+        } catch (err) {
+          console.error(err);
+          status.textContent = 'Сетевая ошибка';
+          status.style.color = 'red';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
+

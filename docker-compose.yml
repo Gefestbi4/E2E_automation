@@ -1,48 +1,61 @@
+version: '3.8'
 
 services:
+  # Backend Service
   backend:
     build:
-      context: .
-      dockerfile: ./back_end/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     env_file:
-      - Environments.env
-    command: ["uvicorn", "back_end.user_api_app:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
     volumes:
-      - ./back_end:/app/back_end
+      - ./backend:/app
       - ./database:/app/database
       - ./api:/app/api
     depends_on:
       - mongodb
       - postgres
+      - redis
 
+  # Frontend Service
   frontend:
-    build: ./front_end
+    build: ./frontend
     ports:
-      - 3000:80
+      - "3000:80"
     environment:
       - API_HOST=backend
       - API_PORT=5000
 
+  # Database Services
   mongodb:
-    image: mongo
+    image: mongo:latest
     ports:
-      - 27017:27017
+      - "27017:27017"
     environment:
       - MONGO_INITDB_DATABASE=my_database
       - MONGO_INITDB_ROOT_USERNAME=my_user
       - MONGO_INITDB_ROOT_PASSWORD=my_password
 
   postgres:
-    image: postgres
+    image: postgres:15
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       - POSTGRES_DB=my_database
       - POSTGRES_USER=my_user
       - POSTGRES_PASSWORD=my_password
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  # Selenium Grid
   selenium-hub:
     image: selenium/hub:latest
     container_name: selenium-hub
@@ -78,11 +91,12 @@ services:
     volumes:
       - /dev/shm:/dev/shm
 
+  # Allure Server
   allure:
-    image: frankescobar/allure-docker-service:2.13.8
+    image: qameta/allure:2.13.8
     container_name: allure-server
     ports:
-      - "5050:5050"
+      - "8080:5050"
     environment:
       CHECK_RESULTS_EVERY_SECONDS: 1
       KEEP_HISTORY: "true"
@@ -90,7 +104,96 @@ services:
     volumes:
       - ./allure-results:/app/allure-results
       - ./allure-reports:/app/default-reports
+      - ./allure-redirect.html:/app/static/index.html
 
-# You can access the frontend at http://localhost:3000, 
-# the backend at http://localhost:5000, 
-# and the Allure server at http://localhost:5050
+  # E2E Tests
+  e2e-tests:
+    build:
+      context: ./e2e-automation
+      dockerfile: Dockerfile
+    environment:
+      - TEST_URL=http://frontend:80
+      - EMAIL=test@example.com
+      - PASSWORD=testpassword123
+      - USER_NAME=Test User
+      - API_KEY=test_api_key
+      - DATABASE_URL=postgresql://my_user:my_password@postgres:5432/my_database
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - ALLURE_RESULTS_DIR=allure-results
+      - ALLURE_REPORTS_DIR=allure-reports/latest
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-reports:/app/allure-reports
+    depends_on:
+      - frontend
+      - backend
+      - postgres
+      - redis
+    networks:
+      - default
+    command: >
+      sh -c "
+        echo '🚀 Запуск E2E тестов...' &&
+        pytest tests/ -v --alluredir=allure-results &&
+        echo '📊 Генерация Allure отчета...' &&
+        allure generate allure-results -o allure-reports/latest --clean &&
+        echo '📱 Отправка отчета в Telegram...' &&
+        python3 ../scripts/telegram/send_final_report.py &&
+        echo '✅ E2E тесты завершены!'
+      "
+
+  # API Tests
+  api-tests:
+    build:
+      context: ./api-tests
+      dockerfile: Dockerfile
+    environment:
+      - API_BASE_URL=http://backend:5000
+      - API_KEY=test_api_key
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-reports:/app/allure-reports
+    depends_on:
+      - backend
+    command: >
+      sh -c "
+        echo '🚀 Запуск API тестов...' &&
+        pytest tests/ -v --alluredir=allure-results &&
+        echo '📊 Генерация Allure отчета...' &&
+        allure generate allure-results -o allure-reports/latest --clean &&
+        echo '✅ API тесты завершены!'
+      "
+
+  # Database Tests
+  db-tests:
+    build:
+      context: ./db-tests
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://my_user:my_password@postgres:5432/my_database
+      - MONGO_URL=mongodb://my_user:my_password@mongodb:27017/my_database
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-reports:/app/allure-reports
+    depends_on:
+      - postgres
+      - mongodb
+    command: >
+      sh -c "
+        echo '🚀 Запуск DB тестов...' &&
+        pytest tests/ -v --alluredir=allure-results &&
+        echo '📊 Генерация Allure отчета...' &&
+        allure generate allure-results -o allure-reports/latest --clean &&
+        echo '✅ DB тесты завершены!'
+      "
+
+# You can access:
+# - Frontend: http://localhost:3000
+# - Backend: http://localhost:5000
+# - Allure Server: http://localhost:8080
+# - Selenium Grid: http://localhost:4444

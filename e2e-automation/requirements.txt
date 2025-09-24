@@ -1,0 +1,9 @@
+# E2E Automation Dependencies
+pytest==8.4.2
+selenium==4.35.0
+allure-pytest==2.15.0
+allure-python-commons==2.15.0
+requests==2.32.5
+python-dotenv==1.1.1
+webdriver-manager==4.0.2
+chromedriver==2.24.1

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Страница тестов</title>
+  <link href="style.css?v=2" rel="stylesheet" type="text/css" />
+  <style>
+    .layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+    .sidebar { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; }
+    .sidebar button { display:block; width:100%; margin-bottom:10px; padding:10px; border-radius:8px; border:1px solid var(--glass-border); background: var(--card-bg); color: var(--text-color); cursor: pointer; }
+    .content { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; min-height: 400px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 16px; }
+    .card { background: var(--card-bg); border:1px solid var(--glass-border); border-radius:10px; padding:12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header" style="padding:24px 24px;">
+      <h2 class="title" style="margin:0;">Демо компонентов</h2>
+    </header>
+    <main class="main-content">
+      <div class="layout">
+            <aside class="sidebar">
+              <button data-tab="inputs" test-id="inputs-tab">Поля ввода</button>
+              <button data-tab="checkboxes" test-id="checkboxes-tab">Чекбоксы</button>
+              <button data-tab="buttons" test-id="buttons-tab">Кнопки</button>
+              <button data-tab="images" test-id="images-tab">Картинки</button>
+              <button data-tab="radio" test-id="radio-tab">Радио кнопки</button>
+              <button data-tab="modals" test-id="modals-tab">Модальные окна</button>
+              <button data-tab="sliders" test-id="sliders-tab">Ползунки</button>
+              <button data-tab="iframes" test-id="iframes-tab">Iframe</button>
+            </aside>
+        <section class="content" id="content"></section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const content = document.getElementById('content');
+    const views = {
+      inputs: () => {
+        content.innerHTML = `
+          <div class="grid">
+            <div class="card">
+              <label>Email</label>
+              <input type="email" placeholder="you@example.com" test-id="demo-email-input" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text-color)">
+            </div>
+            <div class="card">
+              <label>Логин</label>
+              <input type="text" minlength="3" maxlength="30" placeholder="username" test-id="demo-login-input" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text-color)">
+            </div>
+            <div class="card">
+              <label>Пароль</label>
+              <input type="password" minlength="8" placeholder="••••••••" test-id="demo-password-input" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text-color)">
+            </div>
+            <div class="card">
+              <label>Комментарий</label>
+              <textarea rows="4" maxlength="500" placeholder="Ваш комментарий" test-id="demo-comment-textarea" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text-color)"></textarea>
+            </div>
+          </div>`;
+      },
+      checkboxes: () => {
+        content.innerHTML = `
+          <div class="grid">
+            <div class="card"><label><input type="checkbox" test-id="checkbox-1"> Вариант 1</label></div>
+            <div class="card"><label><input type="checkbox" test-id="checkbox-2"> Вариант 2</label></div>
+            <div class="card"><label><input type="checkbox" test-id="checkbox-3"> Вариант 3</label></div>
+            <div class="card"><button id="check-all" test-id="check-all-btn">Выбрать все</button> <button id="uncheck-all" test-id="uncheck-all-btn">Снять все</button></div>
+          </div>`;
+        setTimeout(() => {
+          const boxes = [...content.querySelectorAll('input[type="checkbox"]')];
+          content.querySelector('#check-all').onclick = () => boxes.forEach(b => b.checked = true);
+          content.querySelector('#uncheck-all').onclick = () => boxes.forEach(b => b.checked = false);
+        });
+      },
+      buttons: () => {
+        content.innerHTML = `
+          <div class="grid">
+            <div class="card"><button test-id="normal-button">Обычная</button></div>
+            <div class="card"><button disabled test-id="disabled-button">Неактивная</button></div>
+            <div class="card"><button style="background:var(--card-border);color:#fff;border:none;padding:10px 16px;border-radius:8px" test-id="primary-button">Основная</button></div>
+          </div>`;
+      },
+      images: () => {
+        content.innerHTML = `
+          <div class="grid">
+            <div class="card">
+              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzQ0NDQiLz48dGV4dCB4PSI1MCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2U8L3RleHQ+PC9zdmc+" alt="Placeholder" test-id="demo-image-1" style="width:100%;height:100px;object-fit:cover;border-radius:8px;">
+            </div>
+            <div class="card">
+              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzY2NjYiLz48dGV4dCB4PSI1MCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2U8L3RleHQ+PC9zdmc+" alt="Placeholder" test-id="demo-image-2" style="width:100%;height:100px;object-fit:cover;border-radius:8px;">
+            </div>
+            <div class="card">
+              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzg4ODgiLz48dGV4dCB4PSI1MCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2U8L3RleHQ+PC9zdmc+" alt="Placeholder" test-id="demo-image-3" style="width:100%;height:100px;object-fit:cover;border-radius:8px;">
+            </div>
+          </div>`;
+      },
+      radio: () => {
+        content.innerHTML = `
+          <div class="grid">
+            <div class="card">
+              <fieldset>
+                <legend>Выберите один вариант:</legend>
+                <label><input type="radio" name="radio1" value="1" test-id="radio-1-1"> Вариант 1</label><br>
+                <label><input type="radio" name="radio1" value="2" test-id="radio-1-2"> Вариант 2</label><br>
+                <label><input type="radio" name="radio1" value="3" test-id="radio-1-3"> Вариант 3</label>
+              </fieldset>
+            </div>
+            <div class="card">
+              <fieldset>
+                <legend>Другая группа:</legend>
+                <label><input type="radio" name="radio2" value="a" test-id="radio-2-a"> Вариант A</label><br>
+                <label><input type="radio" name="radio2" value="b" test-id="radio-2-b"> Вариант B</label>
+              </fieldset>
+            </div>
+          </div>`;
+      },
+      modals: () => {
+        content.innerHTML = `
+          <div class="grid">
+            <div class="card">
+              <button id="open-modal" test-id="open-modal-btn">Открыть модальное окно</button>
+            </div>
+            <div class="card">
+              <button id="open-alert" test-id="open-alert-btn">Показать Alert</button>
+            </div>
+            <div class="card">
+              <button id="open-confirm" test-id="open-confirm-btn">Показать Confirm</button>
+            </div>
+          </div>
+          <div id="modal" test-id="modal-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;">
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card-bg);padding:20px;border-radius:10px;border:1px solid var(--glass-border);">
+              <h3>Модальное окно</h3>
+              <p>Это демо модального окна.</p>
+              <button id="close-modal" test-id="close-modal-btn">Закрыть</button>
+            </div>
+          </div>`;
+        setTimeout(() => {
+          content.querySelector('#open-modal').onclick = () => content.querySelector('#modal').style.display = 'block';
+          content.querySelector('#close-modal').onclick = () => content.querySelector('#modal').style.display = 'none';
+          content.querySelector('#open-alert').onclick = () => alert('Это Alert!');
+          content.querySelector('#open-confirm').onclick = () => confirm('Это Confirm!') ? alert('Вы согласились') : alert('Вы отказались');
+        });
+      },
+      sliders: () => {
+        content.innerHTML = `
+          <div class="grid">
+            <div class="card">
+              <label>Обычный ползунок</label>
+              <input type="range" min="0" max="100" value="50" test-id="slider-1" style="width:100%;">
+            </div>
+            <div class="card">
+              <label>Ползунок с шагом 10</label>
+              <input type="range" min="0" max="100" step="10" value="30" test-id="slider-2" style="width:100%;">
+            </div>
+            <div class="card">
+              <label>Ползунок с метками</label>
+              <input type="range" min="0" max="100" value="75" test-id="slider-3" style="width:100%;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-color);opacity:0.7;">
+                <span>0</span>
+                <span>25</span>
+                <span>50</span>
+                <span>75</span>
+                <span>100</span>
+              </div>
+            </div>
+          </div>`;
+      },
+      iframes: () => {
+        content.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:20px;">
+            <div class="card">
+              <h4>Страница резюме</h4>
+              <iframe src="/" width="100%" height="400" test-id="resume-iframe" style="border:1px solid var(--glass-border);border-radius:8px;"></iframe>
+            </div>
+            <div class="card">
+              <h4>Страница авторизации</h4>
+              <iframe src="/login.html" width="100%" height="400" test-id="login-iframe" style="border:1px solid var(--glass-border);border-radius:8px;"></iframe>
+            </div>
+          </div>`;
+      }
+    };
+    document.querySelectorAll('.sidebar button').forEach(btn => btn.addEventListener('click', () => views[btn.dataset.tab]?.()));
+    views.inputs();
+  </script>
+</body>
+</html>
+
+

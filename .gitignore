@@ -18,3 +18,30 @@ build/
 .idea/
 .vscode/
 
+# ===========================================
+# SECURITY - DO NOT COMMIT SECRETS
+# ===========================================
+
+# Environment variables with secrets
+.env
+.env.local
+.env.production
+.env.staging
+
+# Configuration files with secrets
+Environments.env
+config.ini
+secrets.json
+
+# Logs that might contain sensitive data
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+Allure reports (optional - uncomment if you don't want to track them)
+allure-reports/
+allure-results/
+
