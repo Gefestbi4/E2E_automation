@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.sql import func
-from .config import settings
+from config import settings
 
 # Создаем подключение к базе данных
 engine = create_engine(settings.DATABASE_URL)

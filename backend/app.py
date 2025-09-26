@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import router
-from .models import create_db_and_tables
+from routers import router
+from models import create_db_and_tables
 
 app = FastAPI(
     title="E2E Automation API",
     description="API для фреймворка автоматизации тестирования",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # CORS настройки

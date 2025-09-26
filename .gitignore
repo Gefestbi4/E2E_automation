@@ -17,6 +17,7 @@ build/
 # Ignore IDE and editor files
 .idea/
 .vscode/
+.cursor/
 
 # ===========================================
 # SECURITY - DO NOT COMMIT SECRETS
@@ -41,7 +42,21 @@ logs/
 *.tmp
 *.temp
 
-Allure reports (optional - uncomment if you don't want to track them)
-allure-reports/
+# Allure reports (optional - uncomment if you don't want to track them)
+# allure-reports/
+# allure-results/
+
+# Test artifacts
 allure-results/
+allure-reports/
+allure-history/
+screenshots/
+*.png
+*.jpg
+*.jpeg
+
+# Docker volumes and data
+postgres_data/
+mongodb_data/
+redis_data/
 

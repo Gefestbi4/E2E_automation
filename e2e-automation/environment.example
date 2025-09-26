@@ -1,0 +1,100 @@
+# E2E Automation Environment Variables
+# Скопируйте этот файл в .env и заполните своими значениями
+
+# ===========================================
+# Основные настройки приложения
+# ===========================================
+BASE_URL=http://localhost:3000
+API_URL=http://localhost:5000
+
+# ===========================================
+# Настройки браузера
+# ===========================================
+BROWSER=chrome
+HEADLESS=false
+WINDOW_SIZE=1920,1080
+
+# ===========================================
+# Настройки Selenium
+# ===========================================
+SELENIUM_IMPLICIT_WAIT=15
+SELENIUM_PAGE_LOAD_TIMEOUT=30
+SELENIUM_SCRIPT_TIMEOUT=30
+
+# ===========================================
+# Настройки тестирования
+# ===========================================
+SCREENSHOT_ON_FAILURE=true
+VIDEO_RECORDING=false
+PARALLEL_WORKERS=4
+
+# ===========================================
+# Настройки отчетов
+# ===========================================
+ALLURE_RESULTS_DIR=../allure-results
+REPORTS_DIR=../reports
+SCREENSHOTS_DIR=../screenshots
+
+# ===========================================
+# Настройки API
+# ===========================================
+API_KEY=your_api_key_here
+API_TIMEOUT=30
+
+# ===========================================
+# Настройки базы данных
+# ===========================================
+DATABASE_URL=postgresql://user:password@localhost:5432/testdb
+MONGO_URL=mongodb://localhost:27017/testdb
+
+# ===========================================
+# Тестовые данные
+# ===========================================
+EMAIL=test@example.com
+PASSWORD=testpassword123
+USER_NAME=Test User
+
+# ===========================================
+# Настройки Telegram (для уведомлений)
+# ===========================================
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHAT_ID=your_chat_id_here
+
+# ===========================================
+# Настройки CI/CD
+# ===========================================
+CI=false
+BUILD_NUMBER=1
+BUILD_URL=http://localhost:8080/build/1
+
+# ===========================================
+# Настройки Docker
+# ===========================================
+DOCKER_NETWORK=e2e_automation_network
+SELENIUM_HUB_URL=http://selenium-hub:4444/wd/hub
+
+# ===========================================
+# Настройки логирования
+# ===========================================
+LOG_LEVEL=INFO
+LOG_FORMAT=%(asctime)s [%(levelname)8s] %(name)s: %(message)s
+LOG_FILE=../logs/e2e_tests.log
+
+# ===========================================
+# Настройки производительности
+# ===========================================
+PERFORMANCE_THRESHOLD=5000
+SLOW_TEST_THRESHOLD=10
+
+# ===========================================
+# Настройки безопасности
+# ===========================================
+ENCRYPTION_KEY=your_encryption_key_here
+JWT_SECRET=your_jwt_secret_here
+
+# ===========================================
+# Настройки для разработки
+# ===========================================
+DEBUG=false
+VERBOSE=false
+DRY_RUN=false

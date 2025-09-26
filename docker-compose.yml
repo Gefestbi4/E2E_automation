@@ -12,7 +12,7 @@ services:
       - ./backend/.env
     environment:
       - REDIS_URL=redis://redis:6379
-    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+    command: [ "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5000", "--reload" ]
     volumes:
       - ./backend:/app
       - ./database:/app/database
@@ -55,145 +55,95 @@ services:
     ports:
       - "6379:6379"
 
-  # Selenium Grid
+  # Selenium Hub
   selenium-hub:
     image: selenium/hub:latest
     container_name: selenium-hub
     ports:
       - "4444:4444"
     environment:
-      GRID_MAX_SESSIONS: 10
-      GRID_TIMEOUT: 300000
+      - GRID_MAX_SESSION=16
+      - GRID_BROWSER_TIMEOUT=30
+      - GRID_TIMEOUT=30
 
+  # Chrome Node
   node-chrome:
-    image: selenium/node-chrome-debug:latest
-    depends_on:
-      - selenium-hub
+    image: selenium/node-chrome:latest
+    container_name: node-chrome
     ports:
       - "5900:5900"
     environment:
-      SELENIUM_HUB_HOST: selenium-hub
-      SELENIUM_NODE_MAX_SESSIONS: 5
-      START_XVFB: "true"
-    volumes:
-      - /dev/shm:/dev/shm
-
-  node-firefox:
-    image: selenium/node-firefox-debug:latest
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+      - NODE_MAX_INSTANCES=4
+      - NODE_MAX_SESSION=4
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
     depends_on:
       - selenium-hub
+
+  # Firefox Node
+  node-firefox:
+    image: selenium/node-firefox:latest
+    container_name: node-firefox
     ports:
       - "5901:5900"
     environment:
-      SELENIUM_HUB_HOST: selenium-hub
-      SELENIUM_NODE_MAX_SESSIONS: 5
-      START_XVFB: "true"
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+      - NODE_MAX_INSTANCES=4
+      - NODE_MAX_SESSION=4
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    depends_on:
+      - selenium-hub
+
+  # E2E Tests Service
+  e2e-tests:
+    build:
+      context: .
+      dockerfile: ./e2e-automation/Dockerfile
+    environment:
+      - PYTHONPATH=/app
     volumes:
-      - /dev/shm:/dev/shm
+      - ./allure-results:/app/allure-results
+      - ./screenshots:/app/screenshots
+    depends_on:
+      - frontend
+      - backend
+      - allure
+      - selenium-hub
+    command: [ "./run_tests_with_delay.sh" ]
+    profiles:
+      - testing
 
   # Allure Server
   allure:
-    image: qameta/allure:2.13.8
+    image: frankescobar/allure-docker-service:latest
     container_name: allure-server
     ports:
-      - "8080:5050"
+      - "5050:5050"
     environment:
       CHECK_RESULTS_EVERY_SECONDS: 1
       KEEP_HISTORY: "true"
       PROJECT_ID: "E2E_automation"
-    volumes:
-      - ./allure-results:/app/allure-results
-      - ./allure-reports:/app/default-reports
-      - ./allure-redirect.html:/app/static/index.html
-
-  # E2E Tests
-  e2e-tests:
-    build:
-      context: ./e2e-automation
-      dockerfile: Dockerfile
-    environment:
-      - TEST_URL=http://frontend:80
-      - EMAIL=test@example.com
-      - PASSWORD=testpassword123
-      - USER_NAME=Test User
-      - API_KEY=test_api_key
-      - DATABASE_URL=postgresql://my_user:my_password@postgres:5432/my_database
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-      - ALLURE_RESULTS_DIR=allure-results
-      - ALLURE_REPORTS_DIR=allure-reports/latest
+      SECURITY_ENABLED: "false"
+      ALLURE_RESULTS_DIR: "/app/allure-results"
+      ALLURE_REPORTS_DIR: "/app/allure-reports"
+      ALLURE_HISTORY_DIR: "/app/allure-history"
+      KEEP_HISTORY_COUNT: 30
+      ALLURE_PORT: 5050
+      ALLURE_HOST: "0.0.0.0"
     volumes:
       - ./allure-results:/app/allure-results
       - ./allure-reports:/app/allure-reports
-    depends_on:
-      - frontend
-      - backend
-      - postgres
-      - redis
-    networks:
-      - default
-    command: >
-      sh -c "
-        echo '🚀 Запуск E2E тестов...' &&
-        pytest tests/ -v --alluredir=allure-results &&
-        echo '📊 Генерация Allure отчета...' &&
-        allure generate allure-results -o allure-reports/latest --clean &&
-        echo '📱 Отправка отчета в Telegram...' &&
-        python3 ../scripts/telegram/send_final_report.py &&
-        echo '✅ E2E тесты завершены!'
-      "
-
-  # API Tests
-  api-tests:
-    build:
-      context: ./api-tests
-      dockerfile: Dockerfile
-    environment:
-      - API_BASE_URL=http://backend:5000
-      - API_KEY=test_api_key
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-    volumes:
-      - ./allure-results:/app/allure-results
-      - ./allure-reports:/app/allure-reports
-    depends_on:
-      - backend
-    command: >
-      sh -c "
-        echo '🚀 Запуск API тестов...' &&
-        pytest tests/ -v --alluredir=allure-results &&
-        echo '📊 Генерация Allure отчета...' &&
-        allure generate allure-results -o allure-reports/latest --clean &&
-        echo '✅ API тесты завершены!'
-      "
-
-  # Database Tests
-  db-tests:
-    build:
-      context: ./db-tests
-      dockerfile: Dockerfile
-    environment:
-      - DATABASE_URL=postgresql://my_user:my_password@postgres:5432/my_database
-      - MONGO_URL=mongodb://my_user:my_password@mongodb:27017/my_database
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-    volumes:
-      - ./allure-results:/app/allure-results
-      - ./allure-reports:/app/allure-reports
-    depends_on:
-      - postgres
-      - mongodb
-    command: >
-      sh -c "
-        echo '🚀 Запуск DB тестов...' &&
-        pytest tests/ -v --alluredir=allure-results &&
-        echo '📊 Генерация Allure отчета...' &&
-        allure generate allure-results -o allure-reports/latest --clean &&
-        echo '✅ DB тесты завершены!'
-      "
+      - ./allure-history:/app/allure-history
+    restart: always
 
 # You can access:
 # - Frontend: http://localhost:3000
 # - Backend: http://localhost:5000
-# - Allure Server: http://localhost:8080
-# - Selenium Grid: http://localhost:4444
+# - Allure Server: http://localhost:5050
+# - Selenium Hub: http://localhost:4444
