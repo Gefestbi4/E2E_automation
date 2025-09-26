@@ -57,7 +57,7 @@ class LoginPageLocators(BaseLocators):
     EMAIL_INPUT = (By.CSS_SELECTOR, "[test-id='email-input']")
     PASSWORD_INPUT = (By.CSS_SELECTOR, "[test-id='password-input']")
     LOGIN_SUBMIT_BUTTON = (By.CSS_SELECTOR, "[test-id='login-submit-btn']")
-    LOGIN_STATUS = (By.CSS_SELECTOR, "[test-id='login-status']")
+    LOGIN_STATUS = (By.ID, "login-status")
 
     # Заголовки
     PAGE_TITLE = (By.CSS_SELECTOR, "h2.title")

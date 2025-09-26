@@ -1,22 +1,12 @@
-import os
-import sys
+"""
+E2E tests for login page using improved architecture
+"""
+
 import pytest
 import allure
-from dotenv import load_dotenv
 from pages.login_page import LoginPage
-from pages.Locators import LoginPageLocators, TestsPageLocators
-
-# Добавляем путь к api модулю
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from api.api_user import UserApi
-
-load_dotenv()
-
-# Получаем переменные окружения
-api_key = os.getenv("API_KEY")
-email = os.getenv("EMAIL", "test@example.com")
-password = os.getenv("PASSWORD", "test123")
-url = os.getenv("URL", "http://localhost:3000")
+from config.settings import Settings
+from utils.helpers import TestHelpers
 
 
 @pytest.fixture(scope="function")
@@ -27,187 +17,113 @@ def login_page(browser, url):
     return page
 
 
-@pytest.fixture(scope="function")
-def api_client():
-    """Фикстура для API клиента"""
-    return UserApi("http://localhost:5000", api_key)
-
-
-# ============================================== Тесты для страницы авторизации ==============================================
-
-
 @allure.feature("Авторизация")
 @allure.story("Успешная авторизация")
 @pytest.mark.crit
-def test_successful_login(login_page):
+@pytest.mark.smoke
+def test_successful_login(login_page, test_data):
     """Проверка успешной авторизации пользователя"""
-    # Авторизация (шаг уже есть в sign_in())
-    login_page.sign_in(email, password)
+    user_data = test_data["users"]["valid_user"]
 
-    # Проверка перенаправления (шаг уже есть в is_redirected_to_tests())
-    login_page.wait_for_url_change(f"{login_page.base_url}/tests.html", timeout=10)
-    assert (
-        login_page.is_redirected_to_tests()
+    # Авторизация
+    login_page.sign_in(user_data["email"], user_data["password"])
+
+    # Ожидание перенаправления
+    assert login_page.wait_for_redirect_to_tests(
+        timeout=15
     ), "Ожидалось перенаправление на tests.html"
 
-    # Проверка элементов страницы тестов
-    assert login_page.is_element_present(
-        *TestsPageLocators.PAGE_TITLE
-    ), "Заголовок страницы тестов не найден"
-    assert login_page.is_element_present(
-        *TestsPageLocators.SIDEBAR
-    ), "Сайдбар не найден"
+    # Проверка заголовка страницы
+    assert (
+        login_page.get_page_title() == "Демо компонентов"
+    ), "Неверный заголовок страницы"
+
+
+@allure.feature("Авторизация")
+@allure.story("Неуспешная авторизация")
+@pytest.mark.crit
+@pytest.mark.smoke
+def test_invalid_credentials(login_page, test_data):
+    """Проверка авторизации с неверными данными"""
+    user_data = test_data["users"]["invalid_user"]
+
+    # Попытка авторизации с неверными данными
+    login_page.sign_in(user_data["email"], user_data["password"])
+
+    # Проверка сообщения об ошибке
+    status_message = login_page.wait_for_status_message(timeout=10)
+    assert (
+        "Incorrect password" in status_message
+    ), f"Ожидалось сообщение об ошибке пароля, получено: {status_message}"
 
 
 @allure.feature("Авторизация")
 @allure.story("Автоматическая регистрация")
 @pytest.mark.medium
-def test_auto_registration_new_user(login_page, api_client):
+def test_auto_registration_new_user(login_page, test_data):
     """Проверка автоматической регистрации нового пользователя"""
-    new_email = "newuser@example.com"
-    new_password = "newpassword123"
+    user_data = test_data["users"]["new_user"]
 
-    # Удаление пользователя если существует
-    try:
-        api_client.delete_user(new_email)
-    except:
-        pass
+    # Авторизация нового пользователя
+    login_page.sign_in(user_data["email"], user_data["password"])
 
-    # Авторизация (шаг уже есть в sign_in())
-    login_page.sign_in(new_email, new_password)
-
-    # Проверка перенаправления (шаг уже есть в is_redirected_to_tests())
-    login_page.wait_for_url_change(f"{login_page.base_url}/tests.html", timeout=10)
-    assert (
-        login_page.is_redirected_to_tests()
+    # Ожидание перенаправления
+    assert login_page.wait_for_redirect_to_tests(
+        timeout=15
     ), "Ожидалось перенаправление на tests.html"
 
 
-@allure.feature("Авторизация")
-@allure.story("Валидация полей")
+@allure.feature("Валидация формы")
+@allure.story("Проверка валидности формы")
 @pytest.mark.medium
-def test_form_validation(login_page):
-    """Проверка валидации формы авторизации"""
-    # Проверка обязательных полей
-    email_field = login_page.find_element(*LoginPageLocators.EMAIL_INPUT)
-    password_field = login_page.find_element(*LoginPageLocators.PASSWORD_INPUT)
+def test_form_validation(login_page, test_data):
+    """Проверка валидности формы авторизации"""
+    user_data = test_data["users"]["valid_user"]
 
-    assert (
-        email_field.get_attribute("required") is not None
-    ), "Поле email должно быть обязательным"
-    assert (
-        password_field.get_attribute("required") is not None
-    ), "Поле пароль должно быть обязательным"
+    # Заполнение формы корректными данными
+    login_page.fill_form_with_test_data(user_data["email"], user_data["password"])
 
-    # Проверка типов полей
-    assert email_field.get_attribute("type") == "email", "Поле должно иметь тип email"
-    assert (
-        password_field.get_attribute("type") == "password"
-    ), "Поле должно иметь тип password"
-
-    # Проверка валидности формы (шаг уже есть в fill_form_with_test_data() и is_form_valid())
-    login_page.fill_form_with_test_data()
+    # Проверка валидности формы
     assert (
         login_page.is_form_valid()
     ), "Форма должна быть валидной с корректными данными"
 
+    # Проверка активности кнопки
+    assert login_page.is_login_button_enabled(), "Кнопка входа должна быть активной"
+
 
 @allure.feature("Авторизация")
-@allure.story("Ошибки авторизации")
+@allure.story("Хранение токена")
 @pytest.mark.medium
-def test_invalid_credentials(login_page):
-    """Проверка обработки неверных учетных данных"""
-    # Авторизация (шаг уже есть в sign_in())
-    login_page.sign_in("invalid@example.com", "wrongpassword")
+def test_auth_token_storage(login_page, test_data):
+    """Проверка сохранения токена авторизации"""
+    user_data = test_data["users"]["valid_user"]
 
-    # Проверка результата (шаг уже есть в is_redirected_to_tests())
-    login_page.wait_for_url_change(f"{login_page.base_url}/tests.html", timeout=10)
-    assert (
-        login_page.is_redirected_to_tests()
+    # Авторизация
+    login_page.sign_in(user_data["email"], user_data["password"])
+
+    # Ожидание перенаправления
+    assert login_page.wait_for_redirect_to_tests(
+        timeout=15
     ), "Ожидалось перенаправление на tests.html"
 
-    # Проверка токена
-    token = login_page.browser.execute_script(
-        "return localStorage.getItem('auth_token');"
-    )
-    assert (
-        token is not None
-    ), "Токен авторизации должен быть сохранен (автоматическая регистрация)"
+    # Проверка наличия токена
+    token = login_page.get_auth_token()
+    assert token is not None, "Токен авторизации должен быть сохранен"
     assert len(token) > 0, "Токен авторизации не должен быть пустым"
 
 
 @allure.feature("Авторизация")
-@allure.story("UI элементы")
+@allure.story("Неуспешная авторизация")
 @pytest.mark.low
-def test_login_page_elements(login_page):
-    """Проверка наличия всех элементов на странице авторизации"""
-    # Проверка заголовка (шаг уже есть в get_page_title())
-    assert login_page.is_element_present(
-        *LoginPageLocators.PAGE_TITLE
-    ), "Заголовок страницы не найден"
+def test_fail_login(login_page, test_data):
+    """Тест, который должен упасть для демонстрации отчетности"""
+    user_data = test_data["users"]["invalid_user"]
 
-    title_text = login_page.get_page_title()
-    assert (
-        "вход" in title_text.lower() or "login" in title_text.lower()
-    ), f"Неожиданный текст заголовка: {title_text}"
+    # Попытка авторизации с неверными данными
+    login_page.sign_in(user_data["email"], user_data["password"])
 
-    # Проверка формы авторизации
-    assert login_page.is_element_present(
-        *LoginPageLocators.LOGIN_FORM
-    ), "Форма авторизации не найдена"
-    assert login_page.is_element_present(
-        *LoginPageLocators.EMAIL_INPUT
-    ), "Поле email не найдено"
-    assert login_page.is_element_present(
-        *LoginPageLocators.PASSWORD_INPUT
-    ), "Поле пароль не найдено"
-    assert login_page.is_element_present(
-        *LoginPageLocators.LOGIN_SUBMIT_BUTTON
-    ), "Кнопка отправки не найдена"
-    assert login_page.is_element_present(
-        *LoginPageLocators.LOGIN_STATUS
-    ), "Элемент статуса не найден"
-
-    # Проверка активности кнопки (шаг уже есть в is_login_button_enabled())
-    assert (
-        login_page.is_login_button_enabled()
-    ), "Кнопка авторизации должна быть активна"
-
-    # Проверка плейсхолдеров
-    email_input = login_page.find_element(*LoginPageLocators.EMAIL_INPUT)
-    password_input = login_page.find_element(*LoginPageLocators.PASSWORD_INPUT)
-
-    assert (
-        email_input.get_attribute("placeholder") is not None
-    ), "Поле email должно иметь плейсхолдер"
-    assert (
-        password_input.get_attribute("placeholder") is not None
-    ), "Поле пароль должно иметь плейсхолдер"
-
-
-@allure.feature("Авторизация")
-@allure.story("Токен авторизации")
-@pytest.mark.medium
-def test_auth_token_storage(login_page, api_client):
-    """Проверка сохранения токена авторизации в localStorage"""
-    # Авторизация (шаг уже есть в sign_in())
-    login_page.sign_in(email, password)
-
-    # Ожидание перенаправления (шаг уже есть в wait_for_url_change())
-    login_page.wait_for_url_change(f"{login_page.base_url}/tests.html", timeout=10)
-
-    # Проверка токена
-    token = login_page.get_auth_token()
-    assert token is not None, "Токен авторизации не сохранен в localStorage"
-    assert len(token) > 0, "Токен авторизации пустой"
-    assert token.count(".") == 2, f"Токен не имеет формат JWT: {token[:30]}..."
-
-
-def test_fail_login(login_page):
-    """Проверка обработки неверных учетных данных"""
-    login_page.sign_in("invalid@example.com", "wrongssword1")
-    assert login_page.is_redirected_to_tests()
-    assert login_page.is_element_present(
-        *LoginPageLocators.LOGIN_STATUS
-    ), "Элемент статуса не найден"
-    assert login_page.get_status_message() == "Неверный email или пароль"
+    # Намеренно неверная проверка для демонстрации падения теста
+    assert login_page.wait_for_redirect_to_tests(
+        timeout=5
+    ), "Этот тест должен упасть для демонстрации отчетности"

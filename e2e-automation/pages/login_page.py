@@ -33,6 +33,12 @@ class LoginPage(BasePage):
         self.enter_password(password)
         self.submit_sign_in_btn()
 
+        # Ждем появления статусного сообщения
+        try:
+            status_message = self.wait_for_status_message(timeout=5)
+        except Exception:
+            pass
+
     @allure.step("Get login status message")
     def get_status_message(self):
         """Получение сообщения о статусе авторизации"""
@@ -78,6 +84,18 @@ class LoginPage(BasePage):
         """Проверка перенаправления на страницу тестов"""
         current_url = self.browser.current_url
         return current_url.endswith("/tests.html") or "/tests.html" in current_url
+
+    @allure.step("Wait for redirect to tests page")
+    def wait_for_redirect_to_tests(self, timeout=10):
+        """Ожидание перенаправления на страницу тестов"""
+        start_time = time.time()
+
+        while time.time() - start_time < timeout:
+            if self.is_redirected_to_tests():
+                return True
+            time.sleep(0.5)
+
+        return False
 
     @allure.step("Get current page title")
     def get_page_title(self):

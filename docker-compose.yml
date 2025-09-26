@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Backend Service
   backend:
@@ -116,6 +114,7 @@ services:
       - allure
       - selenium-hub
     command: [ "./run_tests_with_delay.sh" ]
+    restart: "no" # Не перезапускать контейнер после завершения
     profiles:
       - testing
 

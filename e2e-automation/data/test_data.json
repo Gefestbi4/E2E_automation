@@ -1,0 +1,52 @@
+{
+    "users": {
+        "valid_user": {
+            "email": "test@example.com",
+            "password": "testpassword123",
+            "expected_redirect": "/tests.html"
+        },
+        "invalid_user": {
+            "email": "test@example.com",
+            "password": "wrongpassword",
+            "expected_error": "Incorrect password"
+        },
+        "new_user": {
+            "email": "newuser2@example.com",
+            "password": "newpass123",
+            "expected_redirect": "/tests.html"
+        }
+    },
+    "urls": {
+        "login_page": "/login.html",
+        "tests_page": "/tests.html",
+        "api_login": "/api/auth/login"
+    },
+    "test_scenarios": {
+        "successful_login": {
+            "description": "User successfully logs in with valid credentials",
+            "priority": "high",
+            "tags": [
+                "smoke",
+                "login",
+                "positive"
+            ]
+        },
+        "invalid_credentials": {
+            "description": "User cannot login with invalid credentials",
+            "priority": "high",
+            "tags": [
+                "smoke",
+                "login",
+                "negative"
+            ]
+        },
+        "form_validation": {
+            "description": "Login form validation works correctly",
+            "priority": "medium",
+            "tags": [
+                "validation",
+                "form"
+            ]
+        }
+    }
+}
