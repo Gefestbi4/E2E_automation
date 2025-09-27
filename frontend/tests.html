@@ -85,7 +85,7 @@
 
       if (!token || !expires || Date.now() > parseInt(expires)) {
         localStorage.clear();
-        window.location.href = '/login.html';
+        window.location.href = '/login_new.html';
         return false;
       }
       return true;
@@ -235,7 +235,7 @@
             </div>
             <div class="card">
               <h4>Страница авторизации</h4>
-              <iframe src="/login.html" width="100%" height="400" test-id="login-iframe" style="border:1px solid var(--glass-border);border-radius:8px;"></iframe>
+              <iframe src="/login_new.html" width="100%" height="400" test-id="login-iframe" style="border:1px solid var(--glass-border);border-radius:8px;"></iframe>
             </div>
           </div>`;
       }

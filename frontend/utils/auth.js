@@ -74,7 +74,7 @@ setInterval(async () => {
         } catch (error) {
             console.error('Token refresh failed:', error);
             // Redirect to login if refresh fails
-            window.location.href = '/login.html';
+            window.location.href = '/login_new.html';
         }
     }
 }, 15 * 60 * 1000); // Refresh every 15 minutes
