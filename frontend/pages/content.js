@@ -137,11 +137,11 @@ class ContentModule {
                                     <span class="stat">👍 ${article.likes_count}</span>
                                 </div>
                                 <div class="article-actions">
-                                    <button class="btn btn-secondary btn-sm" onclick="this.editArticle(${article.id})">Редактировать</button>
-                                    <button class="btn btn-primary btn-sm" onclick="this.viewArticle(${article.id})">Просмотр</button>
+                                    <button class="btn btn-secondary btn-sm" data-action="edit-article" data-article-id="${article.id}">Редактировать</button>
+                                    <button class="btn btn-primary btn-sm" data-action="view-article" data-article-id="${article.id}">Просмотр</button>
                                     ${article.status === 'draft' ?
-                `<button class="btn btn-success btn-sm" onclick="this.publishArticle(${article.id})">Опубликовать</button>` :
-                `<button class="btn btn-warning btn-sm" onclick="this.unpublishArticle(${article.id})">Снять с публикации</button>`
+                `<button class="btn btn-success btn-sm" data-action="publish-article" data-article-id="${article.id}">Опубликовать</button>` :
+                `<button class="btn btn-warning btn-sm" data-action="unpublish-article" data-article-id="${article.id}">Снять с публикации</button>`
             }
                                 </div>
                             </div>
@@ -187,6 +187,23 @@ class ContentModule {
             }
         });
 
+        // Article actions
+        document.addEventListener('click', (e) => {
+            if (e.target.dataset.action === 'edit-article') {
+                const articleId = parseInt(e.target.dataset.articleId);
+                this.editArticle(articleId);
+            } else if (e.target.dataset.action === 'view-article') {
+                const articleId = parseInt(e.target.dataset.articleId);
+                this.viewArticle(articleId);
+            } else if (e.target.dataset.action === 'publish-article') {
+                const articleId = parseInt(e.target.dataset.articleId);
+                this.publishArticle(articleId);
+            } else if (e.target.dataset.action === 'unpublish-article') {
+                const articleId = parseInt(e.target.dataset.articleId);
+                this.unpublishArticle(articleId);
+            }
+        });
+
         // Other action buttons
         document.addEventListener('click', (e) => {
             if (e.target.id === 'manage-categories-btn') {
@@ -211,6 +228,26 @@ class ContentModule {
     filterArticles(status) {
         // Placeholder for filtering logic
         Toast.info(`Фильтрация по статусу: ${status || 'все'}`);
+    }
+
+    editArticle(articleId) {
+        console.log('Editing article:', articleId);
+        Toast.info(`Редактирование статьи ${articleId} будет реализовано в следующих версиях`);
+    }
+
+    viewArticle(articleId) {
+        console.log('Viewing article:', articleId);
+        Toast.info(`Просмотр статьи ${articleId} будет реализован в следующих версиях`);
+    }
+
+    publishArticle(articleId) {
+        console.log('Publishing article:', articleId);
+        Toast.info(`Публикация статьи ${articleId} будет реализована в следующих версиях`);
+    }
+
+    unpublishArticle(articleId) {
+        console.log('Unpublishing article:', articleId);
+        Toast.info(`Снятие с публикации статьи ${articleId} будет реализовано в следующих версиях`);
     }
 
     onPageShow() {

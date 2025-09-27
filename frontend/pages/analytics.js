@@ -225,7 +225,7 @@ class AnalyticsModule {
             </div>
             <div class="error-message">
                 <p>${message}</p>
-                <button class="btn btn-primary" onclick="window.App.modules.analytics.loadAnalyticsData()">Попробовать снова</button>
+                <button class="btn btn-primary" data-action="retry-load">Попробовать снова</button>
             </div>
         `;
     }
@@ -234,13 +234,30 @@ class AnalyticsModule {
         // Analytics actions
         document.addEventListener('click', (e) => {
             if (e.target.id === 'generate-report-btn') {
-                Toast.info('Функция создания отчетов будет реализована');
+                this.generateReport();
             } else if (e.target.id === 'export-data-btn') {
-                Toast.info('Функция экспорта данных будет реализована');
+                this.exportData();
             } else if (e.target.id === 'configure-alerts-btn') {
-                Toast.info('Функция настройки уведомлений будет реализована');
+                this.configureAlerts();
+            } else if (e.target.dataset.action === 'retry-load') {
+                this.loadAnalyticsData();
             }
         });
+    }
+
+    generateReport() {
+        console.log('Generating report...');
+        Toast.info('Функция создания отчетов будет реализована в следующих версиях');
+    }
+
+    exportData() {
+        console.log('Exporting data...');
+        Toast.info('Функция экспорта данных будет реализована в следующих версиях');
+    }
+
+    configureAlerts() {
+        console.log('Configuring alerts...');
+        Toast.info('Функция настройки уведомлений будет реализована в следующих версиях');
     }
 
     onPageShow() {

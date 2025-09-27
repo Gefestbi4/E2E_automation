@@ -94,8 +94,8 @@ class TasksModule {
                                     <span class="progress-text">${Math.round((project.completed_tasks / project.tasks_count) * 100)}% выполнено</span>
                                 </div>
                                 <div class="project-actions">
-                                    <button class="btn btn-secondary btn-sm" onclick="this.viewProject(${project.id})">Открыть</button>
-                                    <button class="btn btn-primary btn-sm" onclick="this.addTask(${project.id})">Добавить задачу</button>
+                                    <button class="btn btn-secondary btn-sm" data-action="view-project" data-project-id="${project.id}">Открыть</button>
+                                    <button class="btn btn-primary btn-sm" data-action="add-task" data-project-id="${project.id}">Добавить задачу</button>
                                 </div>
                             </div>
                         `).join('')}
@@ -163,6 +163,17 @@ class TasksModule {
             }
         });
 
+        // Project actions
+        document.addEventListener('click', (e) => {
+            if (e.target.dataset.action === 'view-project') {
+                const projectId = parseInt(e.target.dataset.projectId);
+                this.viewProject(projectId);
+            } else if (e.target.dataset.action === 'add-task') {
+                const projectId = parseInt(e.target.dataset.projectId);
+                this.addTask(projectId);
+            }
+        });
+
         // Quick actions
         document.addEventListener('click', (e) => {
             if (e.target.closest('#view-all-tasks')) {
@@ -179,6 +190,16 @@ class TasksModule {
 
     showAddProjectModal() {
         Toast.info('Функция создания проекта будет реализована в следующих версиях');
+    }
+
+    viewProject(projectId) {
+        console.log('Viewing project:', projectId);
+        Toast.info(`Открытие проекта ${projectId} будет реализовано в следующих версиях`);
+    }
+
+    addTask(projectId) {
+        console.log('Adding task to project:', projectId);
+        Toast.info(`Добавление задачи в проект ${projectId} будет реализовано в следующих версиях`);
     }
 
     onPageShow() {

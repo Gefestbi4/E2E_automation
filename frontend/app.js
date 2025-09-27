@@ -57,7 +57,7 @@ class App {
                 console.log('Going to page:', pageName);
                 this.currentPage = pageName;
                 this.showPage(pageName);
-                this.updateActiveNavItem(pageName);
+                this.navigation.updateActiveNavItem(pageName);
             },
 
             updateActiveNavItem: (pageName) => {

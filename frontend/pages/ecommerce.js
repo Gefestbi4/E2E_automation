@@ -81,8 +81,8 @@ class EcommerceModule {
                                         <span class="product-price">$${product.price}</span>
                                     </div>
                                     <div class="product-actions">
-                                        <button class="btn btn-secondary btn-sm" onclick="this.addToCart(${product.id})">В корзину</button>
-                                        <button class="btn btn-primary btn-sm" onclick="this.viewProduct(${product.id})">Подробнее</button>
+                                        <button class="btn btn-secondary btn-sm" data-action="add-to-cart" data-product-id="${product.id}">В корзину</button>
+                                        <button class="btn btn-primary btn-sm" data-action="view-product" data-product-id="${product.id}">Подробнее</button>
                                     </div>
                                 </div>
                             </div>
@@ -128,12 +128,33 @@ class EcommerceModule {
             if (e.target.id === 'add-product-btn') {
                 this.showAddProductModal();
             }
+
+            // Product action buttons
+            if (e.target.dataset.action === 'add-to-cart') {
+                const productId = parseInt(e.target.dataset.productId);
+                this.addToCart(productId);
+            }
+
+            if (e.target.dataset.action === 'view-product') {
+                const productId = parseInt(e.target.dataset.productId);
+                this.viewProduct(productId);
+            }
         });
     }
 
     showAddProductModal() {
         // Placeholder for add product modal
         Toast.info('Функция добавления товара будет реализована в следующих версиях');
+    }
+
+    addToCart(productId) {
+        console.log('Adding product to cart:', productId);
+        Toast.success('Товар добавлен в корзину');
+    }
+
+    viewProduct(productId) {
+        console.log('Viewing product:', productId);
+        Toast.info('Функция просмотра товара будет реализована в следующих версиях');
     }
 
     onPageShow() {

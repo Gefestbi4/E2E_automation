@@ -68,10 +68,18 @@ class SocialModule {
 
             <div class="social-content">
                 <div class="create-post-section">
-                    <div class="create-post-form">
-                        <textarea id="new-post-content" placeholder="Что у вас нового?" rows="3"></textarea>
-                        <div class="post-actions">
-                            <button class="btn btn-primary" id="publish-post-btn">Опубликовать</button>
+                    <div class="create-post-card">
+                        <div class="create-post-header">
+                            <img src="" alt="User Avatar" class="user-avatar" id="create-post-avatar">
+                            <div class="user-info">
+                                <h4 id="create-post-username">Test User</h4>
+                            </div>
+                        </div>
+                        <div class="create-post-form">
+                            <textarea id="new-post-content" placeholder="Что у вас нового?" rows="3"></textarea>
+                            <div class="create-post-actions">
+                                <button class="btn btn-primary" id="publish-post-btn">Опубликовать</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -91,15 +99,15 @@ class SocialModule {
                             <div class="post-content">
                                 <p>${post.content}</p>
                             </div>
-                            <div class="post-footer">
-                                <button class="post-action-btn like-btn" data-post-id="${post.id}">
+                            <div class="post-actions">
+                                <button class="btn btn-secondary btn-sm post-action-btn like-btn" data-post-id="${post.id}">
                                     👍 ${post.likes_count}
                                 </button>
-                                <button class="post-action-btn comment-btn" data-post-id="${post.id}">
+                                <button class="btn btn-secondary btn-sm post-action-btn comment-btn" data-post-id="${post.id}">
                                     💬 ${post.comments_count}
                                 </button>
-                                <button class="post-action-btn share-btn" data-post-id="${post.id}">
-                                    🔗 Поделиться
+                                <button class="btn btn-secondary btn-sm post-action-btn share-btn" data-post-id="${post.id}">
+                                    Поделиться
                                 </button>
                             </div>
                         </div>
@@ -192,6 +200,42 @@ class SocialModule {
         console.log('Social page shown');
         if (!this.isInitialized) {
             this.init();
+        }
+
+        // Set user avatar in create post section
+        this.setCreatePostUserInfo();
+    }
+
+    setCreatePostUserInfo() {
+        const createPostAvatar = document.getElementById('create-post-avatar');
+        const createPostUsername = document.getElementById('create-post-username');
+
+        if (createPostAvatar && createPostUsername) {
+            // Get current user data from AuthService
+            if (window.AuthService && window.AuthService.getStoredUserData) {
+                const userData = window.AuthService.getStoredUserData();
+                if (userData) {
+                    createPostUsername.textContent = userData.full_name || userData.email || 'Test User';
+
+                    // Set avatar
+                    if (userData.avatar_url) {
+                        createPostAvatar.src = userData.avatar_url;
+                        createPostAvatar.onerror = () => {
+                            AvatarUtils.handleAvatarError(createPostAvatar, userData.full_name || userData.email);
+                        };
+                    } else {
+                        AvatarUtils.setInitialsAvatar(createPostAvatar, userData.full_name || userData.email || 'Test User');
+                    }
+                } else {
+                    // Fallback to default
+                    createPostUsername.textContent = 'Test User';
+                    AvatarUtils.setInitialsAvatar(createPostAvatar, 'Test User');
+                }
+            } else {
+                // Fallback to default
+                createPostUsername.textContent = 'Test User';
+                AvatarUtils.setInitialsAvatar(createPostAvatar, 'Test User');
+            }
         }
     }
 }
