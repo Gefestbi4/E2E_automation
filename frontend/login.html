@@ -6,13 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Авторизация</title>
   <link href="style.css?v=2" rel="stylesheet" type="text/css" />
-  <meta name="api-base" content="http://backend:5000">
+  <meta name="api-base" content="http://localhost:5000">
 </head>
 
 <body>
   <div class="container" style="max-width:520px;">
     <header class="header" style="padding:30px 24px;text-align:left;">
-      <h2 class="title" style="margin:0;">Вход</h2>
+      <h2 class="title" style="margin:0;">Вход в систему</h2>
+      <p style="margin:8px 0 0 0;color:#666;">Войдите в свой аккаунт</p>
     </header>
     <main class="main-content" style="padding:24px;">
       <form id="login-form" class="feedback-section" test-id="login-form">
@@ -27,6 +28,11 @@
         <button type="submit" id="login-btn" test-id="login-submit-btn">Войти</button>
         <p id="login-status" test-id="login-status"></p>
       </form>
+
+      <div style="text-align:center;margin-top:24px;padding-top:24px;border-top:1px solid #eee;">
+        <p style="margin:0;color:#666;">Нет аккаунта?</p>
+        <a href="/register.html" style="color:#667eea;text-decoration:none;font-weight:500;">Зарегистрироваться</a>
+      </div>
     </main>
   </div>
 
