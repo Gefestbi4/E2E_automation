@@ -1,0 +1,464 @@
+{
+    "users": {
+        "guest_user": {
+            "type": "guest",
+            "permissions": [
+                "view_public_content"
+            ],
+            "description": "Неавторизованный пользователь с ограниченным доступом"
+        },
+        "regular_user": {
+            "email": "user@example.com",
+            "password": "userpassword123",
+            "username": "user",
+            "full_name": "Regular User",
+            "permissions": [
+                "full_access"
+            ],
+            "description": "Обычный пользователь с полным доступом ко всем модулям"
+        },
+        "admin_user": {
+            "email": "admin@example.com",
+            "password": "adminpassword123",
+            "username": "admin",
+            "full_name": "Admin User",
+            "permissions": [
+                "admin_access",
+                "moderation",
+                "analytics"
+            ],
+            "description": "Администратор с расширенными правами"
+        },
+        "test_user": {
+            "email": "test@example.com",
+            "password": "testpassword123",
+            "username": "test",
+            "full_name": "Test User",
+            "permissions": [
+                "full_access"
+            ],
+            "description": "Тестовый пользователь для автоматизации"
+        }
+    },
+    "products": {
+        "sample_products": [
+            {
+                "id": 1,
+                "name": "Laptop Pro 15",
+                "price": 1299.99,
+                "category": "Electronics",
+                "description": "High-performance laptop for professionals",
+                "image_url": "/images/laptop-pro-15.jpg",
+                "in_stock": true,
+                "rating": 4.8
+            },
+            {
+                "id": 2,
+                "name": "Wireless Headphones",
+                "price": 199.99,
+                "category": "Audio",
+                "description": "Premium wireless headphones with noise cancellation",
+                "image_url": "/images/headphones.jpg",
+                "in_stock": true,
+                "rating": 4.6
+            },
+            {
+                "id": 3,
+                "name": "Smartphone X",
+                "price": 899.99,
+                "category": "Electronics",
+                "description": "Latest smartphone with advanced features",
+                "image_url": "/images/smartphone-x.jpg",
+                "in_stock": false,
+                "rating": 4.7
+            },
+            {
+                "id": 4,
+                "name": "Programming Book",
+                "price": 49.99,
+                "category": "Books",
+                "description": "Complete guide to modern programming",
+                "image_url": "/images/programming-book.jpg",
+                "in_stock": true,
+                "rating": 4.9
+            }
+        ],
+        "categories": [
+            "Electronics",
+            "Audio",
+            "Books",
+            "Clothing",
+            "Home & Garden"
+        ]
+    },
+    "social_posts": {
+        "sample_posts": [
+            {
+                "id": 1,
+                "content": "Привет! Это мой первый пост в социальной сети.",
+                "author": "test@example.com",
+                "visibility": "public",
+                "has_image": false,
+                "likes_count": 5,
+                "comments_count": 2
+            },
+            {
+                "id": 2,
+                "content": "Отличный день для изучения новых технологий! #программирование #обучение",
+                "author": "user@example.com",
+                "visibility": "public",
+                "has_image": true,
+                "image_url": "/images/coding-setup.jpg",
+                "likes_count": 12,
+                "comments_count": 8
+            },
+            {
+                "id": 3,
+                "content": "Поделюсь опытом автоматизации тестирования. Скоро напишу подробную статью!",
+                "author": "admin@example.com",
+                "visibility": "public",
+                "has_image": false,
+                "likes_count": 25,
+                "comments_count": 15
+            }
+        ],
+        "search_queries": [
+            "путешествия",
+            "еда",
+            "спорт",
+            "работа",
+            "программирование",
+            "тестирование"
+        ]
+    },
+    "tasks": {
+        "sample_boards": [
+            {
+                "id": 1,
+                "name": "Мой проект",
+                "description": "Описание проекта для управления задачами",
+                "visibility": "private",
+                "user_id": 1,
+                "created_at": "2025-09-27T10:00:00Z"
+            },
+            {
+                "id": 2,
+                "name": "Автоматизация тестирования",
+                "description": "Проект по внедрению автоматизированного тестирования",
+                "visibility": "public",
+                "user_id": 1,
+                "created_at": "2025-09-26T15:30:00Z"
+            }
+        ],
+        "sample_tasks": [
+            {
+                "id": 1,
+                "title": "Изучить документацию",
+                "description": "Изучить документацию по API и написать тесты",
+                "priority": "high",
+                "status": "To Do",
+                "deadline": "2025-10-01T18:00:00Z",
+                "board_id": 1,
+                "assignee_id": 1
+            },
+            {
+                "id": 2,
+                "title": "Написать unit тесты",
+                "description": "Создать unit тесты для основных функций",
+                "priority": "medium",
+                "status": "In Progress",
+                "deadline": "2025-10-05T17:00:00Z",
+                "board_id": 1,
+                "assignee_id": 1
+            },
+            {
+                "id": 3,
+                "title": "Настроить CI/CD",
+                "description": "Настроить автоматический запуск тестов",
+                "priority": "high",
+                "status": "Done",
+                "deadline": "2025-09-25T16:00:00Z",
+                "board_id": 1,
+                "assignee_id": 1
+            }
+        ],
+        "priorities": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+        ],
+        "statuses": [
+            "To Do",
+            "In Progress",
+            "Review",
+            "Done"
+        ]
+    },
+    "content": {
+        "sample_articles": [
+            {
+                "id": 1,
+                "title": "Как писать качественные тесты",
+                "excerpt": "Руководство по написанию эффективных автоматизированных тестов",
+                "content": "<p>В этой статье мы рассмотрим основные принципы написания качественных автоматизированных тестов...</p>",
+                "category": "Тестирование",
+                "tags": [
+                    "тестирование",
+                    "автоматизация",
+                    "QA"
+                ],
+                "status": "published",
+                "author_id": 1,
+                "created_at": "2025-09-27T09:00:00Z",
+                "views_count": 150
+            },
+            {
+                "id": 2,
+                "title": "Введение в API тестирование",
+                "excerpt": "Основы тестирования REST API с примерами",
+                "content": "<p>API тестирование является важной частью современной разработки...</p>",
+                "category": "Разработка",
+                "tags": [
+                    "API",
+                    "тестирование",
+                    "REST"
+                ],
+                "status": "draft",
+                "author_id": 1,
+                "created_at": "2025-09-26T14:30:00Z",
+                "views_count": 0
+            }
+        ],
+        "categories": [
+            "Тестирование",
+            "Разработка",
+            "DevOps",
+            "Обучение",
+            "Новости"
+        ],
+        "tags": [
+            "тестирование",
+            "автоматизация",
+            "QA",
+            "API",
+            "REST",
+            "программирование",
+            "DevOps",
+            "CI/CD"
+        ]
+    },
+    "analytics": {
+        "dashboard_metrics": {
+            "users": {
+                "total_users": 1250,
+                "new_users_this_month": 45,
+                "active_users": 890,
+                "growth_rate": "12.5%"
+            },
+            "ecommerce": {
+                "total_products": 89,
+                "total_orders": 456,
+                "total_revenue": 125000,
+                "average_order_value": 274.12
+            },
+            "social": {
+                "total_posts": 2340,
+                "total_likes": 15600,
+                "total_comments": 8900,
+                "engagement_rate": "8.7%"
+            },
+            "content": {
+                "total_articles": 156,
+                "published_articles": 142,
+                "draft_articles": 14,
+                "total_views": 45600
+            },
+            "tasks": {
+                "total_tasks": 890,
+                "completed_tasks": 567,
+                "in_progress_tasks": 234,
+                "overdue_tasks": 12
+            }
+        },
+        "chart_data": {
+            "user_growth": {
+                "labels": [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun"
+                ],
+                "data": [
+                    100,
+                    150,
+                    200,
+                    250,
+                    300,
+                    350
+                ]
+            },
+            "revenue": {
+                "labels": [
+                    "Q1",
+                    "Q2",
+                    "Q3",
+                    "Q4"
+                ],
+                "data": [
+                    25000,
+                    30000,
+                    35000,
+                    35000
+                ]
+            },
+            "task_completion": {
+                "labels": [
+                    "Week 1",
+                    "Week 2",
+                    "Week 3",
+                    "Week 4"
+                ],
+                "data": [
+                    15,
+                    23,
+                    18,
+                    31
+                ]
+            }
+        },
+        "recent_activity": [
+            {
+                "type": "user_registration",
+                "message": "New user: John Doe",
+                "timestamp": "2 minutes ago",
+                "icon": "user-plus"
+            },
+            {
+                "type": "order",
+                "message": "Order from Jane Smith: $299.99",
+                "timestamp": "5 minutes ago",
+                "icon": "shopping-cart"
+            },
+            {
+                "type": "post_created",
+                "message": "New post by Mike Johnson",
+                "timestamp": "10 minutes ago",
+                "icon": "edit"
+            },
+            {
+                "type": "task_completed",
+                "message": "Task 'Setup CI/CD' completed by Alice Brown",
+                "timestamp": "15 minutes ago",
+                "icon": "check-circle"
+            },
+            {
+                "type": "article_published",
+                "message": "Article 'API Testing Guide' published",
+                "timestamp": "1 hour ago",
+                "icon": "book"
+            }
+        ]
+    },
+    "api_endpoints": {
+        "authentication": [
+            "POST /api/auth/register",
+            "POST /api/auth/login",
+            "POST /api/auth/refresh",
+            "POST /api/auth/logout",
+            "GET /api/auth/me",
+            "PUT /api/auth/me",
+            "POST /api/auth/change-password"
+        ],
+        "ecommerce": [
+            "GET /api/ecommerce/products",
+            "GET /api/ecommerce/products/{id}",
+            "POST /api/ecommerce/products",
+            "GET /api/ecommerce/cart",
+            "POST /api/ecommerce/cart",
+            "GET /api/ecommerce/orders",
+            "POST /api/ecommerce/orders"
+        ],
+        "social": [
+            "GET /api/social/posts",
+            "POST /api/social/posts",
+            "GET /api/social/posts/{id}",
+            "POST /api/social/posts/{id}/like",
+            "POST /api/social/posts/{id}/comment",
+            "GET /api/social/users",
+            "POST /api/social/users/{id}/follow"
+        ],
+        "tasks": [
+            "GET /api/tasks/boards",
+            "POST /api/tasks/boards",
+            "GET /api/tasks/boards/{id}",
+            "GET /api/tasks/boards/{id}/cards",
+            "POST /api/tasks/cards",
+            "PUT /api/tasks/cards/{id}",
+            "POST /api/tasks/cards/{id}/assign"
+        ],
+        "content": [
+            "GET /api/content/articles",
+            "POST /api/content/articles",
+            "PUT /api/content/articles/{id}",
+            "POST /api/content/upload",
+            "GET /api/content/categories",
+            "POST /api/content/articles/{id}/publish"
+        ],
+        "analytics": [
+            "GET /api/analytics/dashboard",
+            "GET /api/analytics/metrics",
+            "POST /api/analytics/reports",
+            "GET /api/analytics/export"
+        ]
+    },
+    "error_codes": {
+        "400": "Bad Request - Неверные данные запроса",
+        "401": "Unauthorized - Неавторизован",
+        "403": "Forbidden - Доступ запрещен",
+        "404": "Not Found - Ресурс не найден",
+        "409": "Conflict - Конфликт данных",
+        "422": "Validation Error - Ошибка валидации",
+        "500": "Internal Server Error - Внутренняя ошибка сервера"
+    },
+    "validation_rules": {
+        "email": {
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "message": "Введите корректный email адрес"
+        },
+        "password": {
+            "min_length": 8,
+            "message": "Пароль должен содержать минимум 8 символов"
+        },
+        "username": {
+            "min_length": 3,
+            "max_length": 20,
+            "pattern": "^[a-zA-Z0-9_]+$",
+            "message": "Имя пользователя должно содержать 3-20 символов (буквы, цифры, _)"
+        }
+    },
+    "test_environment": {
+        "base_url": "http://localhost:3000",
+        "api_url": "http://localhost:5000",
+        "database": {
+            "postgres": "localhost:5432",
+            "mongodb": "localhost:27017",
+            "redis": "localhost:6379"
+        },
+        "selenium": {
+            "hub": "localhost:4444",
+            "chrome": "localhost:5900",
+            "firefox": "localhost:5901"
+        },
+        "allure": "http://localhost:5050"
+    },
+    "performance_metrics": {
+        "page_load_time": "< 2 seconds",
+        "api_response_time": "< 500ms",
+        "success_rate": "> 99%",
+        "cpu_usage": "< 80%",
+        "memory_usage": "< 2GB"
+    }
+}
