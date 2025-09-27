@@ -101,7 +101,44 @@ class LoginPage(BasePage):
     def get_page_title(self):
         """Получение заголовка страницы"""
         title_element = self.find_element(*LoginPageLocators.PAGE_TITLE)
-        return title_element.text.strip()
+        return title_element.text
+
+    @allure.step("Check if network error is displayed")
+    def is_network_error_displayed(self):
+        """Проверка отображения ошибки сети"""
+        try:
+            # Ищем сообщение об ошибке сети
+            error_element = self.find_element(*LoginPageLocators.LOGIN_STATUS)
+            return (
+                "network" in error_element.text.lower()
+                or "connection" in error_element.text.lower()
+            )
+        except:
+            return False
+
+    @allure.step("Check if validation error is displayed")
+    def is_validation_error_displayed(self):
+        """Проверка отображения ошибок валидации"""
+        try:
+            # Проверяем HTML5 валидацию
+            email_field = self.find_element(*LoginPageLocators.EMAIL_INPUT)
+            return not email_field.get_attribute("validity").get("valid", True)
+        except:
+            return False
+
+    @allure.step("Refresh page")
+    def refresh(self):
+        """Обновление страницы"""
+        self.browser.refresh()
+
+    @allure.step("Check if page is loaded")
+    def is_page_loaded(self):
+        """Проверка загрузки страницы входа"""
+        try:
+            self.find_element(*LoginPageLocators.EMAIL_INPUT)
+            return True
+        except:
+            return False
 
     @allure.step("Check if login button is enabled")
     def is_login_button_enabled(self):

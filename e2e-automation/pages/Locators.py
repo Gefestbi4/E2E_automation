@@ -71,6 +71,39 @@ class LoginPageLocators(BaseLocators):
 class TestsPageLocators(BaseLocators):
     """Локаторы страницы тестов (tests.html)"""
 
+    # Основные элементы
+    PAGE_TITLE = (By.CSS_SELECTOR, "h2.title")
+    SIDEBAR = (By.CSS_SELECTOR, ".sidebar")
+    CONTENT = (By.CSS_SELECTOR, "#content")
+
+    # Кнопки навигации по компонентам
+    INPUTS_TAB = (By.CSS_SELECTOR, "[test-id='inputs-tab']")
+    CHECKBOXES_TAB = (By.CSS_SELECTOR, "[test-id='checkboxes-tab']")
+    BUTTONS_TAB = (By.CSS_SELECTOR, "[test-id='buttons-tab']")
+    IMAGES_TAB = (By.CSS_SELECTOR, "[test-id='images-tab']")
+    RADIO_TAB = (By.CSS_SELECTOR, "[test-id='radio-tab']")
+    MODALS_TAB = (By.CSS_SELECTOR, "[test-id='modals-tab']")
+    SLIDERS_TAB = (By.CSS_SELECTOR, "[test-id='sliders-tab']")
+    IFRAMES_TAB = (By.CSS_SELECTOR, "[test-id='iframes-tab']")
+
+    # Демо элементы (появляются после клика на табы)
+    DEMO_EMAIL_INPUT = (By.CSS_SELECTOR, "[test-id='demo-email-input']")
+    DEMO_LOGIN_INPUT = (By.CSS_SELECTOR, "[test-id='demo-login-input']")
+    DEMO_PASSWORD_INPUT = (By.CSS_SELECTOR, "[test-id='demo-password-input']")
+    DEMO_COMMENT_TEXTAREA = (By.CSS_SELECTOR, "[test-id='demo-comment-textarea']")
+    NORMAL_BUTTON = (By.CSS_SELECTOR, "[test-id='normal-button']")
+    DISABLED_BUTTON = (By.CSS_SELECTOR, "[test-id='disabled-button']")
+    PRIMARY_BUTTON = (By.CSS_SELECTOR, "[test-id='primary-button']")
+
+    # Кнопки управления чекбоксами
+    CHECK_ALL_BTN = (By.CSS_SELECTOR, "[test-id='check-all-btn']")
+    UNCHECK_ALL_BTN = (By.CSS_SELECTOR, "[test-id='uncheck-all-btn']")
+
+    # Чекбоксы
+    CHECKBOX_1 = (By.CSS_SELECTOR, "[test-id='checkbox-1']")
+    CHECKBOX_2 = (By.CSS_SELECTOR, "[test-id='checkbox-2']")
+    CHECKBOX_3 = (By.CSS_SELECTOR, "[test-id='checkbox-3']")
+
     # Заголовки
     PAGE_TITLE = (By.CSS_SELECTOR, "h2.title")
 
