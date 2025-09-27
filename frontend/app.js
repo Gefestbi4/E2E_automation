@@ -1,7 +1,7 @@
 // Main Application
 class App {
     constructor() {
-        this.currentPage = 'dashboard';
+        this.currentPage = this.getStoredPage() || 'dashboard';
         this.modules = {};
         this.isInitialized = false;
     }
@@ -14,7 +14,17 @@ class App {
             this.initTheme();
             this.initDefaultAvatar();
             this.initEventListeners();
+
             this.isInitialized = true;
+
+            // Show stored page or default after everything is initialized
+            this.showPage(this.currentPage);
+
+            // Update active navigation item
+            if (this.navigation) {
+                this.navigation.updateActiveNavItem(this.currentPage);
+            }
+
             this.hideLoading();
         } catch (error) {
             console.error('Application initialization failed:', error);
@@ -54,7 +64,6 @@ class App {
     initNavigation() {
         this.navigation = {
             goToPage: (pageName) => {
-                console.log('Going to page:', pageName);
                 this.currentPage = pageName;
                 this.showPage(pageName);
                 this.navigation.updateActiveNavItem(pageName);
@@ -74,37 +83,27 @@ class App {
     }
 
     async initModules() {
-        console.log('Initializing modules...');
-
         this.modules.dashboard = new DashboardModule();
         await this.modules.dashboard.init();
-        console.log('Dashboard module initialized');
 
         this.modules.ecommerce = new EcommerceModule();
         await this.modules.ecommerce.init();
-        console.log('Ecommerce module initialized');
 
         this.modules.social = new SocialModule();
         await this.modules.social.init();
-        console.log('Social module initialized');
 
         this.modules.tasks = new TasksModule();
         await this.modules.tasks.init();
-        console.log('Tasks module initialized');
 
         this.modules.content = new ContentModule();
         await this.modules.content.init();
-        console.log('Content module initialized');
 
         this.modules.analytics = new AnalyticsModule();
         await this.modules.analytics.init();
-        console.log('Analytics module initialized');
-
-        console.log('All modules initialized:', Object.keys(this.modules));
     }
 
     initTheme() {
-        const savedTheme = localStorage.getItem('theme') || 'light';
+        const savedTheme = this.getStoredTheme();
         document.documentElement.setAttribute('data-theme', savedTheme);
     }
 
@@ -119,14 +118,11 @@ class App {
     initEventListeners() {
         // Navigation click handlers
         const navItems = document.querySelectorAll('.navbar-item');
-        console.log('Found navbar items:', navItems.length);
-
+        
         navItems.forEach(item => {
-            console.log('Adding click handler to:', item.dataset.page);
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = item.dataset.page;
-                console.log('Navigation clicked:', page);
                 if (page && this.navigation) {
                     this.navigation.goToPage(page);
                 } else {
@@ -175,7 +171,6 @@ class App {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = button.dataset.navigate;
-                console.log('Navigation button clicked:', page);
                 if (page && this.navigation) {
                     this.navigation.goToPage(page);
                 }
@@ -184,8 +179,6 @@ class App {
     }
 
     showPage(pageName) {
-        console.log('Showing page:', pageName);
-
         // Hide all pages
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
@@ -193,21 +186,23 @@ class App {
 
         // Show target page
         const targetPage = document.getElementById(`${pageName}-page`);
-        console.log('Target page element:', targetPage);
-
+        
         if (targetPage) {
             targetPage.classList.add('active');
-            console.log('Page activated:', pageName);
+
+            // Save current page to localStorage
+            this.setStoredPage(pageName);
 
             // Initialize page if module exists
             if (this.modules[pageName]) {
-                console.log('Calling onPageShow for:', pageName);
                 this.modules[pageName].onPageShow();
-            } else {
-                console.log('Module not found for:', pageName);
             }
         } else {
             console.error('Page element not found:', `${pageName}-page`);
+            // Fallback to dashboard if page not found
+            if (pageName !== 'dashboard') {
+                this.showPage('dashboard');
+            }
         }
     }
 
@@ -238,7 +233,16 @@ class App {
     }
 
     async logout() {
-        await AuthService.logout();
+        // Clear stored state
+        this.clearStoredPage();
+
+        // Clear auth tokens
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token_expires');
+
+        // Redirect to login
+        this.redirectToLogin();
     }
 
     toggleTheme() {
@@ -246,7 +250,7 @@ class App {
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
         document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        this.setStoredTheme(newTheme);
 
         // Update theme toggle icon
         const themeIcon = document.querySelector('.theme-icon');
@@ -300,6 +304,49 @@ class App {
                 errorDiv.remove();
             }
         }, 10000);
+    }
+
+    // State management methods
+    getStoredPage() {
+        try {
+            return localStorage.getItem('app_current_page');
+        } catch (error) {
+            console.warn('Failed to get stored page:', error);
+            return null;
+        }
+    }
+
+    setStoredPage(page) {
+        try {
+            localStorage.setItem('app_current_page', page);
+        } catch (error) {
+            console.warn('Failed to store page:', error);
+        }
+    }
+
+    clearStoredPage() {
+        try {
+            localStorage.removeItem('app_current_page');
+        } catch (error) {
+            console.warn('Failed to clear stored page:', error);
+        }
+    }
+
+    getStoredTheme() {
+        try {
+            return localStorage.getItem('theme');
+        } catch (error) {
+            console.warn('Failed to get stored theme:', error);
+            return 'light';
+        }
+    }
+
+    setStoredTheme(theme) {
+        try {
+            localStorage.setItem('theme', theme);
+        } catch (error) {
+            console.warn('Failed to store theme:', error);
+        }
     }
 }
 
