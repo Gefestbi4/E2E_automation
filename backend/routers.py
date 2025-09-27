@@ -6,7 +6,7 @@ import models, schemas, auth, config
 from auth import get_db
 
 # Import all API routers
-from api import ecommerce, social, tasks, content, analytics
+from api import ecommerce, social, tasks, content, analytics, monitoring
 
 router = APIRouter()
 
@@ -16,6 +16,7 @@ router.include_router(social.router, tags=["social"])
 router.include_router(tasks.router, tags=["tasks"])
 router.include_router(content.router, tags=["content"])
 router.include_router(analytics.router, tags=["analytics"])
+router.include_router(monitoring.router, tags=["monitoring"])
 
 
 # Auth endpoints

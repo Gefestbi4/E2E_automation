@@ -46,6 +46,7 @@ class User(Base):
 
     # Content relationships
     articles = relationship("Article", back_populates="author")
+    media_files = relationship("MediaFile", back_populates="uploader")
 
     # Analytics relationships
     reports = relationship("Report", back_populates="created_by")
