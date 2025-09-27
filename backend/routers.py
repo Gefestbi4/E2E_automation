@@ -50,7 +50,60 @@ def login_or_register(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    # Создаем refresh токен
+    refresh_token = auth.create_refresh_token(data={"sub": user.email})
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "expires_in": config.settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    }
+
+
+@router.post("/api/auth/refresh", response_model=schemas.Token)
+def refresh_access_token(
+    refresh_token: schemas.RefreshToken, db: Session = Depends(get_db)
+):
+    """Обновление access токена с помощью refresh токена"""
+    # Проверяем refresh токен
+    email = auth.verify_token(refresh_token.refresh_token, "refresh")
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Проверяем, что пользователь существует
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Создаем новый access токен
+    access_token_expires = timedelta(
+        minutes=config.settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+    access_token = auth.create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token.refresh_token,  # Возвращаем тот же refresh токен
+        "token_type": "bearer",
+        "expires_in": config.settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    }
+
+
+@router.post("/api/auth/logout")
+def logout(current_user: models.User = Depends(auth.get_current_user)):
+    """Выход из системы (в будущем можно добавить blacklist токенов)"""
+    return {"message": "Successfully logged out"}
 
 
 @router.get("/api/auth/me", response_model=schemas.UserResponse)

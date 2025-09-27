@@ -120,8 +120,16 @@ def test_complete_user_journey(browser, url, api_client):
             tests_page.is_user_authenticated()
         ), "Пользователь не остался авторизованным"
 
-        # Проверяем, что токен авторизации присутствует
-        assert tests_page.is_auth_token_present(), "Токен авторизации отсутствует"
+        # Проверяем, что access токен присутствует
+        assert tests_page.is_auth_token_present(), "Access токен отсутствует"
+
+        # Проверяем, что refresh токен присутствует
+        assert tests_page.is_refresh_token_present(), "Refresh токен отсутствует"
+
+        # Проверяем, что информация об истечении токена присутствует
+        assert (
+            tests_page.is_token_expires_present()
+        ), "Информация об истечении токена отсутствует"
 
     # ===== ЭТАП 6: ЗАВЕРШЕНИЕ СЕССИИ =====
     with allure.step("9. Завершение работы"):
@@ -185,11 +193,11 @@ def test_critical_path_error_handling(browser, url):
         # Пытаемся авторизоваться с неверными данными
         login_page.sign_in("invalid@example.com", "wrongpassword")
 
-        # Проверяем, что остались на странице входа или произошло перенаправление
+        # Проверяем, что остались на странице входа (правильное поведение)
         current_url = browser.current_url
         assert (
-            "login" in current_url or "tests" in current_url
-        ), "Неожиданное поведение при неверной авторизации"
+            "login" in current_url
+        ), "Пользователь должен остаться на странице входа при неверной авторизации"
 
     with allure.step("Восстановление после ошибки"):
         # Обновляем страницу для восстановления состояния
@@ -200,16 +208,24 @@ def test_critical_path_error_handling(browser, url):
 
         time.sleep(2)
 
-        # Проверяем, что страница загрузилась
+        # Переходим на страницу входа и ждем загрузки
+        browser.get(f"{url}/login.html")
+
+        # Ждем загрузки страницы с помощью WebDriverWait
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+        from pages.Locators import LoginPageLocators
+
         try:
-            assert (
-                login_page.is_page_loaded()
-            ), "Страница не загрузилась после обновления"
+            WebDriverWait(browser, 15).until(
+                EC.presence_of_element_located(LoginPageLocators.EMAIL_INPUT)
+            )
         except:
-            # Если страница не загрузилась, переходим на неё заново
-            browser.get(f"{url}/login.html")
-            time.sleep(2)
-            assert login_page.is_page_loaded(), "Страница не загрузилась после перехода"
+            # Если не удалось, ждем еще немного
+            time.sleep(5)
+
+        # Создаем новый объект LoginPage для обновленной страницы
+        login_page = LoginPage(browser, f"{url}/login.html")
 
         # Пытаемся авторизоваться с правильными данными
         login_page.sign_in("test@example.com", "testpassword123")

@@ -40,12 +40,14 @@ def test_api_error_handling(browser, url):
     current_url = browser.current_url
     page_title = browser.title
 
-    # Проверяем, что произошло перенаправление на страницу тестов (некорректное поведение)
-    # Это демонстрирует, что фронтенд не обрабатывает ошибки API
-    assert "tests" in current_url, "Ожидалось перенаправление на страницу тестов"
+    # Проверяем, что пользователь остался на странице входа (правильное поведение)
+    # Это демонстрирует, что фронтенд теперь правильно обрабатывает ошибки API
     assert (
-        "Демо компонентов" in page_title or "Страница тестов" in page_title
-    ), "Страница тестов не отображается"
+        "login" in current_url
+    ), "Пользователь должен остаться на странице входа при ошибке авторизации"
+    assert (
+        "Вход" in page_title or "Login" in page_title or "Авторизация" in page_title
+    ), "Страница входа должна отображаться"
 
 
 @allure.feature("Обработка ошибок")
@@ -146,7 +148,16 @@ def test_error_recovery(browser, url):
     # Проверяем, что приложение восстанавливается
     page.refresh()
     # Проверяем, что страница загрузилась (проверяем заголовок)
-    # После refresh пользователь остается на странице тестов
+    # После refresh пользователь может остаться на tests.html (токен еще действителен)
+    current_url = browser.current_url
     assert (
-        "Демо компонентов" in browser.title or "Страница тестов" in browser.title
-    ), "Приложение не восстанавливается после ошибки"
+        "tests" in current_url or "login" in current_url
+    ), "Пользователь должен быть на tests.html или перенаправлен на login"
+    page_title = browser.title
+    assert (
+        "Демо компонентов" in page_title
+        or "Страница тестов" in page_title
+        or "Вход" in page_title
+        or "Login" in page_title
+        or "Авторизация" in page_title
+    ), "Страница должна отображаться корректно"

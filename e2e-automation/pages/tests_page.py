@@ -248,12 +248,34 @@ class TestsPage(BasePage):
 
     @allure.step("Check if auth token is present")
     def is_auth_token_present(self):
-        """Проверка наличия токена авторизации"""
+        """Проверка наличия access токена авторизации"""
         try:
             # Проверяем наличие токена в localStorage
             token = self.browser.execute_script(
                 "return localStorage.getItem('auth_token');"
             )
             return token is not None and len(token) > 0
+        except:
+            return False
+
+    @allure.step("Check if refresh token is present")
+    def is_refresh_token_present(self):
+        """Проверка наличия refresh токена"""
+        try:
+            token = self.browser.execute_script(
+                "return localStorage.getItem('refresh_token');"
+            )
+            return token is not None and len(token) > 0
+        except:
+            return False
+
+    @allure.step("Check if token expires info is present")
+    def is_token_expires_present(self):
+        """Проверка наличия информации об истечении токена"""
+        try:
+            expires = self.browser.execute_script(
+                "return localStorage.getItem('token_expires');"
+            )
+            return expires is not None and len(expires) > 0
         except:
             return False

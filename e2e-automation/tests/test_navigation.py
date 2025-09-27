@@ -10,8 +10,19 @@ from utils.helpers import TestHelpers
 
 
 @pytest.fixture(scope="function")
-def tests_page(browser, url):
-    """Фикстура для создания страницы тестов"""
+def tests_page(browser, url, test_data):
+    """Фикстура для создания страницы тестов с авторизацией"""
+    # Сначала авторизуемся
+    from pages.login_page import LoginPage
+
+    login_page = LoginPage(browser, f"{url}/login.html")
+    login_page.open()
+
+    user_data = test_data["users"]["valid_user"]
+    login_page.sign_in(user_data["email"], user_data["password"])
+    assert login_page.wait_for_redirect_to_tests(), "Авторизация не удалась"
+
+    # Теперь открываем страницу тестов
     page = TestsPage(browser, f"{url}/tests.html")
     page.open()
     return page

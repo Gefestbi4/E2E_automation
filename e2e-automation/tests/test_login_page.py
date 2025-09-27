@@ -107,10 +107,58 @@ def test_auth_token_storage(login_page, test_data):
         timeout=15
     ), "Ожидалось перенаправление на tests.html"
 
-    # Проверка наличия токена
+    # Проверка наличия access токена
     token = login_page.get_auth_token()
-    assert token is not None, "Токен авторизации должен быть сохранен"
-    assert len(token) > 0, "Токен авторизации не должен быть пустым"
+    assert token is not None, "Access токен должен быть сохранен"
+    assert len(token) > 0, "Access токен не должен быть пустым"
+
+    # Проверка наличия refresh токена
+    assert login_page.is_refresh_token_present(), "Refresh токен должен быть сохранен"
+
+    # Проверка наличия информации об истечении токена
+    assert (
+        login_page.is_token_expires_present()
+    ), "Информация об истечении токена должна быть сохранена"
+
+    # Проверка времени истечения токена
+    expires_time = login_page.get_token_expiration_time()
+    assert expires_time is not None, "Время истечения токена должно быть установлено"
+    current_time = login_page.browser.execute_script("return Date.now();")
+    assert expires_time > current_time, "Время истечения токена должно быть в будущем"
+
+
+@allure.feature("Авторизация")
+@allure.story("Refresh токен")
+@pytest.mark.medium
+def test_refresh_token_functionality(browser, url, test_data):
+    """Проверка функциональности refresh токена"""
+    from pages.login_page import LoginPage
+
+    user_data = test_data["users"]["valid_user"]
+    login_page = LoginPage(browser, f"{url}/login.html")
+    login_page.open()
+
+    # Авторизация
+    login_page.sign_in(user_data["email"], user_data["password"])
+    assert login_page.wait_for_redirect_to_tests(), "Авторизация не удалась"
+
+    # Получаем refresh токен
+    refresh_token = browser.execute_script(
+        "return localStorage.getItem('refresh_token');"
+    )
+    assert refresh_token is not None, "Refresh токен должен быть сохранен"
+
+    # Симулируем истечение access токена, установив время истечения в прошлое
+    browser.execute_script("localStorage.setItem('token_expires', '1000000000');")
+
+    # Переходим на страницу tests.html - должна произойти проверка авторизации
+    browser.get(f"{url}/tests.html")
+
+    # Проверяем, что пользователь перенаправлен на страницу входа
+    current_url = browser.current_url
+    assert (
+        "login" in current_url
+    ), "Пользователь должен быть перенаправлен на страницу входа при истекшем токене"
 
 
 @allure.feature("Авторизация")

@@ -31,38 +31,180 @@
   </div>
 
   <script>
+    // Улучшенная система авторизации с JWT токенами
+    class AuthManager {
+      constructor() {
+        this.apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000').replace(/\/?$/, '');
+        this.refreshTimer = null;
+        this.init();
+      }
+
+      init() {
+        // Проверяем авторизацию при загрузке
+        this.checkAuthStatus();
+
+        // Настраиваем автоматическое обновление токенов
+        this.setupTokenRefresh();
+      }
+
+      async login(email, password) {
+        try {
+          const response = await fetch(`${this.apiBase}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data?.access_token && data?.refresh_token) {
+            // Сохраняем токены
+            localStorage.setItem('auth_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
+            localStorage.setItem('token_expires', Date.now() + (data.expires_in * 1000));
+
+            // Запускаем автоматическое обновление токенов
+            this.startTokenRefresh();
+
+            return { success: true, message: 'Успешная авторизация' };
+          } else {
+            return {
+              success: false,
+              message: data?.detail || 'Не удалось авторизоваться',
+              status: response.status
+            };
+          }
+        } catch (error) {
+          console.error('Ошибка авторизации:', error);
+          return {
+            success: false,
+            message: 'Сетевая ошибка',
+            error: error.message
+          };
+        }
+      }
+
+      async refreshToken() {
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) {
+          this.logout();
+          return false;
+        }
+
+        try {
+          const response = await fetch(`${this.apiBase}/api/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshToken })
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data?.access_token) {
+            localStorage.setItem('auth_token', data.access_token);
+            localStorage.setItem('token_expires', Date.now() + (data.expires_in * 1000));
+            return true;
+          } else {
+            this.logout();
+            return false;
+          }
+        } catch (error) {
+          console.error('Ошибка обновления токена:', error);
+          this.logout();
+          return false;
+        }
+      }
+
+      async logout() {
+        try {
+          const token = localStorage.getItem('auth_token');
+          if (token) {
+            await fetch(`${this.apiBase}/api/auth/logout`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Ошибка выхода:', error);
+        } finally {
+          // Очищаем локальное хранилище
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('token_expires');
+
+          // Останавливаем обновление токенов
+          this.stopTokenRefresh();
+        }
+      }
+
+      isAuthenticated() {
+        const token = localStorage.getItem('auth_token');
+        const expires = localStorage.getItem('token_expires');
+
+        if (!token || !expires) return false;
+
+        // Проверяем, не истек ли токен
+        return Date.now() < parseInt(expires);
+      }
+
+      checkAuthStatus() {
+        if (this.isAuthenticated()) {
+          // Если пользователь уже авторизован, перенаправляем на главную
+          window.location.href = '/tests.html';
+        }
+      }
+
+      setupTokenRefresh() {
+        // Проверяем токен каждые 5 минут
+        this.refreshTimer = setInterval(async () => {
+          const expires = localStorage.getItem('token_expires');
+          if (expires && Date.now() > (parseInt(expires) - 300000)) { // За 5 минут до истечения
+            await this.refreshToken();
+          }
+        }, 300000); // 5 минут
+      }
+
+      startTokenRefresh() {
+        this.stopTokenRefresh();
+        this.setupTokenRefresh();
+      }
+
+      stopTokenRefresh() {
+        if (this.refreshTimer) {
+          clearInterval(this.refreshTimer);
+          this.refreshTimer = null;
+        }
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      const authManager = new AuthManager();
       const form = document.getElementById('login-form');
       const status = document.getElementById('login-status');
+
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+
         status.textContent = 'Вход...';
         status.style.color = '#333';
 
         const formData = new FormData(form);
-        const payload = {
-          email: formData.get('email'),
-          password: formData.get('password')
-        };
-        const apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000').replace(/\/?$/, '');
+        const email = formData.get('email');
+        const password = formData.get('password');
 
-        try {
-          const resp = await fetch(`${apiBase}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          const data = await resp.json();
-          if (resp.ok && data?.access_token) {
-            localStorage.setItem('auth_token', data.access_token);
+        const result = await authManager.login(email, password);
+
+        if (result.success) {
+          status.textContent = 'Успешная авторизация!';
+          status.style.color = 'green';
+          setTimeout(() => {
             window.location.href = '/tests.html';
-          } else {
-            status.textContent = `Ошибка: ${data?.detail || 'Не удалось авторизоваться'}`;
-            status.style.color = 'red';
-          }
-        } catch (err) {
-          console.error(err);
-          status.textContent = 'Сетевая ошибка';
+          }, 1000);
+        } else {
+          status.textContent = `Ошибка: ${result.message}`;
           status.style.color = 'red';
         }
       });

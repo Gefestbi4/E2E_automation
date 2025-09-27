@@ -157,6 +157,39 @@ class LoginPage(BasePage):
         except Exception:
             return None
 
+    @allure.step("Check if refresh token is present")
+    def is_refresh_token_present(self):
+        """Проверка наличия refresh токена"""
+        try:
+            token = self.browser.execute_script(
+                "return localStorage.getItem('refresh_token');"
+            )
+            return token is not None and len(token) > 0
+        except:
+            return False
+
+    @allure.step("Check if token expires info is present")
+    def is_token_expires_present(self):
+        """Проверка наличия информации об истечении токена"""
+        try:
+            expires = self.browser.execute_script(
+                "return localStorage.getItem('token_expires');"
+            )
+            return expires is not None and len(expires) > 0
+        except:
+            return False
+
+    @allure.step("Get token expiration time")
+    def get_token_expiration_time(self):
+        """Получение времени истечения токена"""
+        try:
+            expires = self.browser.execute_script(
+                "return localStorage.getItem('token_expires');"
+            )
+            return int(expires) if expires else None
+        except:
+            return None
+
     @allure.step("Fill form with test data")
     def fill_form_with_test_data(
         self, email="test@example.com", password="testpassword123"

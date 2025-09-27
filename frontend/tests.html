@@ -1,19 +1,60 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Страница тестов</title>
   <link href="style.css?v=2" rel="stylesheet" type="text/css" />
   <style>
-    .layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
-    .sidebar { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; }
-    .sidebar button { display:block; width:100%; margin-bottom:10px; padding:10px; border-radius:8px; border:1px solid var(--glass-border); background: var(--card-bg); color: var(--text-color); cursor: pointer; }
-    .content { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; min-height: 400px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 16px; }
-    .card { background: var(--card-bg); border:1px solid var(--glass-border); border-radius:10px; padding:12px; }
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 20px;
+    }
+
+    .sidebar {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .sidebar button {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      cursor: pointer;
+    }
+
+    .content {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 16px;
+      min-height: 400px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 12px;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header class="header" style="padding:24px 24px;">
@@ -21,22 +62,40 @@
     </header>
     <main class="main-content">
       <div class="layout">
-            <aside class="sidebar">
-              <button data-tab="inputs" test-id="inputs-tab">Поля ввода</button>
-              <button data-tab="checkboxes" test-id="checkboxes-tab">Чекбоксы</button>
-              <button data-tab="buttons" test-id="buttons-tab">Кнопки</button>
-              <button data-tab="images" test-id="images-tab">Картинки</button>
-              <button data-tab="radio" test-id="radio-tab">Радио кнопки</button>
-              <button data-tab="modals" test-id="modals-tab">Модальные окна</button>
-              <button data-tab="sliders" test-id="sliders-tab">Ползунки</button>
-              <button data-tab="iframes" test-id="iframes-tab">Iframe</button>
-            </aside>
+        <aside class="sidebar">
+          <button data-tab="inputs" test-id="inputs-tab">Поля ввода</button>
+          <button data-tab="checkboxes" test-id="checkboxes-tab">Чекбоксы</button>
+          <button data-tab="buttons" test-id="buttons-tab">Кнопки</button>
+          <button data-tab="images" test-id="images-tab">Картинки</button>
+          <button data-tab="radio" test-id="radio-tab">Радио кнопки</button>
+          <button data-tab="modals" test-id="modals-tab">Модальные окна</button>
+          <button data-tab="sliders" test-id="sliders-tab">Ползунки</button>
+          <button data-tab="iframes" test-id="iframes-tab">Iframe</button>
+        </aside>
         <section class="content" id="content"></section>
       </div>
     </main>
   </div>
 
   <script>
+    // Проверка авторизации
+    function checkAuth() {
+      const token = localStorage.getItem('auth_token');
+      const expires = localStorage.getItem('token_expires');
+
+      if (!token || !expires || Date.now() > parseInt(expires)) {
+        localStorage.clear();
+        window.location.href = '/login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Проверяем авторизацию при загрузке страницы
+    if (!checkAuth()) {
+      // Перенаправление происходит в checkAuth()
+    }
+
     const content = document.getElementById('content');
     const views = {
       inputs: () => {
@@ -185,6 +244,5 @@
     views.inputs();
   </script>
 </body>
+
 </html>
-
-
