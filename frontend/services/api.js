@@ -1,10 +1,22 @@
 // API service
 class ApiService {
     constructor() {
-        this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000';
+        // Ждем готовности DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000';
+            });
+        } else {
+            this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000';
+        }
     }
 
     async request(endpoint, options = {}) {
+        // Убеждаемся, что baseURL установлен
+        if (!this.baseURL) {
+            this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000';
+        }
+
         const url = `${this.baseURL}${endpoint}`;
         const token = localStorage.getItem('auth_token');
 
@@ -85,4 +97,12 @@ class ApiService {
 }
 
 // Export for global access
-window.ApiService = ApiService;
+console.log('🔧 Creating ApiService instance...');
+try {
+    window.ApiService = new ApiService();
+    console.log('🔧 ApiService initialized:', !!window.ApiService);
+    console.log('🔧 ApiService type:', typeof window.ApiService);
+    console.log('🔧 ApiService methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.ApiService)));
+} catch (error) {
+    console.error('🔧 Error creating ApiService:', error);
+}

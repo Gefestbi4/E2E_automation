@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход - Automation Learning Platform</title>
+  <meta name="description" content="Вход в систему обучения автоматизаторов">
+  <meta name="api-base" content="http://localhost:5000">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/themes.css">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .auth-header {
+      margin-bottom: 32px;
+    }
+
+    .auth-logo {
+      font-size: 48px;
+      color: #667eea;
+      margin-bottom: 16px;
+    }
+
+    .auth-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      color: #718096;
+      font-size: 16px;
+    }
+
+    .auth-form {
+      text-align: left;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-input.error {
+      border-color: #e53e3e;
+    }
+
+    .form-error {
+      color: #e53e3e;
+      font-size: 14px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .auth-actions {
+      margin-top: 32px;
+    }
+
+    .btn-login {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .auth-links {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .auth-link {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-link:hover {
+      text-decoration: underline;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .demo-credentials {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 24px;
+      text-align: left;
+    }
+
+    .demo-credentials h4 {
+      margin: 0 0 12px 0;
+      color: #2d3748;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .demo-credential {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .demo-credential:last-child {
+      margin-bottom: 0;
+    }
+
+    .demo-label {
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .demo-value {
+      color: #2d3748;
+      font-family: monospace;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .demo-value:hover {
+      background-color: #e2e8f0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i class="fas fa-robot"></i>
+        </div>
+        <h1 class="auth-title">Добро пожаловать!</h1>
+        <p class="auth-subtitle">Войдите в систему обучения автоматизаторов</p>
+      </div>
+
+      <form class="auth-form" id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" name="email" class="form-input" placeholder="your@email.com" required
+            test-id="email-input">
+          <div class="form-error" id="email-error"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Пароль</label>
+          <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required
+            test-id="password-input">
+          <div class="form-error" id="password-error"></div>
+        </div>
+
+        <div class="auth-actions">
+          <button type="submit" class="btn-login" id="login-btn" test-id="login-submit-btn">
+            <span id="login-text">Войти</span>
+            <span id="login-loading" style="display: none;">
+              <span class="loading-spinner"></span>
+              Вход...
+            </span>
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-links">
+        <p>Нет аккаунта? <a href="register.html" class="auth-link" test-id="register-link">Зарегистрироваться</a></p>
+      </div>
+
+      <!-- Демо-данные для тестирования -->
+      <div class="demo-credentials">
+        <h4>Демо-данные для тестирования:</h4>
+        <div class="demo-credential">
+          <span class="demo-label">Email:</span>
+          <span class="demo-value" onclick="fillDemoCredentials('test@example.com')">test@example.com</span>
+        </div>
+        <div class="demo-credential">
+          <span class="demo-label">Пароль:</span>
+          <span class="demo-value" onclick="fillDemoCredentials('testpassword123')">testpassword123</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <script>
+    // Простая система уведомлений
+    class Toast {
+      static show(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'error' ? '#e53e3e' : type === 'success' ? '#38a169' : '#667eea'};
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => toast.remove(), 300);
+        }, 5000);
+      }
+    }
+
+    // Система авторизации
+    class AuthManager {
+      constructor() {
+        this.apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000').replace(/\/?$/, '');
+        this.init();
+      }
+
+      init() {
+        this.setupFormValidation();
+        this.setupFormSubmission();
+        this.checkAuthStatus();
+      }
+
+      checkAuthStatus() {
+        const token = localStorage.getItem('auth_token');
+        if (token && this.isTokenValid(token)) {
+          window.location.href = 'index.html';
+        }
+      }
+
+      isTokenValid(token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          return payload.exp * 1000 > Date.now();
+        } catch {
+          return false;
+        }
+      }
+
+      setupFormValidation() {
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        emailInput.addEventListener('input', () => this.validateEmail());
+        passwordInput.addEventListener('input', () => this.validatePassword());
+      }
+
+      setupFormSubmission() {
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          await this.handleLogin();
+        });
+      }
+
+      validateEmail() {
+        const emailInput = document.getElementById('email');
+        const errorDiv = document.getElementById('email-error');
+        const email = emailInput.value.trim();
+
+        if (!email) {
+          this.hideFieldError(errorDiv);
+          emailInput.classList.remove('error');
+          return true;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          this.showFieldError(errorDiv, 'Введите корректный email');
+          emailInput.classList.add('error');
+          return false;
+        }
+
+        this.hideFieldError(errorDiv);
+        emailInput.classList.remove('error');
+        return true;
+      }
+
+      validatePassword() {
+        const passwordInput = document.getElementById('password');
+        const errorDiv = document.getElementById('password-error');
+        const password = passwordInput.value;
+
+        if (!password) {
+          this.hideFieldError(errorDiv);
+          passwordInput.classList.remove('error');
+          return true;
+        }
+
+        this.hideFieldError(errorDiv);
+        passwordInput.classList.remove('error');
+        return true;
+      }
+
+      showFieldError(errorDiv, message) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+      }
+
+      hideFieldError(errorDiv) {
+        errorDiv.style.display = 'none';
+      }
+
+      validateForm() {
+        return this.validateEmail() && this.validatePassword();
+      }
+
+      async handleLogin() {
+        if (!this.validateForm()) {
+          return;
+        }
+
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('login-btn');
+        const loginText = document.getElementById('login-text');
+        const loginLoading = document.getElementById('login-loading');
+
+        // Показываем загрузку
+        loginBtn.disabled = true;
+        loginText.style.display = 'none';
+        loginLoading.style.display = 'inline';
+
+        try {
+          const response = await fetch(`${this.apiBase}/api/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: emailInput.value.trim(),
+              password: passwordInput.value
+            })
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.access_token) {
+            // Сохраняем токены
+            localStorage.setItem('auth_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
+            localStorage.setItem('token_expires', Date.now() + (data.expires_in * 1000));
+
+            Toast.show('Успешная авторизация! Переходим в приложение...', 'success');
+
+            setTimeout(() => {
+              window.location.href = 'index.html';
+            }, 1500);
+          } else {
+            Toast.show(data.detail || 'Ошибка авторизации', 'error');
+          }
+        } catch (error) {
+          console.error('Ошибка авторизации:', error);
+          Toast.show('Сетевая ошибка. Проверьте подключение.', 'error');
+        } finally {
+          // Убираем загрузку
+          loginBtn.disabled = false;
+          loginText.style.display = 'inline';
+          loginLoading.style.display = 'none';
+        }
+      }
+    }
+
+    // Функция для заполнения демо-данных
+    function fillDemoCredentials(value) {
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+
+      if (value.includes('@')) {
+        emailInput.value = value;
+      } else {
+        passwordInput.value = value;
+      }
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', () => {
+      new AuthManager();
+
+      // Обработка параметров URL
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('registered') === 'true') {
+        const email = urlParams.get('email');
+        if (email) {
+          document.getElementById('email').value = decodeURIComponent(email);
+        }
+        Toast.show('Регистрация прошла успешно! Теперь войдите в систему.', 'success');
+      }
+    });
+
+    // CSS анимации для toast
+    const style = document.createElement('style');
+    style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+    document.head.appendChild(style);
+  </script>
+</body>
+
+</html>

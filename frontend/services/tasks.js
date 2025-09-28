@@ -1,7 +1,7 @@
 // Task management service
 class TasksService {
     constructor() {
-        this.api = new ApiService();
+        this.api = window.ApiService;
     }
 
     async getProjects() {
@@ -111,5 +111,5 @@ class TasksService {
     }
 }
 
-// Export for global access
-window.TasksService = TasksService;
+// Создаем экземпляр и экспортируем для глобального доступа
+window.TasksService = new TasksService();

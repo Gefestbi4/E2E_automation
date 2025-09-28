@@ -1,12 +1,33 @@
 // E-commerce service
 class EcommerceService {
     constructor() {
-        this.api = new ApiService();
+        console.log('🛒 EcommerceService constructor - window.ApiService before assignment:', typeof window.ApiService);
+        this.api = window.ApiService;
+        console.log('🛒 EcommerceService constructor - API available:', !!this.api);
+        console.log('🛒 EcommerceService constructor - API type:', typeof this.api);
+        console.log('🛒 EcommerceService constructor - API methods:', this.api ? Object.getOwnPropertyNames(Object.getPrototypeOf(this.api)) : 'null');
+    }
+
+    async initApi() {
+        // Ждем инициализации ApiService
+        while (!window.ApiService) {
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
+        this.api = window.ApiService;
+        console.log('🛒 EcommerceService: ApiService initialized');
     }
 
     async getProducts(params = {}) {
+        console.log('🛒 EcommerceService.getProducts called with params:', params);
+        console.log('🛒 API available:', !!this.api);
+        console.log('🛒 API type:', typeof this.api);
+        console.log('🛒 API methods:', this.api ? Object.getOwnPropertyNames(Object.getPrototypeOf(this.api)) : 'null');
+
         const queryString = new URLSearchParams(params).toString();
-        return this.api.get(`/api/ecommerce/products?${queryString}`);
+        console.log('🛒 Query string:', queryString);
+        const url = `/api/ecommerce/products?${queryString}`;
+        console.log('🛒 Full URL:', url);
+        return this.api.get(url);
     }
 
     async getProduct(id) {
@@ -15,6 +36,14 @@ class EcommerceService {
 
     async getCategories() {
         return this.api.get('/api/ecommerce/categories');
+    }
+
+    async createProduct(productData) {
+        // Ждем инициализации API
+        if (!this.api) {
+            await this.initApi();
+        }
+        return this.api.post('/api/ecommerce/products', productData);
     }
 
     async addToCart(productId, quantity = 1) {
@@ -59,5 +88,5 @@ class EcommerceService {
     }
 }
 
-// Export for global access
-window.EcommerceService = EcommerceService;
+// Создаем экземпляр и экспортируем для глобального доступа
+window.EcommerceService = new EcommerceService();

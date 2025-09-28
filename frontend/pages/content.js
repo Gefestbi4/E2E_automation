@@ -124,7 +124,7 @@ class ContentModule {
                                 </div>
                                 <div class="article-meta">
                                     <div class="article-author">
-                                        <img src="${article.author.avatar}" alt="${article.author.name}" class="author-avatar">
+                                        <img src="${article.author.avatar || 'https://via.placeholder.com/40x40?text=U'}" alt="${article.author.name}" class="author-avatar">
                                         <span>${article.author.name}</span>
                                     </div>
                                     <span class="article-date">${this.formatDate(article.created_at)}</span>

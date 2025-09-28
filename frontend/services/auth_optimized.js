@@ -27,18 +27,18 @@ class AuthService {
      */
     setupRequestInterceptors() {
         // Сохраняем оригинальный fetch
-        const originalFetch = window.fetch;
+        this.originalFetch = window.fetch;
 
         // Перехватываем все fetch запросы
         window.fetch = async (url, options = {}) => {
-            return this.interceptRequest(url, options, originalFetch);
+            return this.interceptRequest(url, options);
         };
     }
 
     /**
      * Перехват запроса с автоматическим обновлением токена
      */
-    async interceptRequest(url, options = {}, originalFetch) {
+    async interceptRequest(url, options = {}) {
         // Добавляем токен к запросу
         const token = localStorage.getItem('auth_token');
         if (token && !options.headers?.['Authorization']) {
@@ -49,11 +49,11 @@ class AuthService {
         }
 
         try {
-            const response = await originalFetch(url, options);
+            const response = await this.originalFetch(url, options);
 
             // Если токен истек, пытаемся обновить его
             if (response.status === 401 && token) {
-                return this.handleTokenExpiry(url, options, originalFetch);
+                return this.handleTokenExpiry(url, options);
             }
 
             return response;
@@ -66,7 +66,7 @@ class AuthService {
     /**
      * Обработка истечения токена
      */
-    async handleTokenExpiry(originalUrl, originalOptions, originalFetch) {
+    async handleTokenExpiry(originalUrl, originalOptions) {
         if (this.isRefreshing) {
             // Если уже обновляем токен, ждем в очереди
             return new Promise((resolve, reject) => {
@@ -88,7 +88,7 @@ class AuthService {
                 }
             };
 
-            const response = await originalFetch(originalUrl, newOptions);
+            const response = await this.originalFetch(originalUrl, newOptions);
 
             // Обрабатываем ожидающие запросы
             this.pendingRequests.forEach(({ resolve, url, options }) => {
@@ -99,7 +99,7 @@ class AuthService {
                         'Authorization': `Bearer ${newToken}`
                     }
                 };
-                originalFetch(url, newOptions).then(resolve).catch(reject);
+                this.originalFetch(url, newOptions).then(resolve).catch(reject);
             });
 
             this.pendingRequests = [];
@@ -455,5 +455,5 @@ class AuthService {
     }
 }
 
-// Создаем экземпляр и экспортируем для глобального доступа
-window.AuthService = new AuthService();
+// Экспорт для глобального доступа
+window.AuthService = AuthService;

@@ -1,0 +1,841 @@
+/**
+ * Адаптивный дизайн и мобильная оптимизация
+ * Поддерживает различные разрешения: mobile, tablet, desktop, large screens
+ */
+
+/* ===== ПЕРЕМЕННЫЕ ДЛЯ BREAKPOINTS ===== */
+:root {
+    /* Breakpoints */
+    --breakpoint-xs: 0px;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --breakpoint-xxl: 1400px;
+
+    /* Spacing для разных экранов */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+
+    /* Font sizes для разных экранов */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+
+    /* Touch targets */
+    --touch-target-min: 44px;
+    --touch-target-comfortable: 48px;
+
+    /* Safe areas для мобильных устройств */
+    --safe-area-top: env(safe-area-inset-top);
+    --safe-area-right: env(safe-area-inset-right);
+    --safe-area-bottom: env(safe-area-inset-bottom);
+    --safe-area-left: env(safe-area-inset-left);
+}
+
+/* ===== БАЗОВЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ ===== */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* Dynamic viewport height */
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== КОНТЕЙНЕРЫ И СЕТКИ ===== */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0 var(--spacing-md);
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 calc(-1 * var(--spacing-sm));
+}
+
+.col {
+    flex: 1 0 0%;
+    padding: 0 var(--spacing-sm);
+}
+
+/* Grid система */
+.grid {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.grid-cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.grid-cols-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+/* ===== НАВИГАЦИЯ ===== */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--navbar-bg, #ffffff);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    padding: var(--spacing-sm) 0;
+}
+
+.navbar-brand {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex: 1;
+    justify-content: center;
+}
+
+.navbar-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text-secondary, #6b7280);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-height: var(--touch-target-min);
+    justify-content: center;
+}
+
+.navbar-item:hover,
+.navbar-item.active {
+    background: var(--primary-50, #eff6ff);
+    color: var(--primary-600, #2563eb);
+}
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+}
+
+/* ===== КАРТОЧКИ И КОНТЕНТ ===== */
+.card {
+    background: var(--card-bg, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.card-body {
+    padding: var(--spacing-lg);
+}
+
+.card-footer {
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    background: var(--bg-secondary, #f9fafb);
+}
+
+/* ===== КНОПКИ ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    min-height: 36px;
+}
+
+.btn-lg {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+    min-height: 52px;
+}
+
+/* ===== ФОРМЫ ===== */
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-primary, #111827);
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 6px;
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    min-height: var(--touch-target-min);
+    transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-500, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+}
+
+.modal-dialog {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    background: var(--modal-bg, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-body {
+    padding: var(--spacing-lg);
+    max-height: 60vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-footer {
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+/* ===== АДАПТИВНЫЕ СТИЛИ ===== */
+
+/* Mobile First - базовые стили для мобильных */
+@media (max-width: 575.98px) {
+    :root {
+        --spacing-md: 0.75rem;
+        --spacing-lg: 1rem;
+        --spacing-xl: 1.5rem;
+        --font-size-base: 0.875rem;
+        --font-size-lg: 1rem;
+        --font-size-xl: 1.125rem;
+    }
+
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .navbar {
+        padding: var(--spacing-xs) 0;
+    }
+
+    .navbar-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--navbar-bg, #ffffff);
+        border-top: 1px solid var(--border-color, #e5e7eb);
+        padding: var(--spacing-sm);
+        gap: var(--spacing-xs);
+        justify-content: space-around;
+        z-index: 1000;
+    }
+
+    .navbar-item {
+        flex-direction: column;
+        padding: var(--spacing-xs);
+        font-size: var(--font-size-xs);
+        min-height: 60px;
+        flex: 1;
+    }
+
+    .navbar-item span {
+        margin-top: var(--spacing-xs);
+    }
+
+    .navbar-user {
+        display: none;
+    }
+
+    .grid-cols-2,
+    .grid-cols-3,
+    .grid-cols-4,
+    .grid-cols-5,
+    .grid-cols-6 {
+        grid-template-columns: 1fr;
+    }
+
+    .card-body {
+        padding: var(--spacing-md);
+    }
+
+    .modal {
+        padding: var(--spacing-sm);
+    }
+
+    .modal-dialog {
+        max-height: 95vh;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .btn-group .btn {
+        border-radius: 6px;
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .btn-group .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-cols-3,
+    .grid-cols-4,
+    .grid-cols-5,
+    .grid-cols-6 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .navbar-menu {
+        gap: var(--spacing-sm);
+    }
+
+    .navbar-item {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-cols-4,
+    .grid-cols-5,
+    .grid-cols-6 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .navbar-menu {
+        position: static;
+        background: none;
+        border: none;
+        padding: 0;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .navbar-item {
+        flex-direction: row;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .navbar-user {
+        display: flex;
+    }
+
+    .modal-dialog {
+        max-width: 600px;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .grid-cols-5,
+    .grid-cols-6 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .container {
+        max-width: 960px;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .grid-cols-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .grid-cols-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .container {
+        max-width: 1200px;
+    }
+}
+
+/* Extra extra large devices (1400px and up) */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+/* ===== TOUCH ОПТИМИЗАЦИЯ ===== */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Убираем hover эффекты на touch устройствах */
+    .hover-lift:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .hover-scale:hover {
+        transform: none;
+    }
+
+    .hover-rotate:hover {
+        transform: none;
+    }
+
+    .hover-glow:hover {
+        box-shadow: none;
+    }
+
+    /* Увеличиваем touch targets */
+    .btn {
+        min-height: var(--touch-target-comfortable);
+        min-width: var(--touch-target-comfortable);
+    }
+
+    .navbar-item {
+        min-height: var(--touch-target-comfortable);
+    }
+
+    /* Улучшаем скроллинг */
+    .modal-body {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+}
+
+/* ===== LANDSCAPE ОРИЕНТАЦИЯ ===== */
+@media (orientation: landscape) and (max-height: 500px) {
+    .modal {
+        align-items: flex-start;
+        padding: var(--spacing-sm);
+    }
+
+    .modal-dialog {
+        max-height: 95vh;
+    }
+
+    .modal-body {
+        max-height: 60vh;
+    }
+
+    .navbar {
+        padding: var(--spacing-xs) 0;
+    }
+}
+
+/* ===== DARK MODE ПОДДЕРЖКА ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-primary: #f9fafb;
+        --text-secondary: #d1d5db;
+        --bg-primary: #111827;
+        --bg-secondary: #1f2937;
+        --card-bg: #1f2937;
+        --border-color: #374151;
+        --navbar-bg: #1f2937;
+        --modal-bg: #1f2937;
+    }
+}
+
+/* ===== ВЫСОКИЙ КОНТРАСТ ===== */
+@media (prefers-contrast: high) {
+    .btn {
+        border-width: 2px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        border-width: 2px;
+    }
+
+    .card {
+        border: 2px solid var(--border-color, #d1d5db);
+    }
+}
+
+/* ===== УМЕНЬШЕННОЕ ДВИЖЕНИЕ ===== */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ===== УТИЛИТЫ ===== */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+.invisible {
+    visibility: hidden !important;
+}
+
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-around {
+    justify-content: space-around;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.p-1 {
+    padding: var(--spacing-xs);
+}
+
+.p-2 {
+    padding: var(--spacing-sm);
+}
+
+.p-3 {
+    padding: var(--spacing-md);
+}
+
+.p-4 {
+    padding: var(--spacing-lg);
+}
+
+.p-5 {
+    padding: var(--spacing-xl);
+}
+
+.m-0 {
+    margin: 0;
+}
+
+.m-1 {
+    margin: var(--spacing-xs);
+}
+
+.m-2 {
+    margin: var(--spacing-sm);
+}
+
+.m-3 {
+    margin: var(--spacing-md);
+}
+
+.m-4 {
+    margin: var(--spacing-lg);
+}
+
+.m-5 {
+    margin: var(--spacing-xl);
+}
+
+.mt-auto {
+    margin-top: auto;
+}
+
+.mb-auto {
+    margin-bottom: auto;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+.mr-auto {
+    margin-right: auto;
+}
+
+/* ===== МОБИЛЬНАЯ НАВИГАЦИЯ ===== */
+.mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--navbar-bg, #ffffff);
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    padding: var(--spacing-sm);
+    display: none;
+    z-index: 1000;
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs);
+    text-decoration: none;
+    color: var(--text-secondary, #6b7280);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-height: var(--touch-target-comfortable);
+    flex: 1;
+    justify-content: center;
+}
+
+.mobile-nav-item:hover,
+.mobile-nav-item.active {
+    color: var(--primary-600, #2563eb);
+}
+
+.mobile-nav-item i {
+    font-size: var(--font-size-lg);
+}
+
+@media (max-width: 767.98px) {
+    .mobile-nav {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .navbar-menu {
+        display: none;
+    }
+}
+
+/* ===== SAFE AREA ПОДДЕРЖКА ===== */
+@supports (padding: max(0px)) {
+    .navbar {
+        padding-top: max(var(--spacing-sm), var(--safe-area-top));
+        padding-bottom: max(var(--spacing-sm), var(--safe-area-bottom));
+    }
+
+    .mobile-nav {
+        padding-bottom: max(var(--spacing-sm), var(--safe-area-bottom));
+    }
+
+    .modal {
+        padding-top: max(var(--spacing-md), var(--safe-area-top));
+        padding-bottom: max(var(--spacing-md), var(--safe-area-bottom));
+    }
+}

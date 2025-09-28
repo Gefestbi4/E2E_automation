@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход - Automation Learning Platform</title>
-    <meta name="description" content="Вход в систему обучения автоматизаторов">
+    <title>Регистрация - Automation Learning Platform</title>
+    <meta name="description" content="Регистрация в системе обучения автоматизаторов">
     <meta name="api-base" content="http://localhost:5000">
 
     <!-- CSS -->
@@ -32,7 +32,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             padding: 40px;
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
         }
 
@@ -74,6 +74,11 @@
             font-size: 14px;
         }
 
+        .form-label .optional {
+            color: #718096;
+            font-weight: 400;
+        }
+
         .form-input {
             width: 100%;
             padding: 12px 16px;
@@ -100,11 +105,17 @@
             display: none;
         }
 
+        .form-help {
+            color: #718096;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
         .auth-actions {
             margin-top: 32px;
         }
 
-        .btn-login {
+        .btn-register {
             width: 100%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -117,11 +128,11 @@
             transition: transform 0.2s;
         }
 
-        .btn-login:hover {
+        .btn-register:hover {
             transform: translateY(-2px);
         }
 
-        .btn-login:disabled {
+        .btn-register:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
@@ -159,49 +170,44 @@
             }
         }
 
-        .demo-credentials {
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 24px;
-            text-align: left;
+        .password-strength {
+            margin-top: 8px;
+            font-size: 12px;
         }
 
-        .demo-credentials h4 {
-            margin: 0 0 12px 0;
-            color: #2d3748;
-            font-size: 14px;
-            font-weight: 600;
+        .strength-bar {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
         }
 
-        .demo-credential {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
+        .strength-fill {
+            height: 100%;
+            transition: width 0.3s, background-color 0.3s;
+            width: 0%;
+            background: #e53e3e;
         }
 
-        .demo-credential:last-child {
-            margin-bottom: 0;
+        .strength-fill.weak {
+            background: #e53e3e;
+            width: 25%;
         }
 
-        .demo-label {
-            color: #718096;
-            font-weight: 500;
+        .strength-fill.fair {
+            background: #ed8936;
+            width: 50%;
         }
 
-        .demo-value {
-            color: #2d3748;
-            font-family: monospace;
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 4px;
-            transition: background-color 0.2s;
+        .strength-fill.good {
+            background: #38a169;
+            width: 75%;
         }
 
-        .demo-value:hover {
-            background-color: #e2e8f0;
+        .strength-fill.strong {
+            background: #38a169;
+            width: 100%;
         }
     </style>
 </head>
@@ -213,11 +219,11 @@
                 <div class="auth-logo">
                     <i class="fas fa-robot"></i>
                 </div>
-                <h1 class="auth-title">Добро пожаловать!</h1>
-                <p class="auth-subtitle">Войдите в систему обучения автоматизаторов</p>
+                <h1 class="auth-title">Присоединяйтесь!</h1>
+                <p class="auth-subtitle">Создайте аккаунт для обучения автоматизации</p>
             </div>
 
-            <form class="auth-form" id="login-form">
+            <form class="auth-form" id="register-form">
                 <div class="form-group">
                     <label class="form-label" for="email">Email</label>
                     <input type="email" id="email" name="email" class="form-input" placeholder="your@email.com" required
@@ -226,39 +232,48 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label" for="full_name">
+                        Полное имя <span class="optional">(необязательно)</span>
+                    </label>
+                    <input type="text" id="full_name" name="full_name" class="form-input" placeholder="Иван Иванов"
+                        test-id="full-name-input">
+                    <div class="form-error" id="full-name-error"></div>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label" for="password">Пароль</label>
                     <input type="password" id="password" name="password" class="form-input" placeholder="••••••••"
                         required test-id="password-input">
+                    <div class="form-help">Минимум 8 символов</div>
+                    <div class="password-strength" id="password-strength" style="display: none;">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strength-fill"></div>
+                        </div>
+                        <div id="strength-text"></div>
+                    </div>
                     <div class="form-error" id="password-error"></div>
                 </div>
 
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">Подтверждение пароля</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-input"
+                        placeholder="••••••••" required test-id="confirm-password-input">
+                    <div class="form-error" id="confirm-password-error"></div>
+                </div>
+
                 <div class="auth-actions">
-                    <button type="submit" class="btn-login" id="login-btn" test-id="login-submit-btn">
-                        <span id="login-text">Войти</span>
-                        <span id="login-loading" style="display: none;">
+                    <button type="submit" class="btn-register" id="register-btn" test-id="register-submit-btn">
+                        <span id="register-text">Зарегистрироваться</span>
+                        <span id="register-loading" style="display: none;">
                             <span class="loading-spinner"></span>
-                            Вход...
+                            Регистрация...
                         </span>
                     </button>
                 </div>
             </form>
 
             <div class="auth-links">
-                <p>Нет аккаунта? <a href="register_new.html" class="auth-link"
-                        test-id="register-link">Зарегистрироваться</a></p>
-            </div>
-
-            <!-- Демо-данные для тестирования -->
-            <div class="demo-credentials">
-                <h4>Демо-данные для тестирования:</h4>
-                <div class="demo-credential">
-                    <span class="demo-label">Email:</span>
-                    <span class="demo-value" onclick="fillDemoCredentials('test@example.com')">test@example.com</span>
-                </div>
-                <div class="demo-credential">
-                    <span class="demo-label">Пароль:</span>
-                    <span class="demo-value" onclick="fillDemoCredentials('testpassword123')">testpassword123</span>
-                </div>
+                <p>Уже есть аккаунт? <a href="login.html" class="auth-link" test-id="login-link">Войти</a></p>
             </div>
         </div>
     </div>
@@ -295,8 +310,8 @@
             }
         }
 
-        // Система авторизации
-        class AuthManager {
+        // Система регистрации
+        class RegistrationManager {
             constructor() {
                 this.apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000').replace(/\/?$/, '');
                 this.init();
@@ -305,37 +320,25 @@
             init() {
                 this.setupFormValidation();
                 this.setupFormSubmission();
-                this.checkAuthStatus();
-            }
-
-            checkAuthStatus() {
-                const token = localStorage.getItem('auth_token');
-                if (token && this.isTokenValid(token)) {
-                    window.location.href = 'index_new.html';
-                }
-            }
-
-            isTokenValid(token) {
-                try {
-                    const payload = JSON.parse(atob(token.split('.')[1]));
-                    return payload.exp * 1000 > Date.now();
-                } catch {
-                    return false;
-                }
             }
 
             setupFormValidation() {
                 const emailInput = document.getElementById('email');
                 const passwordInput = document.getElementById('password');
+                const confirmPasswordInput = document.getElementById('confirm_password');
 
                 emailInput.addEventListener('input', () => this.validateEmail());
-                passwordInput.addEventListener('input', () => this.validatePassword());
+                passwordInput.addEventListener('input', () => {
+                    this.validatePassword();
+                    this.updatePasswordStrength();
+                });
+                confirmPasswordInput.addEventListener('input', () => this.validatePasswordConfirmation());
             }
 
             setupFormSubmission() {
-                document.getElementById('login-form').addEventListener('submit', async (e) => {
+                document.getElementById('register-form').addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    await this.handleLogin();
+                    await this.handleRegistration();
                 });
             }
 
@@ -373,9 +376,85 @@
                     return true;
                 }
 
+                if (password.length < 8) {
+                    this.showFieldError(errorDiv, 'Пароль должен содержать минимум 8 символов');
+                    passwordInput.classList.add('error');
+                    return false;
+                }
+
                 this.hideFieldError(errorDiv);
                 passwordInput.classList.remove('error');
                 return true;
+            }
+
+            validatePasswordConfirmation() {
+                const passwordInput = document.getElementById('password');
+                const confirmPasswordInput = document.getElementById('confirm_password');
+                const errorDiv = document.getElementById('confirm-password-error');
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (!confirmPassword) {
+                    this.hideFieldError(errorDiv);
+                    confirmPasswordInput.classList.remove('error');
+                    return true;
+                }
+
+                if (password !== confirmPassword) {
+                    this.showFieldError(errorDiv, 'Пароли не совпадают');
+                    confirmPasswordInput.classList.add('error');
+                    return false;
+                }
+
+                this.hideFieldError(errorDiv);
+                confirmPasswordInput.classList.remove('error');
+                return true;
+            }
+
+            updatePasswordStrength() {
+                const password = document.getElementById('password').value;
+                const strengthDiv = document.getElementById('password-strength');
+                const strengthFill = document.getElementById('strength-fill');
+                const strengthText = document.getElementById('strength-text');
+
+                if (!password) {
+                    strengthDiv.style.display = 'none';
+                    return;
+                }
+
+                strengthDiv.style.display = 'block';
+
+                let strength = 0;
+                let strengthLabel = '';
+
+                if (password.length >= 8) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+                switch (strength) {
+                    case 0:
+                    case 1:
+                        strengthLabel = 'Очень слабый';
+                        strengthFill.className = 'strength-fill weak';
+                        break;
+                    case 2:
+                        strengthLabel = 'Слабый';
+                        strengthFill.className = 'strength-fill fair';
+                        break;
+                    case 3:
+                        strengthLabel = 'Хороший';
+                        strengthFill.className = 'strength-fill good';
+                        break;
+                    case 4:
+                    case 5:
+                        strengthLabel = 'Сильный';
+                        strengthFill.className = 'strength-fill strong';
+                        break;
+                }
+
+                strengthText.textContent = strengthLabel;
             }
 
             showFieldError(errorDiv, message) {
@@ -388,90 +467,67 @@
             }
 
             validateForm() {
-                return this.validateEmail() && this.validatePassword();
+                return this.validateEmail() && this.validatePassword() && this.validatePasswordConfirmation();
             }
 
-            async handleLogin() {
+            async handleRegistration() {
                 if (!this.validateForm()) {
                     return;
                 }
 
                 const emailInput = document.getElementById('email');
+                const fullNameInput = document.getElementById('full_name');
                 const passwordInput = document.getElementById('password');
-                const loginBtn = document.getElementById('login-btn');
-                const loginText = document.getElementById('login-text');
-                const loginLoading = document.getElementById('login-loading');
+                const confirmPasswordInput = document.getElementById('confirm_password');
+                const registerBtn = document.getElementById('register-btn');
+                const registerText = document.getElementById('register-text');
+                const registerLoading = document.getElementById('register-loading');
 
                 // Показываем загрузку
-                loginBtn.disabled = true;
-                loginText.style.display = 'none';
-                loginLoading.style.display = 'inline';
+                registerBtn.disabled = true;
+                registerText.style.display = 'none';
+                registerLoading.style.display = 'inline';
 
                 try {
-                    const response = await fetch(`${this.apiBase}/api/auth/login`, {
+                    const response = await fetch(`${this.apiBase}/api/auth/register`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             email: emailInput.value.trim(),
-                            password: passwordInput.value
+                            password: passwordInput.value,
+                            confirm_password: confirmPasswordInput.value,
+                            full_name: fullNameInput.value.trim() || null
                         })
                     });
 
                     const data = await response.json();
 
-                    if (response.ok && data.access_token) {
-                        // Сохраняем токены
-                        localStorage.setItem('auth_token', data.access_token);
-                        localStorage.setItem('refresh_token', data.refresh_token);
-                        localStorage.setItem('token_expires', Date.now() + (data.expires_in * 1000));
-
-                        Toast.show('Успешная авторизация! Переходим в приложение...', 'success');
+                    if (response.ok) {
+                        Toast.show('Регистрация успешна! Теперь вы можете авторизоваться.', 'success');
 
                         setTimeout(() => {
-                            window.location.href = 'index_new.html';
-                        }, 1500);
+                            window.location.href = `login.html?registered=true&email=${encodeURIComponent(emailInput.value.trim())}`;
+                        }, 3000);
                     } else {
-                        Toast.show(data.detail || 'Ошибка авторизации', 'error');
+                        Toast.show(data.detail || 'Ошибка регистрации', 'error');
                     }
                 } catch (error) {
-                    console.error('Ошибка авторизации:', error);
+                    console.error('Ошибка регистрации:', error);
                     Toast.show('Сетевая ошибка. Проверьте подключение.', 'error');
                 } finally {
                     // Убираем загрузку
-                    loginBtn.disabled = false;
-                    loginText.style.display = 'inline';
-                    loginLoading.style.display = 'none';
+                    registerBtn.disabled = false;
+                    registerText.style.display = 'inline';
+                    registerLoading.style.display = 'none';
                 }
-            }
-        }
-
-        // Функция для заполнения демо-данных
-        function fillDemoCredentials(value) {
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-
-            if (value.includes('@')) {
-                emailInput.value = value;
-            } else {
-                passwordInput.value = value;
             }
         }
 
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', () => {
-            new AuthManager();
-
-            // Обработка параметров URL
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('registered') === 'true') {
-                const email = urlParams.get('email');
-                if (email) {
-                    document.getElementById('email').value = decodeURIComponent(email);
-                }
-                Toast.show('Регистрация прошла успешно! Теперь войдите в систему.', 'success');
-            }
+            new RegistrationManager();
         });
 
         // CSS анимации для toast

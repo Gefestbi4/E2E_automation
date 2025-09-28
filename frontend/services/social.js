@@ -1,15 +1,39 @@
 // Social network service
 class SocialService {
     constructor() {
-        this.api = new ApiService();
+        this.api = window.ApiService;
+        console.log('👥 SocialService constructor - API available:', !!this.api);
+        console.log('👥 SocialService constructor - API type:', typeof this.api);
+        console.log('👥 SocialService constructor - API methods:', this.api ? Object.getOwnPropertyNames(Object.getPrototypeOf(this.api)) : 'null');
+    }
+
+    async initApi() {
+        // Ждем инициализации ApiService
+        while (!window.ApiService) {
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
+        this.api = window.ApiService;
+        console.log('👥 SocialService: ApiService initialized');
     }
 
     async getPosts(params = {}) {
+        console.log('👥 SocialService.getPosts called with params:', params);
+        console.log('👥 API available:', !!this.api);
+        console.log('👥 API type:', typeof this.api);
+        console.log('👥 API methods:', this.api ? Object.getOwnPropertyNames(Object.getPrototypeOf(this.api)) : 'null');
+
         const queryString = new URLSearchParams(params).toString();
-        return this.api.get(`/api/social/posts?${queryString}`);
+        console.log('👥 Query string:', queryString);
+        const url = `/api/social/posts?${queryString}`;
+        console.log('👥 Full URL:', url);
+        return this.api.get(url);
     }
 
     async createPost(postData) {
+        // Ждем инициализации API
+        if (!this.api) {
+            await this.initApi();
+        }
         return this.api.post('/api/social/posts', postData);
     }
 
@@ -90,5 +114,5 @@ class SocialService {
     }
 }
 
-// Export for global access
-window.SocialService = SocialService;
+// Создаем экземпляр и экспортируем для глобального доступа
+window.SocialService = new SocialService();

@@ -1,7 +1,7 @@
 // Analytics service
 class AnalyticsService {
     constructor() {
-        this.api = new ApiService();
+        this.api = window.ApiService;
     }
 
     async getDashboardData() {
@@ -126,5 +126,5 @@ class AnalyticsService {
     }
 }
 
-// Export for global access
-window.AnalyticsService = AnalyticsService;
+// Создаем экземпляр и экспортируем для глобального доступа
+window.AnalyticsService = new AnalyticsService();

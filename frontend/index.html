@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/themes.css">
+    <link rel="stylesheet" href="styles/advanced-components.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/accessibility.css">
+    <link rel="stylesheet" href="styles/performance.css">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,35 +31,35 @@
 
 <body>
     <!-- Navigation -->
-    <nav class="navbar" id="navbar">
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
         <div class="navbar-brand">
             <i class="fas fa-robot"></i>
             <span>Automation Learning Platform</span>
         </div>
 
-        <div class="navbar-menu" id="navbar-menu">
-            <a href="#dashboard" class="navbar-item active" data-page="dashboard">
-                <i class="fas fa-tachometer-alt"></i>
+        <div class="navbar-menu" id="navbar-menu" role="menubar">
+            <a href="#dashboard" class="navbar-item active" data-page="dashboard" role="menuitem" aria-current="page">
+                <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#ecommerce" class="navbar-item" data-page="ecommerce">
-                <i class="fas fa-shopping-cart"></i>
+            <a href="#ecommerce" class="navbar-item" data-page="ecommerce" role="menuitem">
+                <i class="fas fa-shopping-cart" aria-hidden="true"></i>
                 <span>E-commerce</span>
             </a>
-            <a href="#social" class="navbar-item" data-page="social">
-                <i class="fas fa-users"></i>
+            <a href="#social" class="navbar-item" data-page="social" role="menuitem">
+                <i class="fas fa-users" aria-hidden="true"></i>
                 <span>Social Network</span>
             </a>
-            <a href="#tasks" class="navbar-item" data-page="tasks">
-                <i class="fas fa-tasks"></i>
+            <a href="#tasks" class="navbar-item" data-page="tasks" role="menuitem">
+                <i class="fas fa-tasks" aria-hidden="true"></i>
                 <span>Task Management</span>
             </a>
-            <a href="#content" class="navbar-item" data-page="content">
-                <i class="fas fa-edit"></i>
+            <a href="#content" class="navbar-item" data-page="content" role="menuitem">
+                <i class="fas fa-edit" aria-hidden="true"></i>
                 <span>Content Management</span>
             </a>
-            <a href="#analytics" class="navbar-item" data-page="analytics">
-                <i class="fas fa-chart-line"></i>
+            <a href="#analytics" class="navbar-item" data-page="analytics" role="menuitem">
+                <i class="fas fa-chart-line" aria-hidden="true"></i>
                 <span>Analytics</span>
             </a>
         </div>
@@ -69,7 +73,7 @@
         <div class="navbar-user" id="navbar-user">
             <div class="user-menu" id="user-menu">
                 <div class="user-avatar">
-                    <img src="" alt="User Avatar" id="user-avatar">
+                    <img src="https://via.placeholder.com/40x40?text=U" alt="User Avatar" id="user-avatar">
                 </div>
                 <span class="user-name" id="user-name">Guest</span>
                 <i class="fas fa-chevron-down"></i>
@@ -100,7 +104,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" id="main-content" role="main">
         <!-- Dashboard Page -->
         <div id="dashboard-page" class="page active">
             <div class="page-header">
@@ -216,7 +220,8 @@
             <div class="page-header">
                 <h1>E-commerce</h1>
                 <div class="page-actions">
-                    <button class="btn btn-primary" onclick="EcommerceModule.showAddProductModal()">
+                    <button id="add-product-btn" class="btn btn-primary"
+                        onclick="EcommerceModule.showAddProductModal()">
                         <i class="fas fa-plus"></i>
                         Добавить товар
                     </button>
@@ -269,7 +274,7 @@
             <div class="page-header">
                 <h1>Social Network</h1>
                 <div class="page-actions">
-                    <button class="btn btn-primary" onclick="SocialModule.showCreatePostModal()">
+                    <button id="create-post-btn" class="btn btn-primary" onclick="SocialModule.showCreatePostModal()">
                         <i class="fas fa-plus"></i>
                         Создать пост
                     </button>
@@ -319,7 +324,8 @@
                         <i class="fas fa-plus"></i>
                         Новый проект
                     </button>
-                    <button class="btn btn-secondary" onclick="TasksModule.showCreateBoardModal()">
+                    <button id="create-board-btn" class="btn btn-secondary"
+                        onclick="TasksModule.showCreateBoardModal()">
                         <i class="fas fa-columns"></i>
                         Новая доска
                     </button>
@@ -349,7 +355,8 @@
             <div class="page-header">
                 <h1>Content Management</h1>
                 <div class="page-actions">
-                    <button class="btn btn-primary" onclick="ContentModule.showCreateArticleModal()">
+                    <button id="create-article-btn" class="btn btn-primary"
+                        onclick="ContentModule.showCreateArticleModal()">
                         <i class="fas fa-plus"></i>
                         Новая статья
                     </button>
@@ -427,7 +434,17 @@
     <script src="utils/constants.js"></script>
     <script src="utils/helpers.js"></script>
     <script src="utils/validation.js"></script>
+    <script src="utils/form_validator.js"></script>
+    <script src="utils/error_handler.js"></script>
+    <script src="utils/toast.js"></script>
     <script src="utils/avatar.js"></script>
+    <script src="utils/animations.js"></script>
+    <script src="utils/loading_indicators.js"></script>
+    <script src="utils/interactions.js"></script>
+    <script src="utils/touch_gestures.js"></script>
+    <script src="utils/mobile_navigation.js"></script>
+    <script src="utils/accessibility.js"></script>
+    <script src="utils/performance.js"></script>
     <script src="services/auth.js"></script>
     <script src="services/api.js"></script>
     <script src="services/ecommerce.js"></script>
@@ -438,7 +455,9 @@
     <script src="utils/common.js"></script>
     <script src="components/forms.js"></script>
     <script src="components/modals.js"></script>
-    <script src="components/toast.js"></script>
+    <script src="components/advanced_modals.js"></script>
+    <script src="components/advanced_forms.js"></script>
+    <script src="components/advanced_tables.js"></script>
     <script src="pages/dashboard.js"></script>
     <script src="pages/ecommerce.js"></script>
     <script src="pages/social.js"></script>

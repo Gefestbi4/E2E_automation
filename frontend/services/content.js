@@ -1,7 +1,7 @@
 // Content management service
 class ContentService {
     constructor() {
-        this.api = new ApiService();
+        this.api = window.ApiService;
     }
 
     async getArticles(params = {}) {
@@ -123,5 +123,5 @@ class ContentService {
     }
 }
 
-// Export for global access
-window.ContentService = ContentService;
+// Создаем экземпляр и экспортируем для глобального доступа
+window.ContentService = new ContentService();

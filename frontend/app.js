@@ -8,8 +8,22 @@ class App {
 
     async init() {
         try {
-            await this.initAuth();
+            // Инициализируем утилиты
+            this.initUtils();
+
+            // Инициализируем мобильную навигацию
+            this.initMobileNavigation();
+
+            // Инициализируем доступность
+            this.initAccessibility();
+
+            // Инициализируем оптимизацию производительности
+            this.initPerformance();
+
+            // Инициализируем навигацию ПЕРЕД обработчиками событий
             this.initNavigation();
+
+            await this.initAuth();
             await this.initModules();
             this.initTheme();
             this.initDefaultAvatar();
@@ -28,8 +42,111 @@ class App {
             this.hideLoading();
         } catch (error) {
             console.error('Application initialization failed:', error);
+            // Используем ErrorHandler для обработки ошибок инициализации
+            if (window.ErrorHandler) {
+                window.ErrorHandler.handleError(error, { context: 'app_init' });
+            }
             this.showError('Failed to initialize application');
         }
+    }
+
+    /**
+     * Инициализация утилит
+     */
+    initUtils() {
+        // Утилиты уже загружены через script теги в HTML
+        // Проверяем их наличие
+        console.log('🔧 INIT UTILS: Checking utilities...');
+        console.log('🔧 Toast available:', !!window.Toast);
+        console.log('🔧 ErrorHandler available:', !!window.ErrorHandler);
+        console.log('🔧 FormValidator available:', !!window.FormValidator);
+        console.log('🔧 EcommerceService available:', !!window.EcommerceService);
+        console.log('🔧 SocialService available:', !!window.SocialService);
+        console.log('🔧 AuthService available:', !!window.AuthService);
+        console.log('🔧 TouchGestures available:', !!window.TouchGestures);
+        console.log('🔧 MobileNav available:', !!window.MobileNav);
+        console.log('🔧 AccessibilityManager available:', !!window.AccessibilityManager);
+        console.log('🔧 PerformanceManager available:', !!window.PerformanceManager);
+
+        if (!window.Toast) {
+            console.warn('Toast utility not loaded');
+        }
+        if (!window.ErrorHandler) {
+            console.warn('ErrorHandler utility not loaded');
+        }
+        if (!window.FormValidator) {
+            console.warn('FormValidator utility not loaded');
+        }
+        if (!window.EcommerceService) {
+            console.warn('EcommerceService not loaded');
+        }
+        if (!window.SocialService) {
+            console.warn('SocialService not loaded');
+        }
+        if (!window.AuthService) {
+            console.warn('AuthService not loaded');
+        }
+        if (!window.TouchGestures) {
+            console.warn('TouchGestures utility not loaded');
+        }
+        if (!window.MobileNav) {
+            console.warn('MobileNav utility not loaded');
+        }
+
+        console.log('Utils initialized successfully');
+    }
+
+    initMobileNavigation() {
+        console.log('📱 Initializing mobile navigation...');
+
+        if (window.MobileNav) {
+            // Настраиваем swipe навигацию для страниц
+            document.querySelectorAll('.page').forEach(page => {
+                if (window.TouchGestures) {
+                    window.TouchGestures.enableSwipeNavigation(page);
+                }
+            });
+
+            console.log('📱 Mobile navigation initialized successfully');
+        } else {
+            console.warn('MobileNav not available');
+        }
+    }
+
+    initAccessibility() {
+        console.log('♿ Initializing accessibility...');
+
+        if (window.AccessibilityManager) {
+            this.accessibilityManager = new window.AccessibilityManager();
+            console.log('♿ Accessibility manager initialized successfully');
+        } else {
+            console.warn('AccessibilityManager not available');
+        }
+    }
+
+    initPerformance() {
+        console.log('⚡ Initializing performance optimization...');
+
+        if (window.PerformanceManager) {
+            this.performanceManager = new window.PerformanceManager();
+            console.log('⚡ Performance manager initialized successfully');
+
+            // Optimize existing images
+            this.performanceManager.optimizeImagesInContainer(document.body);
+
+            // Setup performance monitoring
+            this.setupPerformanceMonitoring();
+        } else {
+            console.warn('PerformanceManager not available');
+        }
+    }
+
+    setupPerformanceMonitoring() {
+        // Monitor performance metrics
+        setInterval(() => {
+            const metrics = this.performanceManager.getPerformanceMetrics();
+            console.log('📊 Performance metrics:', metrics);
+        }, 30000); // Every 30 seconds
     }
 
     async initAuth() {
@@ -83,12 +200,17 @@ class App {
     }
 
     async initModules() {
+        console.log('📊 Creating Dashboard module...');
         this.modules.dashboard = new DashboardModule();
         await this.modules.dashboard.init();
 
+        console.log('🛒 Creating Ecommerce module...');
+        console.log('🛒 Before new EcommerceModule()');
         this.modules.ecommerce = new EcommerceModule();
+        console.log('🛒 After new EcommerceModule()');
         await this.modules.ecommerce.init();
 
+        console.log('👥 Creating Social module...');
         this.modules.social = new SocialModule();
         await this.modules.social.init();
 
@@ -118,7 +240,7 @@ class App {
     initEventListeners() {
         // Navigation click handlers
         const navItems = document.querySelectorAll('.navbar-item');
-        
+
         navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -186,7 +308,7 @@ class App {
 
         // Show target page
         const targetPage = document.getElementById(`${pageName}-page`);
-        
+
         if (targetPage) {
             targetPage.classList.add('active');
 
@@ -229,7 +351,7 @@ class App {
     }
 
     redirectToLogin() {
-        window.location.href = '/login_new.html';
+        window.location.href = '/login.html';
     }
 
     async logout() {
@@ -374,6 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        console.log('All scripts loaded successfully!');
         window.App = new App();
         window.App.init();
     }
