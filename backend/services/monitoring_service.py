@@ -89,9 +89,14 @@ class MonitoringService:
             "log_retention_days": 30,
         }
 
-        # Запускаем сбор метрик
-        asyncio.create_task(self._collect_metrics_loop())
-        asyncio.create_task(self._cleanup_old_data())
+        # Запускаем сбор метрик только если есть event loop
+        try:
+            loop = asyncio.get_running_loop()
+            asyncio.create_task(self._collect_metrics_loop())
+            asyncio.create_task(self._cleanup_old_data())
+        except RuntimeError:
+            # Нет запущенного event loop, пропускаем
+            pass
 
     async def log(
         self,

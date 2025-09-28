@@ -53,8 +53,8 @@ class User(Base):
     dashboards = relationship("Dashboard", back_populates="created_by")
     alerts = relationship("Alert", back_populates="created_by")
 
-    # Roles relationships
-    roles = relationship("Role", secondary="user_roles", back_populates="users")
+    # Roles relationships (commented out due to import issues)
+    # roles = relationship("Role", secondary="user_roles", back_populates="users")
 
 
 # Import all models to register them with SQLAlchemy
@@ -69,6 +69,5 @@ def create_db_and_tables():
     import models_package.tasks
     import models_package.content
     import models_package.analytics
-    import models.roles
 
     Base.metadata.create_all(bind=engine)
