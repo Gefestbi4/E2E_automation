@@ -17,6 +17,11 @@
     <link rel="stylesheet" href="styles/responsive.css">
     <link rel="stylesheet" href="styles/accessibility.css">
     <link rel="stylesheet" href="styles/performance.css">
+    <link rel="stylesheet" href="styles/notifications.css">
+    <link rel="stylesheet" href="styles/testing.css">
+    <link rel="stylesheet" href="styles/interactions.css">
+    <link rel="stylesheet" href="styles/social_connections.css">
+    <link rel="stylesheet" href="styles/realtime.css">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,6 +32,27 @@
     <!-- Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+    <!-- AI Button Styles -->
+    <style>
+        .btn-purple {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .btn-purple:hover {
+            background: #5a32a3;
+        }
+
+        .btn-dark {
+            background: #343a40;
+            color: white;
+        }
+
+        .btn-dark:hover {
+            background: #23272b;
+        }
+    </style>
 </head>
 
 <body>
@@ -224,6 +250,61 @@
                         onclick="EcommerceModule.showAddProductModal()">
                         <i class="fas fa-plus"></i>
                         Добавить товар
+                    </button>
+                    <button id="test-media-upload-btn" class="btn btn-secondary"
+                        onclick="window.mediaUploadManager.openFileDialog()">
+                        <i class="fas fa-upload"></i>
+                        Тест загрузки медиа
+                    </button>
+                    <button id="test-search-btn" class="btn btn-info" onclick="window.searchFilterManager.init()">
+                        <i class="fas fa-search"></i>
+                        Тест поиска
+                    </button>
+                    <button id="test-settings-btn" class="btn btn-warning" onclick="window.settingsManager.init()">
+                        <i class="fas fa-cog"></i>
+                        Настройки
+                    </button>
+                    <button id="test-ai-btn" class="btn btn-purple" onclick="window.aiManager.init()">
+                        <i class="fas fa-brain"></i>
+                        AI & ML
+                    </button>
+                    <button id="test-analytics-btn" class="btn btn-success"
+                        onclick="window.advancedAnalyticsManager.init()">
+                        <i class="fas fa-chart-line"></i>
+                        Аналитика
+                    </button>
+                    <button id="test-advanced-notifications-btn" class="btn btn-dark"
+                        onclick="window.advancedNotificationsManager.openAdvancedNotificationsModal()">
+                        <i class="fas fa-bell"></i>
+                        Умные уведомления
+                    </button>
+                    <button id="test-integrations-btn" class="btn btn-dark" onclick="window.integrationsManager.init()">
+                        <i class="fas fa-plug"></i>
+                        Интеграции
+                    </button>
+                    <button id="test-roles-btn" class="btn btn-warning" onclick="window.rolesManager.openRolesModal()">
+                        <i class="fas fa-shield-alt"></i>
+                        Роли и разрешения
+                    </button>
+                    <button id="test-performance-btn" class="btn btn-info"
+                        onclick="window.performanceOptimizer.getPerformanceReport()">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Производительность
+                    </button>
+                    <button id="test-security-btn" class="btn btn-danger"
+                        onclick="window.securityManager.getSecurityReport()">
+                        <i class="fas fa-shield-alt"></i>
+                        Безопасность
+                    </button>
+                    <button id="test-monitoring-btn" class="btn btn-secondary"
+                        onclick="window.monitoringDashboard.openDashboard()">
+                        <i class="fas fa-chart-line"></i>
+                        Мониторинг
+                    </button>
+                    <button id="test-testing-btn" class="btn btn-primary"
+                        onclick="window.testingManager.openTestingDashboard()">
+                        <i class="fas fa-vial"></i>
+                        Тестирование
                     </button>
                 </div>
             </div>
@@ -430,6 +511,23 @@
         </div>
     </div>
 
+    <!-- Connection Status -->
+    <div id="connection-status" class="connection-status disconnected">
+        <div class="connection-indicator"></div>
+        <span class="connection-text">Подключение...</span>
+    </div>
+
+    <!-- Live Update Indicator -->
+    <div id="live-update-indicator" class="live-update-indicator">
+        <i class="fas fa-sync-alt"></i>
+        <span>Обновление...</span>
+    </div>
+
+    <!-- Connection Progress -->
+    <div id="connection-progress" class="connection-progress" style="display: none;">
+        <div class="connection-progress-bar"></div>
+    </div>
+
     <!-- Scripts -->
     <script src="utils/constants.js"></script>
     <script src="utils/helpers.js"></script>
@@ -441,10 +539,26 @@
     <script src="utils/animations.js"></script>
     <script src="utils/loading_indicators.js"></script>
     <script src="utils/interactions.js"></script>
+    <script src="utils/social_connections.js"></script>
+    <script src="utils/realtime.js"></script>
+    <script src="utils/media_upload.js"></script>
+    <script src="utils/search_filter.js"></script>
+    <script src="utils/settings_manager.js"></script>
+    <script src="utils/ai_manager.js"></script>
+    <script src="utils/advanced_analytics_manager.js"></script>
+    <script src="utils/advanced_notifications_manager.js"></script>
+    <script src="utils/integrations_manager.js"></script>
+    <script src="utils/roles_manager.js"></script>
+    <script src="utils/performance_optimizer.js"></script>
+    <script src="utils/security_manager.js"></script>
+    <script src="utils/monitoring_dashboard.js"></script>
+    <script src="utils/testing_manager.js"></script>
     <script src="utils/touch_gestures.js"></script>
     <script src="utils/mobile_navigation.js"></script>
     <script src="utils/accessibility.js"></script>
     <script src="utils/performance.js"></script>
+    <script src="utils/social_feed.js"></script>
+    <script src="utils/notifications.js"></script>
     <script src="services/auth.js"></script>
     <script src="services/api.js"></script>
     <script src="services/ecommerce.js"></script>

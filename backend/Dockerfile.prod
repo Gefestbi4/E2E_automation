@@ -1,40 +1,48 @@
-# Production Dockerfile
+# Production Dockerfile for Backend
 FROM python:3.11-slim
 
-# Установка системных зависимостей
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV ENVIRONMENT=production
 
-# Создание пользователя для безопасности
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-
-# Установка рабочей директории
+# Set work directory
 WORKDIR /app
 
-# Копирование requirements
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    libpq-dev \
+    gcc \
+    g++ \
+    libffi-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-# Установка Python зависимостей
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Копирование исходного кода
+# Copy project
 COPY . .
 
-# Создание директории для логов
-RUN mkdir -p /app/logs && chown -R appuser:appuser /app
+# Create necessary directories
+RUN mkdir -p /app/logs /app/uploads /app/static
 
-# Переключение на непривилегированного пользователя
+# Create non-root user
+RUN adduser --disabled-password --gecos '' appuser \
+    && chown -R appuser:appuser /app
 USER appuser
 
-# Открытие порта
+# Expose port
 EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Запуск приложения
+# Run the application
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

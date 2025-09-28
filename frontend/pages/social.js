@@ -134,6 +134,10 @@ class SocialModule {
                 <h1>Social Network</h1>
                 <p>Социальная сеть с постами и чатами</p>
             </div>
+            
+            <div class="user-search-container">
+                <input type="text" class="user-search-input" placeholder="Поиск пользователей...">
+            </div>
 
             <div class="social-content">
                 <div class="create-post-section">
@@ -170,14 +174,20 @@ class SocialModule {
                             </div>
                             <div class="post-actions">
                                 <button class="btn btn-secondary btn-sm post-action-btn like-btn" data-post-id="${post.id}">
-                                    👍 ${post.likes_count}
+                                    <i class="far fa-heart"></i>
+                                    <span class="like-count">${post.likes_count || 0}</span>
                                 </button>
                                 <button class="btn btn-secondary btn-sm post-action-btn comment-btn" data-post-id="${post.id}">
-                                    💬 ${post.comments_count}
+                                    <i class="far fa-comment"></i>
+                                    <span class="comment-count">${post.comments_count || 0}</span>
                                 </button>
                                 <button class="btn btn-secondary btn-sm post-action-btn share-btn" data-post-id="${post.id}">
-                                    Поделиться
+                                    <i class="fas fa-share"></i>
+                                    <span>Поделиться</span>
                                 </button>
+                            </div>
+                            <div class="comments-container" data-post-id="${post.id}" style="display: none;">
+                                <!-- Комментарии будут загружены динамически -->
                             </div>
                         </div>
                     `).join('')}

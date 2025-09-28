@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import router
+from main_routers import router as main_router
 from models import create_db_and_tables
 from middleware import SecurityMiddleware, RequestLoggingMiddleware
 from monitoring import MetricsCollector, PrometheusMetrics
@@ -47,7 +47,62 @@ app.add_middleware(
 )
 
 # Подключение роутов
-app.include_router(router)
+app.include_router(main_router)
+
+# Подключение роутера уведомлений
+from routers.notifications import router as notifications_router
+
+app.include_router(notifications_router)
+
+# Подключение роутера медиафайлов
+from routers.media import router as media_router
+
+app.include_router(media_router)
+
+# Подключение роутера поиска
+from routers.search import router as search_router
+
+app.include_router(search_router)
+
+# Подключение роутера настроек
+from routers.settings import router as settings_router
+
+app.include_router(settings_router)
+
+# Подключение роутера AI
+from routers.ai import router as ai_router
+
+app.include_router(ai_router)
+
+# Подключение роутера расширенной аналитики
+from routers.advanced_analytics import router as advanced_analytics_router
+
+app.include_router(advanced_analytics_router)
+
+# Подключение роутера интеграций
+from routers.integrations import router as integrations_router
+
+app.include_router(integrations_router)
+
+# Подключение роутера расширенных уведомлений
+from routers.advanced_notifications import router as advanced_notifications_router
+
+app.include_router(advanced_notifications_router)
+
+# Подключение роутера ролей и разрешений
+from routers.roles import router as roles_router
+
+app.include_router(roles_router)
+
+# Подключение роутера мониторинга
+from routers.monitoring import router as monitoring_router
+
+app.include_router(monitoring_router)
+
+# Подключение роутера тестирования
+from routers.testing import router as testing_router
+
+app.include_router(testing_router)
 
 
 @app.get("/")

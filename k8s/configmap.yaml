@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app-config
+  name: e2e-automation-config
   namespace: e2e-automation
 data:
-  DATABASE_URL: "postgresql://app_user:password@postgres-service:5432/e2e_automation_prod"
+  DATABASE_URL: "postgresql://postgres:password@postgres-service:5432/e2e_automation"
   REDIS_URL: "redis://redis-service:6379"
   ENVIRONMENT: "production"
   LOG_LEVEL: "INFO"
-  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
-  REFRESH_TOKEN_EXPIRE_DAYS: "7"
+  CORS_ORIGINS: "https://yourdomain.com"
+  REACT_APP_API_URL: "https://yourdomain.com"
+  REACT_APP_ENVIRONMENT: "production"

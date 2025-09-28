@@ -19,19 +19,36 @@ spec:
         ports:
         - containerPort: 8000
         env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: e2e-automation-config
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: e2e-automation-config
+              key: REDIS_URL
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: app-secrets
+              name: e2e-automation-secrets
               key: SECRET_KEY
-        - name: GRAFANA_PASSWORD
+        - name: ENVIRONMENT
           valueFrom:
-            secretKeyRef:
-              name: app-secrets
-              key: GRAFANA_PASSWORD
-        envFrom:
-        - configMapRef:
-            name: app-config
+            configMapKeyRef:
+              name: e2e-automation-config
+              key: ENVIRONMENT
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: e2e-automation-config
+              key: LOG_LEVEL
+        - name: CORS_ORIGINS
+          valueFrom:
+            configMapKeyRef:
+              name: e2e-automation-config
+              key: CORS_ORIGINS
         resources:
           requests:
             memory: "512Mi"
@@ -45,24 +62,13 @@ spec:
             port: 8000
           initialDelaySeconds: 30
           periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /ready
+            path: /health
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 3
-        startupProbe:
-          httpGet:
-            path: /live
-            port: 8000
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 12
+
 ---
 apiVersion: v1
 kind: Service
@@ -76,6 +82,7 @@ spec:
   - port: 8000
     targetPort: 8000
   type: ClusterIP
+
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

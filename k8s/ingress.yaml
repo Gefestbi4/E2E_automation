@@ -13,19 +13,12 @@ metadata:
 spec:
   tls:
   - hosts:
-    - your-domain.com
+    - yourdomain.com
     secretName: e2e-automation-tls
   rules:
-  - host: your-domain.com
+  - host: yourdomain.com
     http:
       paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend-service
-            port:
-              number: 80
       - path: /api
         pathType: Prefix
         backend:
@@ -33,17 +26,10 @@ spec:
             name: backend-service
             port:
               number: 8000
-      - path: /health
-        pathType: Exact
+      - path: /
+        pathType: Prefix
         backend:
           service:
-            name: backend-service
+            name: frontend-service
             port:
-              number: 8000
-      - path: /metrics
-        pathType: Exact
-        backend:
-          service:
-            name: backend-service
-            port:
-              number: 8000
+              number: 80

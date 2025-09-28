@@ -1,0 +1,385 @@
+/**
+ * Real-time Styles - стили для WebSocket и live updates
+ */
+
+/* ===== ИНДИКАТОР ПОДКЛЮЧЕНИЯ ===== */
+.connection-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.connection-status.connected {
+    background: rgba(39, 174, 96, 0.9);
+    color: white;
+}
+
+.connection-status.disconnected {
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+}
+
+.connection-status.reconnecting {
+    background: rgba(241, 196, 15, 0.9);
+    color: #2c3e50;
+}
+
+.connection-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.connection-status.connected .connection-indicator {
+    background: #27ae60;
+}
+
+.connection-status.disconnected .connection-indicator {
+    background: #e74c3c;
+}
+
+.connection-status.reconnecting .connection-indicator {
+    background: #f1c40f;
+    animation: blink 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
+/* ===== LIVE UPDATES ИНДИКАТОР ===== */
+.live-update-indicator {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 999;
+    background: rgba(52, 152, 219, 0.9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.live-update-indicator.show {
+    transform: translateX(0);
+}
+
+.live-update-indicator i {
+    margin-right: 0.5rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== АНИМАЦИИ ОБНОВЛЕНИЙ ===== */
+.update-animation {
+    animation: updateGlow 0.6s ease-out;
+}
+
+@keyframes updateGlow {
+    0% {
+        background: rgba(52, 152, 219, 0.1);
+        transform: scale(1);
+    }
+
+    50% {
+        background: rgba(52, 152, 219, 0.3);
+        transform: scale(1.02);
+    }
+
+    100% {
+        background: transparent;
+        transform: scale(1);
+    }
+}
+
+/* ===== СЧЕТЧИКИ В РЕАЛЬНОМ ВРЕМЕНИ ===== */
+.realtime-counter {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.realtime-counter.updated {
+    animation: counterUpdate 0.5s ease-out;
+}
+
+@keyframes counterUpdate {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+        color: #3498db;
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ===== УВЕДОМЛЕНИЯ В РЕАЛЬНОМ ВРЕМЕНИ ===== */
+.realtime-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    background: white;
+    color: #2c3e50;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border-left: 4px solid #3498db;
+    max-width: 400px;
+    animation: slideDown 0.3s ease-out;
+    backdrop-filter: blur(10px);
+}
+
+.realtime-notification.success {
+    border-left-color: #27ae60;
+}
+
+.realtime-notification.error {
+    border-left-color: #e74c3c;
+}
+
+.realtime-notification.warning {
+    border-left-color: #f39c12;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ===== ПРОГРЕСС БАР ПОДКЛЮЧЕНИЯ ===== */
+.connection-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(52, 152, 219, 0.2);
+    z-index: 1002;
+    overflow: hidden;
+}
+
+.connection-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    width: 0%;
+    transition: width 0.3s ease;
+    animation: progressShimmer 2s infinite;
+}
+
+@keyframes progressShimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ===== СТАТУС В НАВИГАЦИИ ===== */
+.navbar .connection-status {
+    position: static;
+    margin-left: auto;
+    margin-right: 1rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+/* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+@media (max-width: 768px) {
+    .connection-status {
+        top: 10px;
+        right: 10px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .live-update-indicator {
+        top: 60px;
+        right: 10px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+    }
+
+    .realtime-notification {
+        left: 10px;
+        right: 10px;
+        transform: none;
+        max-width: none;
+    }
+
+    .navbar .connection-status {
+        display: none;
+    }
+}
+
+/* ===== ТЕМНАЯ ТЕМА ===== */
+[data-theme="dark"] .connection-status.connected {
+    background: rgba(39, 174, 96, 0.8);
+}
+
+[data-theme="dark"] .connection-status.disconnected {
+    background: rgba(231, 76, 60, 0.8);
+}
+
+[data-theme="dark"] .connection-status.reconnecting {
+    background: rgba(241, 196, 15, 0.8);
+    color: #ecf0f1;
+}
+
+[data-theme="dark"] .live-update-indicator {
+    background: rgba(52, 152, 219, 0.8);
+}
+
+[data-theme="dark"] .realtime-notification {
+    background: #34495e;
+    color: #ecf0f1;
+    border-left-color: #3498db;
+}
+
+[data-theme="dark"] .realtime-notification.success {
+    border-left-color: #27ae60;
+}
+
+[data-theme="dark"] .realtime-notification.error {
+    border-left-color: #e74c3c;
+}
+
+[data-theme="dark"] .realtime-notification.warning {
+    border-left-color: #f39c12;
+}
+
+/* ===== АНИМАЦИИ ЗАГРУЗКИ ===== */
+.realtime-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.realtime-loading .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ecf0f1;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* ===== СТАТИСТИКА ПОДКЛЮЧЕНИЯ ===== */
+.connection-stats {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+.connection-stats.show {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.connection-stats h4 {
+    margin: 0 0 0.5rem 0;
+    color: #3498db;
+    font-size: 0.9rem;
+}
+
+.connection-stats .stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+.connection-stats .stat-item:last-child {
+    margin-bottom: 0;
+}
+
+.connection-stats .stat-label {
+    color: #bdc3c7;
+}
+
+.connection-stats .stat-value {
+    color: #ecf0f1;
+    font-weight: 500;
+}
+
+/* ===== АДАПТИВНОСТЬ СТАТИСТИКИ ===== */
+@media (max-width: 768px) {
+    .connection-stats {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        padding: 0.75rem;
+    }
+}

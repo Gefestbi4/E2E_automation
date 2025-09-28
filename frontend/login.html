@@ -407,6 +407,9 @@
         loginLoading.style.display = 'inline';
 
         try {
+          // Добавляем задержку для предотвращения rate limiting
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
           const response = await fetch(`${this.apiBase}/api/auth/login`, {
             method: 'POST',
             headers: {
@@ -419,6 +422,11 @@
           });
 
           const data = await response.json();
+
+          if (response.status === 429) {
+            Toast.show('Слишком много попыток. Подождите 1 минуту.', 'warning');
+            return;
+          }
 
           if (response.ok && data.access_token) {
             // Сохраняем токены

@@ -115,12 +115,8 @@ class EcommerceModule {
             }
         }
 
-        // Use performance optimization for rendering
-        if (window.PerformanceManager) {
-            this.renderProductsOptimized(products, ecommerceElement);
-        } else {
-            this.renderProductsStandard(products, ecommerceElement);
-        }
+        // Use standard rendering for now
+        this.renderProductsStandard(products, ecommerceElement);
     }
 
     renderProductsOptimized(products, container) {
@@ -131,16 +127,13 @@ class EcommerceModule {
         }
 
         // Use batch DOM updates
-        const fragment = window.PerformanceManager.batchDOMUpdates([
-            () => {
-                const productsHTML = products.map(product => this.createProductCardHTML(product)).join('');
-                const template = document.createElement('div');
-                template.innerHTML = this.getEcommerceTemplate(productsHTML);
-                while (template.firstChild) {
-                    fragment.appendChild(template.firstChild);
-                }
-            }
-        ]);
+        const fragment = document.createDocumentFragment();
+        const productsHTML = products.map(product => this.createProductCardHTML(product)).join('');
+        const template = document.createElement('div');
+        template.innerHTML = this.getEcommerceTemplate(productsHTML);
+        while (template.firstChild) {
+            fragment.appendChild(template.firstChild);
+        }
 
         container.appendChild(fragment);
 
@@ -157,15 +150,13 @@ class EcommerceModule {
         container.innerHTML = this.getEcommerceTemplate(productsHTML);
 
         // Trigger animations
-        if (window.Animations) {
+        if (window.Animations && typeof window.Animations.animateOnScroll === 'function') {
             window.Animations.animateOnScroll();
         }
     }
 
     createProductCardHTML(product) {
-        const optimizedImage = window.PerformanceManager ?
-            window.PerformanceManager.optimizeImageUrl(product.image, 300, 200) :
-            product.image || 'https://via.placeholder.com/300x200?text=No+Image';
+        const optimizedImage = product.image || 'https://via.placeholder.com/300x200?text=No+Image';
 
         return `
             <div class="product-card hover-lift click-ripple animate-on-scroll card-optimized" data-product-id="${product.id}" data-animation="slideInUp">

@@ -20,13 +20,13 @@ spec:
         - containerPort: 5432
         env:
         - name: POSTGRES_DB
-          value: "e2e_automation_prod"
+          value: e2e_automation
         - name: POSTGRES_USER
-          value: "app_user"
+          value: postgres
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: app-secrets
+              name: e2e-automation-secrets
               key: POSTGRES_PASSWORD
         volumeMounts:
         - name: postgres-storage
@@ -43,9 +43,7 @@ spec:
             command:
             - pg_isready
             - -U
-            - app_user
-            - -d
-            - e2e_automation_prod
+            - postgres
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
@@ -53,15 +51,14 @@ spec:
             command:
             - pg_isready
             - -U
-            - app_user
-            - -d
-            - e2e_automation_prod
+            - postgres
           initialDelaySeconds: 5
           periodSeconds: 5
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:
           claimName: postgres-pvc
+
 ---
 apiVersion: v1
 kind: Service
@@ -75,6 +72,7 @@ spec:
   - port: 5432
     targetPort: 5432
   type: ClusterIP
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -83,7 +81,7 @@ metadata:
   namespace: e2e-automation
 spec:
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi

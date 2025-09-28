@@ -12,28 +12,34 @@ alerting:
           - alertmanager:9093
 
 scrape_configs:
+  # Prometheus itself
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
 
+  # Backend API
   - job_name: 'backend'
     static_configs:
       - targets: ['backend:8000']
     metrics_path: '/metrics'
-    scrape_interval: 5s
-    scrape_timeout: 5s
+    scrape_interval: 10s
 
+  # Node exporter (if available)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Nginx metrics
   - job_name: 'nginx'
     static_configs:
       - targets: ['nginx:9113']
-    scrape_interval: 10s
 
+  # PostgreSQL metrics
   - job_name: 'postgres'
     static_configs:
       - targets: ['postgres-exporter:9187']
-    scrape_interval: 10s
 
+  # Redis metrics
   - job_name: 'redis'
     static_configs:
       - targets: ['redis-exporter:9121']
-    scrape_interval: 10s

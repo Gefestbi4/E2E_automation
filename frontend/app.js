@@ -20,6 +20,54 @@ class App {
             // Инициализируем оптимизацию производительности
             this.initPerformance();
 
+            // Инициализируем социальные функции
+            this.initSocialFeatures();
+
+            // Инициализируем систему взаимодействий
+            this.initInteractions();
+
+            // Инициализируем социальные связи
+            this.initSocialConnections();
+
+            // Инициализируем систему реального времени
+            this.initRealtime();
+
+            // Инициализируем систему загрузки медиафайлов
+            this.initMediaUpload();
+
+            // Инициализируем систему поиска и фильтрации
+            this.initSearchFilter();
+
+            // Инициализируем систему настроек
+            this.initSettings();
+
+            // Инициализируем AI систему
+            this.initAI();
+
+            // Инициализируем расширенную аналитику
+            this.initAdvancedAnalytics();
+
+            // Инициализируем систему интеграций
+            this.initIntegrations();
+
+            // Инициализируем расширенные уведомления
+            this.initAdvancedNotifications();
+
+            // Инициализируем систему ролей и разрешений
+            this.initRoles();
+
+            // Инициализируем систему оптимизации производительности
+            this.initPerformanceOptimizer();
+
+            // Инициализируем систему безопасности
+            this.initSecurity();
+
+            // Инициализируем систему мониторинга
+            this.initMonitoring();
+
+            // Инициализируем систему тестирования
+            this.initTesting();
+
             // Инициализируем навигацию ПЕРЕД обработчиками событий
             this.initNavigation();
 
@@ -67,6 +115,11 @@ class App {
         console.log('🔧 MobileNav available:', !!window.MobileNav);
         console.log('🔧 AccessibilityManager available:', !!window.AccessibilityManager);
         console.log('🔧 PerformanceManager available:', !!window.PerformanceManager);
+        console.log('🔧 SocialFeedManager available:', !!window.SocialFeedManager);
+        console.log('🔧 NotificationManager available:', !!window.NotificationManager);
+        console.log('🔧 InteractionsManager available:', !!window.InteractionsManager);
+        console.log('🔧 SocialConnectionsManager available:', !!window.SocialConnectionsManager);
+        console.log('🔧 RealtimeManager available:', !!window.RealtimeManager);
 
         if (!window.Toast) {
             console.warn('Toast utility not loaded');
@@ -147,6 +200,310 @@ class App {
             const metrics = this.performanceManager.getPerformanceMetrics();
             console.log('📊 Performance metrics:', metrics);
         }, 30000); // Every 30 seconds
+    }
+
+    initSocialFeatures() {
+        console.log('📱 Initializing social features...');
+
+        // Initialize Social Feed Manager
+        if (window.SocialFeedManager) {
+            this.socialFeedManager = new window.SocialFeedManager();
+            window.socialFeedManager = this.socialFeedManager; // Make globally available
+            console.log('📱 Social Feed Manager initialized successfully');
+        } else {
+            console.warn('SocialFeedManager not available');
+        }
+
+        // Initialize Notification Manager
+        if (window.NotificationManager) {
+            this.notificationManager = new window.NotificationManager();
+            window.notificationManager = this.notificationManager; // Make globally available
+            console.log('🔔 Notification Manager initialized successfully');
+
+            // Setup notification observers
+            this.setupNotificationObservers();
+        } else {
+            console.warn('NotificationManager not available');
+        }
+    }
+
+    initInteractions() {
+        console.log('💬 Initializing interactions system...');
+
+        if (window.InteractionsManager) {
+            this.interactionsManager = new window.InteractionsManager();
+            window.interactionsManager = this.interactionsManager; // Make globally available
+
+            // Initialize interactions system
+            this.interactionsManager.init().then(() => {
+                console.log('💬 Interactions system initialized successfully');
+            }).catch(error => {
+                console.error('💬 Failed to initialize interactions:', error);
+            });
+        } else {
+            console.warn('InteractionsManager not available');
+        }
+    }
+
+    initSocialConnections() {
+        console.log('👥 Initializing social connections system...');
+
+        if (window.SocialConnectionsManager) {
+            this.socialConnectionsManager = new window.SocialConnectionsManager();
+            window.socialConnectionsManager = this.socialConnectionsManager; // Make globally available
+
+            // Initialize social connections system
+            this.socialConnectionsManager.init().then(() => {
+                console.log('👥 Social connections system initialized successfully');
+            }).catch(error => {
+                console.error('👥 Failed to initialize social connections:', error);
+            });
+        } else {
+            console.warn('SocialConnectionsManager not available');
+        }
+    }
+
+    initRealtime() {
+        console.log('⚡ Initializing realtime system...');
+
+        if (window.RealtimeManager) {
+            this.realtimeManager = new window.RealtimeManager();
+            window.realtimeManager = this.realtimeManager; // Make globally available
+
+            // Initialize realtime system
+            this.realtimeManager.init().then(() => {
+                console.log('⚡ Realtime system initialized successfully');
+                this.setupRealtimeUI();
+            }).catch(error => {
+                console.error('⚡ Failed to initialize realtime:', error);
+                this.setupRealtimeUI(); // Setup UI even if connection fails
+            });
+        } else {
+            console.warn('RealtimeManager not available');
+        }
+    }
+
+    initMediaUpload() {
+        console.log('📁 Initializing media upload system...');
+
+        if (window.MediaUploadManager) {
+            this.mediaUploadManager = new window.MediaUploadManager();
+            window.mediaUploadManager = this.mediaUploadManager; // Make globally available
+
+            // Initialize media upload system
+            this.mediaUploadManager.init();
+            console.log('📁 Media upload system initialized successfully');
+        } else {
+            console.warn('MediaUploadManager not available');
+        }
+    }
+
+    initSearchFilter() {
+        console.log('🔍 Initializing search filter system...');
+
+        if (window.SearchFilterManager) {
+            this.searchFilterManager = window.searchFilterManager; // Use global instance
+
+            // Initialize search filter system
+            this.searchFilterManager.init();
+            console.log('🔍 Search filter system initialized successfully');
+        } else {
+            console.warn('SearchFilterManager not available');
+        }
+    }
+
+    initSettings() {
+        console.log('⚙️ Initializing settings system...');
+
+        if (window.SettingsManager) {
+            this.settingsManager = window.settingsManager; // Use global instance
+
+            // Initialize settings system
+            this.settingsManager.init();
+            console.log('⚙️ Settings system initialized successfully');
+        } else {
+            console.warn('SettingsManager not available');
+        }
+    }
+
+    initAI() {
+        console.log('🤖 Initializing AI system...');
+
+        if (window.AIManager) {
+            this.aiManager = window.aiManager; // Use global instance
+
+            // Initialize AI system
+            this.aiManager.init();
+            console.log('🤖 AI system initialized successfully');
+        } else {
+            console.warn('AIManager not available');
+        }
+    }
+
+    initAdvancedAnalytics() {
+        console.log('📊 Initializing advanced analytics system...');
+
+        if (window.AdvancedAnalyticsManager) {
+            this.advancedAnalyticsManager = window.advancedAnalyticsManager; // Use global instance
+
+            // Initialize advanced analytics system
+            this.advancedAnalyticsManager.init();
+            console.log('📊 Advanced analytics system initialized successfully');
+        } else {
+            console.warn('AdvancedAnalyticsManager not available');
+        }
+    }
+
+    initAdvancedNotifications() {
+        console.log('🔔 Initializing advanced notifications system...');
+
+        if (window.AdvancedNotificationsManager) {
+            this.advancedNotificationsManager = window.advancedNotificationsManager; // Use global instance
+
+            // Initialize advanced notifications system
+            this.advancedNotificationsManager.init();
+            console.log('🔔 Advanced notifications system initialized successfully');
+        } else {
+            console.warn('AdvancedNotificationsManager not available');
+        }
+    }
+
+    initIntegrations() {
+        console.log('🔗 Initializing integrations system...');
+
+        if (window.IntegrationsManager) {
+            this.integrationsManager = window.integrationsManager; // Use global instance
+
+            // Initialize integrations system
+            this.integrationsManager.init();
+            console.log('🔗 Integrations system initialized successfully');
+        } else {
+            console.warn('IntegrationsManager not available');
+        }
+    }
+
+    initRoles() {
+        console.log('🔐 Initializing roles and permissions system...');
+
+        if (window.RolesManager) {
+            this.rolesManager = window.rolesManager; // Use global instance
+
+            // Initialize roles system
+            this.rolesManager.init();
+            console.log('🔐 Roles and permissions system initialized successfully');
+        } else {
+            console.warn('RolesManager not available');
+        }
+    }
+
+    initPerformanceOptimizer() {
+        console.log('⚡ Initializing performance optimizer...');
+
+        if (window.PerformanceOptimizer) {
+            this.performanceOptimizer = window.performanceOptimizer; // Use global instance
+
+            // Initialize performance optimizer
+            this.performanceOptimizer.init();
+            console.log('⚡ Performance optimizer initialized successfully');
+        } else {
+            console.warn('PerformanceOptimizer not available');
+        }
+    }
+
+    initSecurity() {
+        console.log('🔒 Initializing security system...');
+
+        if (window.SecurityManager) {
+            this.securityManager = window.securityManager; // Use global instance
+
+            // Initialize security system
+            this.securityManager.init();
+            console.log('🔒 Security system initialized successfully');
+        } else {
+            console.warn('SecurityManager not available');
+        }
+    }
+
+    initMonitoring() {
+        console.log('📊 Initializing monitoring system...');
+
+        if (window.MonitoringDashboard) {
+            this.monitoringDashboard = window.monitoringDashboard; // Use global instance
+
+            // Initialize monitoring system
+            this.monitoringDashboard.init();
+            console.log('📊 Monitoring system initialized successfully');
+        } else {
+            console.warn('MonitoringDashboard not available');
+        }
+    }
+
+    initTesting() {
+        console.log('🧪 Initializing testing system...');
+
+        if (window.TestingManager) {
+            this.testingManager = window.testingManager; // Use global instance
+
+            // Initialize testing system
+            this.testingManager.init();
+            console.log('🧪 Testing system initialized successfully');
+        } else {
+            console.warn('TestingManager not available');
+        }
+    }
+
+    setupRealtimeUI() {
+        // Обновляем UI статуса подключения
+        this.updateConnectionStatus();
+
+        // Настраиваем периодическое обновление статуса
+        setInterval(() => {
+            this.updateConnectionStatus();
+        }, 5000);
+    }
+
+    updateConnectionStatus() {
+        const statusElement = document.getElementById('connection-status');
+        const textElement = statusElement?.querySelector('.connection-text');
+
+        if (!statusElement || !textElement) return;
+
+        if (this.realtimeManager) {
+            const status = this.realtimeManager.getConnectionStatus();
+
+            if (status.isConnected) {
+                statusElement.className = 'connection-status connected';
+                textElement.textContent = 'Подключено';
+            } else if (status.reconnectAttempts > 0) {
+                statusElement.className = 'connection-status reconnecting';
+                textElement.textContent = `Переподключение (${status.reconnectAttempts})`;
+            } else {
+                statusElement.className = 'connection-status disconnected';
+                textElement.textContent = 'Отключено';
+            }
+        } else {
+            statusElement.className = 'connection-status disconnected';
+            textElement.textContent = 'Недоступно';
+        }
+    }
+
+    setupNotificationObservers() {
+        if (!this.notificationManager) return;
+
+        // Listen for social events
+        this.notificationManager.addObserver((event, data) => {
+            switch (event) {
+                case 'notificationAdded':
+                    console.log('🔔 New notification:', data);
+                    break;
+                case 'notificationClicked':
+                    console.log('🔔 Notification clicked:', data);
+                    break;
+                case 'allNotificationsRead':
+                    console.log('🔔 All notifications marked as read');
+                    break;
+            }
+        });
     }
 
     async initAuth() {

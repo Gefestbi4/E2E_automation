@@ -190,6 +190,11 @@ class PerformanceManager {
             return url;
         }
 
+        // If it's a data URL (base64), return as is
+        if (url.startsWith('data:')) {
+            return url;
+        }
+
         // Add WebP support if available
         if (this.supportsWebP && !url.includes('.webp')) {
             const extension = url.split('.').pop();

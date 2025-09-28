@@ -118,11 +118,21 @@ class AnalyticsService {
     }
 
     async trackEvent(eventType, eventData) {
-        return this.api.post('/api/analytics/events', {
-            type: eventType,
-            data: eventData,
-            timestamp: new Date().toISOString()
-        });
+        try {
+            // Only track if we have valid data
+            if (!eventType || !eventData) {
+                return;
+            }
+
+            return this.api.post('/api/analytics/events', {
+                type: eventType,
+                data: eventData,
+                timestamp: new Date().toISOString()
+            });
+        } catch (error) {
+            // Silently fail for analytics to not break the app
+            console.debug('Analytics tracking failed:', error);
+        }
     }
 }
 

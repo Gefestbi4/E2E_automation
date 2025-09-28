@@ -8,6 +8,8 @@ from auth import get_db
 # Import all API routers
 from api import ecommerce, social, tasks, content, analytics, monitoring
 
+# from routers.notifications import router as notifications_router
+
 router = APIRouter()
 
 # Include all API routers
@@ -17,6 +19,7 @@ router.include_router(tasks.router, tags=["tasks"])
 router.include_router(content.router, tags=["content"])
 router.include_router(analytics.router, tags=["analytics"])
 router.include_router(monitoring.router, tags=["monitoring"])
+# router.include_router(notifications_router)
 
 
 # Auth endpoints
@@ -242,3 +245,7 @@ def verify_email(
 def health_check():
     """Проверка здоровья API"""
     return {"status": "ok", "message": "API is running"}
+
+
+# Экспорт роутера
+__all__ = ["router"]
