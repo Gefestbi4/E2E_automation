@@ -25,8 +25,8 @@ Authorization: Bearer <your_jwt_token>
 ```json
 {
   "email": "user@example.com",
-  "username": "username",
   "password": "SecurePass123!",
+  "confirm_password": "SecurePass123!",
   "full_name": "Full Name"
 }
 ```
@@ -393,7 +393,7 @@ products = api.ecommerce.get_products()
 # 1. Регистрация
 curl -X POST http://localhost:8000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","username":"user","password":"Pass123!","full_name":"User Name"}'
+  -d '{"email":"user@example.com","password":"Pass123!","confirm_password":"Pass123!","full_name":"User Name"}'
 
 # 2. Вход
 curl -X POST http://localhost:8000/api/auth/login \

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация - Automation Learning Platform</title>
     <meta name="description" content="Регистрация в системе обучения автоматизаторов">
-    <meta name="api-base" content="http://localhost:5000">
+    <meta name="api-base" content="http://localhost:8000">
 
     <!-- CSS -->
     <link rel="stylesheet" href="styles/main.css">
@@ -281,6 +281,9 @@
     <!-- Toast Container -->
     <div id="toast-container"></div>
 
+    <!-- Logger -->
+    <script src="utils/logger.js"></script>
+
     <script>
         // Простая система уведомлений
         class Toast {
@@ -313,7 +316,7 @@
         // Система регистрации
         class RegistrationManager {
             constructor() {
-                this.apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000').replace(/\/?$/, '');
+                this.apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:8000').replace(/\/?$/, '');
                 this.init();
             }
 

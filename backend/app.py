@@ -36,8 +36,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
+        "http://localhost:8000",
         "http://localhost",
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
         "http://frontend:80",
         "http://frontend",
     ],
@@ -103,6 +105,11 @@ app.include_router(monitoring_router)
 from routers.testing import router as testing_router
 
 app.include_router(testing_router)
+
+# Подключение роутера логов
+from routers.logs import router as logs_router
+
+app.include_router(logs_router)
 
 
 @app.get("/")
