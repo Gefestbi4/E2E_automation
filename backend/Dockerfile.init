@@ -1,4 +1,4 @@
-FROM python:3.13-rc-slim
+FROM python:3.11-slim
 
 # Устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y \
@@ -9,22 +9,14 @@ RUN apt-get update && apt-get install -y \
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем requirements.txt и устанавливаем зависимости
+# Копируем requirements.txt
 COPY requirements.txt .
+
+# Устанавливаем Python зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем код приложения
 COPY . .
 
-# Делаем скрипт исполняемым
-RUN chmod +x init_db.py
-
-# Устанавливаем переменные окружения по умолчанию
-ENV POSTGRES_HOST=postgres
-ENV POSTGRES_PORT=5432
-ENV POSTGRES_USER=my_user
-ENV POSTGRES_PASSWORD=my_password
-ENV POSTGRES_DB=my_database
-
-# Запускаем скрипт инициализации
+# Команда по умолчанию
 CMD ["python", "init_db.py"]

@@ -1,32 +1,16 @@
 services:
   # Database Initialization Service
   db-init:
-    image: postgres:15
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.init
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=my_user
       - POSTGRES_PASSWORD=my_password
       - POSTGRES_DB=my_database
-    command: >
-      sh -c "
-        echo '⏳ Ожидание PostgreSQL...' &&
-        until pg_isready -h postgres -p 5432 -U my_user; do
-          echo 'PostgreSQL не готов, ждем...'
-          sleep 2
-        done &&
-        echo '✅ PostgreSQL готов!' &&
-        echo '🗄️ Создание тестовой базы данных...' &&
-        PGPASSWORD=my_password psql -h postgres -U my_user -d my_database -c 'CREATE DATABASE test_database;' 2>/dev/null || echo 'База test_database уже существует' &&
-        echo '🔧 Создание enum''ов...' &&
-        PGPASSWORD=my_password psql -h postgres -U my_user -d my_database -c 'CREATE TYPE IF NOT EXISTS taskstatus AS ENUM (''todo'', ''in_progress'', ''review'', ''done'');' 2>/dev/null || echo 'Enum taskstatus уже существует' &&
-        PGPASSWORD=my_password psql -h postgres -U my_user -d my_database -c 'CREATE TYPE IF NOT EXISTS taskpriority AS ENUM (''low'', ''medium'', ''high'', ''urgent'');' 2>/dev/null || echo 'Enum taskpriority уже существует' &&
-        PGPASSWORD=my_password psql -h postgres -U my_user -d my_database -c 'CREATE TYPE IF NOT EXISTS articlestatus AS ENUM (''draft'', ''published'', ''archived'');' 2>/dev/null || echo 'Enum articlestatus уже существует' &&
-        PGPASSWORD=my_password psql -h postgres -U my_user -d test_database -c 'CREATE TYPE IF NOT EXISTS taskstatus AS ENUM (''todo'', ''in_progress'', ''review'', ''done'');' 2>/dev/null || echo 'Enum taskstatus уже существует в test_database' &&
-        PGPASSWORD=my_password psql -h postgres -U my_user -d test_database -c 'CREATE TYPE IF NOT EXISTS taskpriority AS ENUM (''low'', ''medium'', ''high'', ''urgent'');' 2>/dev/null || echo 'Enum taskpriority уже существует в test_database' &&
-        PGPASSWORD=my_password psql -h postgres -U my_user -d test_database -c 'CREATE TYPE IF NOT EXISTS articlestatus AS ENUM (''draft'', ''published'', ''archived'');' 2>/dev/null || echo 'Enum articlestatus уже существует в test_database' &&
-        echo '🎉 Инициализация базы данных завершена!'
-      "
+    command: python init_db.py
     depends_on:
       postgres:
         condition: service_healthy
