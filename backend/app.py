@@ -1,10 +1,11 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from main_routers import router as main_router
 from models import create_db_and_tables
 from middleware import SecurityMiddleware, RequestLoggingMiddleware
 from monitoring import MetricsCollector, PrometheusMetrics
+from websocket_manager import websocket_manager
 
 
 @asynccontextmanager
@@ -115,3 +116,19 @@ app.include_router(logs_router)
 @app.get("/")
 def read_root():
     return {"message": "E2E Automation API is running"}
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    """WebSocket эндпоинт для real-time обновлений"""
+    await websocket_manager.connect(websocket)
+    try:
+        while True:
+            # Получаем сообщения от клиента
+            data = await websocket.receive_text()
+            await websocket_manager.handle_message(websocket, data)
+    except WebSocketDisconnect:
+        websocket_manager.disconnect(websocket)
+    except Exception as e:
+        print(f"WebSocket error: {e}")
+        websocket_manager.disconnect(websocket)

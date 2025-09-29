@@ -449,6 +449,12 @@
 
           const data = await response.json();
 
+          // Отладочная информация
+          console.log('Login response status:', response.status);
+          console.log('Login response ok:', response.ok);
+          console.log('Login data:', data);
+          console.log('Access token exists:', !!data.access_token);
+
           if (response.status === 429) {
             Toast.show('Слишком много попыток. Подождите 1 минуту.', 'warning');
             return;

@@ -1,5 +1,5 @@
 fastapi==0.116.1
-uvicorn==0.35.0
+uvicorn[standard]==0.35.0
 sqlalchemy==2.0.43
 psycopg2-binary==2.9.10
 pydantic==2.11.7
@@ -28,6 +28,10 @@ redis==5.0.1  # Redis driver
 
 # Async task queue
 celery==5.3.4  # Asynchronous task queue
+
+# WebSocket dependencies
+websockets==12.0  # WebSocket support for uvicorn
+wsproto==1.2.0  # WebSocket protocol implementation
 
 # Testing dependencies
 pytest==8.3.4

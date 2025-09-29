@@ -148,49 +148,49 @@ styleSheet.textContent = errorStyles;
 document.head.appendChild(styleSheet);
 
 // Export functions for use in other modules
-export function validateEmail(email) {
+window.validateEmail = function (email) {
     return ValidationUtils.validateEmail(email);
-}
+};
 
-export function validatePassword(password) {
+window.validatePassword = function (password) {
     return ValidationUtils.validatePassword(password);
-}
+};
 
-export function validateRequired(value, fieldName) {
+window.validateRequired = function (value, fieldName) {
     return ValidationUtils.validateRequired(value, fieldName);
-}
+};
 
-export function validateMinLength(value, minLength, fieldName) {
+window.validateMinLength = function (value, minLength, fieldName) {
     return ValidationUtils.validateMinLength(value, minLength, fieldName);
-}
+};
 
-export function validateMaxLength(value, maxLength, fieldName) {
+window.validateMaxLength = function (value, maxLength, fieldName) {
     return ValidationUtils.validateMaxLength(value, maxLength, fieldName);
-}
+};
 
-export function validateNumber(value, fieldName) {
+window.validateNumber = function (value, fieldName) {
     return ValidationUtils.validateNumber(value, fieldName);
-}
+};
 
-export function validatePositiveNumber(value, fieldName) {
+window.validatePositiveNumber = function (value, fieldName) {
     return ValidationUtils.validatePositiveNumber(value, fieldName);
-}
+};
 
-export function validateUrl(value, fieldName) {
+window.validateUrl = function (value, fieldName) {
     return ValidationUtils.validateUrl(value, fieldName);
-}
+};
 
-export function validateForm(formData, rules) {
+window.validateForm = function (formData, rules) {
     return ValidationUtils.validateForm(formData, rules);
-}
+};
 
-export function showFieldError(fieldElement, error) {
+window.showFieldError = function (fieldElement, error) {
     return ValidationUtils.showFieldError(fieldElement, error);
-}
+};
 
-export function clearFieldError(fieldElement) {
+window.clearFieldError = function (fieldElement) {
     return ValidationUtils.clearFieldError(fieldElement);
-}
+};
 
 // Export the class as well
-export { ValidationUtils };
+window.ValidationUtils = ValidationUtils;

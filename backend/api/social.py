@@ -4,6 +4,7 @@ from auth import get_current_user, get_db
 import models_package.social as social_models
 import models
 from typing import List, Optional
+from websocket_notifications import ws_notifications
 
 from schemas.social import (
     PostCreate,
@@ -103,7 +104,7 @@ def get_post(
 
 
 @router.post("/api/social/posts", response_model=PostResponse)
-def create_post(
+async def create_post(
     post_data: PostCreate,
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -111,6 +112,20 @@ def create_post(
     """Создать новый пост"""
     service = SocialService(db)
     post = service.create_post(post_data, current_user)
+
+    # Отправляем WebSocket уведомление
+    await ws_notifications.send_social_update(
+        "post_created",
+        {
+            "post_id": post.id,
+            "author_id": current_user.id,
+            "author_name": current_user.username,
+            "content": (
+                post.content[:100] + "..." if len(post.content) > 100 else post.content
+            ),
+            "is_public": post.is_public,
+        },
+    )
 
     return PostResponse(
         id=post.id,

@@ -64,6 +64,10 @@ class RealtimeManager {
                     this.reconnectAttempts = 0;
                     this.processMessageQueue();
                     this.setupHeartbeat();
+
+                    // Подписываемся на все типы событий
+                    this.subscribeToEvents();
+
                     resolve();
                 };
 
@@ -101,8 +105,41 @@ class RealtimeManager {
      */
     getWebSocketUrl() {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = window.location.host;
+        // Всегда используем localhost:5000 для браузера
+        const host = 'localhost:5000';
         return `${protocol}//${host}/ws`;
+    }
+
+    /**
+     * Подписка на события
+     */
+    subscribeToEvents() {
+        const events = ['social', 'ecommerce', 'tasks', 'analytics', 'content', 'system'];
+        events.forEach(eventType => {
+            this.send({
+                type: 'subscribe',
+                event_type: eventType
+            });
+        });
+        console.log('⚡ Subscribed to events:', events);
+    }
+
+    /**
+     * Отправка сообщения через WebSocket
+     */
+    send(message) {
+        if (this.isConnected && this.ws) {
+            try {
+                this.ws.send(JSON.stringify(message));
+                console.log('⚡ Sent message:', message);
+            } catch (error) {
+                console.error('⚡ Error sending message:', error);
+                this.messageQueue.push(message);
+            }
+        } else {
+            console.log('⚡ WebSocket not connected, queuing message:', message);
+            this.messageQueue.push(message);
+        }
     }
 
     /**
@@ -115,6 +152,43 @@ class RealtimeManager {
 
             // Обрабатываем разные типы сообщений
             switch (data.type) {
+                case 'social_update':
+                    this.handleSocialUpdate(data);
+                    break;
+                case 'ecommerce_update':
+                    this.handleEcommerceUpdate(data);
+                    break;
+                case 'tasks_update':
+                    this.handleTasksUpdate(data);
+                    break;
+                case 'analytics_update':
+                    this.handleAnalyticsUpdate(data);
+                    break;
+                case 'content_update':
+                    this.handleContentUpdate(data);
+                    break;
+                case 'system_notification':
+                    this.handleSystemNotification(data);
+                    break;
+                case 'user_notification':
+                    this.handleUserNotification(data);
+                    break;
+                case 'subscription_confirmed':
+                    console.log('⚡ Subscription confirmed:', data.event_type);
+                    break;
+                case 'unsubscription_confirmed':
+                    console.log('⚡ Unsubscription confirmed:', data.event_type);
+                    break;
+                case 'pong':
+                    console.log('⚡ Pong received');
+                    break;
+                case 'connection':
+                    console.log('⚡ Connection message:', data.message);
+                    break;
+                case 'error':
+                    console.error('⚡ WebSocket error:', data.message);
+                    break;
+                // Legacy support
                 case 'post_created':
                     this.handlePostCreated(data);
                     break;
@@ -570,6 +644,83 @@ class RealtimeManager {
         this.eventListeners.clear();
         this.messageQueue = [];
         console.log('⚡ All realtime data cleared');
+    }
+    /**
+     * Обработчики новых типов событий
+     */
+    handleSocialUpdate(data) {
+        console.log('⚡ Social update received:', data);
+        const event = data.event;
+        const eventData = data.data;
+
+        switch (event) {
+            case 'post_created':
+                this.handlePostCreated(eventData);
+                break;
+            case 'post_updated':
+                this.handlePostUpdated(eventData);
+                break;
+            case 'post_deleted':
+                this.handlePostDeleted(eventData);
+                break;
+            case 'like_added':
+                this.handleLikeAdded(eventData);
+                break;
+            case 'like_removed':
+                this.handleLikeRemoved(eventData);
+                break;
+            case 'comment_added':
+                this.handleCommentAdded(eventData);
+                break;
+            case 'comment_updated':
+                this.handleCommentUpdated(eventData);
+                break;
+            case 'comment_deleted':
+                this.handleCommentDeleted(eventData);
+                break;
+            case 'user_followed':
+                this.handleUserFollowed(eventData);
+                break;
+            case 'user_unfollowed':
+                this.handleUserUnfollowed(eventData);
+                break;
+            default:
+                console.log('⚡ Unknown social event:', event);
+        }
+    }
+
+    handleEcommerceUpdate(data) {
+        console.log('⚡ E-commerce update received:', data);
+        // Здесь можно добавить обработку e-commerce событий
+        this.showNotification('E-commerce update received', 'info');
+    }
+
+    handleTasksUpdate(data) {
+        console.log('⚡ Tasks update received:', data);
+        // Здесь можно добавить обработку задач
+        this.showNotification('Tasks update received', 'info');
+    }
+
+    handleAnalyticsUpdate(data) {
+        console.log('⚡ Analytics update received:', data);
+        // Здесь можно добавить обработку аналитики
+        this.showNotification('Analytics update received', 'info');
+    }
+
+    handleContentUpdate(data) {
+        console.log('⚡ Content update received:', data);
+        // Здесь можно добавить обработку контента
+        this.showNotification('Content update received', 'info');
+    }
+
+    handleSystemNotification(data) {
+        console.log('⚡ System notification received:', data);
+        this.showNotification(data.message, data.notification_type || 'info');
+    }
+
+    handleUserNotification(data) {
+        console.log('⚡ User notification received:', data);
+        this.showNotification(data.message, data.notification_type || 'info');
     }
 }
 

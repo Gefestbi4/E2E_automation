@@ -726,4 +726,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(runTestsBtn);
 });
 
-export { TestingSuite };
+window.TestingSuite = TestingSuite;

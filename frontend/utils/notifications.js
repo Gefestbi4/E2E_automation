@@ -503,6 +503,25 @@ class NotificationManager {
     }
 
     /**
+     * Обновление бейджа уведомлений
+     */
+    updateNotificationBadge(count = null) {
+        if (count === null) {
+            count = this.unreadCount;
+        }
+
+        // Обновляем бейдж в UI
+        const badge = document.querySelector('.notification-badge');
+        if (badge) {
+            badge.textContent = count > 0 ? count : '';
+            badge.style.display = count > 0 ? 'block' : 'none';
+        }
+
+        // Обновляем заголовок страницы
+        document.title = count > 0 ? `(${count}) Automation Learning Platform` : 'Automation Learning Platform';
+    }
+
+    /**
      * Отправка тестового уведомления
      */
     async sendTestNotification() {

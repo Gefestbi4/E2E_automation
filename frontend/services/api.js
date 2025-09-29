@@ -73,6 +73,19 @@ class ApiService {
         const url = `${this.baseURL}${endpoint}`;
         const token = localStorage.getItem('auth_token');
 
+        console.log('API Request:', {
+            url,
+            endpoint,
+            token: token ? `${token.substring(0, 20)}...` : 'null',
+            method: options?.method || 'GET'
+        });
+
+        // Если нет токена и это не публичный эндпоинт, не отправляем запрос
+        if (!token && !this.isPublicEndpoint(endpoint)) {
+            console.warn('No auth token available for protected endpoint:', endpoint);
+            throw new Error('Authentication required');
+        }
+
         const defaultOptions = {
             headers: {
                 'Content-Type': 'application/json',
@@ -102,7 +115,13 @@ class ApiService {
         // Retry logic with exponential backoff
         for (let attempt = 1; attempt <= this.retryAttempts; attempt++) {
             try {
+                console.log('Sending request to:', url);
                 const response = await fetch(url, config);
+                console.log('Response received:', {
+                    status: response.status,
+                    ok: response.ok,
+                    url: response.url
+                });
 
                 // Автоматическое обновление токена при 401 ошибке
                 if (response.status === 401 && this.isAuthenticated()) {
@@ -284,6 +303,19 @@ class ApiService {
     // Методы аутентификации
     isAuthenticated() {
         return !!localStorage.getItem('auth_token');
+    }
+
+    // Проверка публичных эндпоинтов
+    isPublicEndpoint(endpoint) {
+        const publicEndpoints = [
+            '/api/auth/login',
+            '/api/auth/register',
+            '/api/auth/verify-email',
+            '/api/auth/reset-password',
+            '/api/health',
+            '/api/metrics'
+        ];
+        return publicEndpoints.some(publicEndpoint => endpoint.startsWith(publicEndpoint));
     }
 
     async refreshAccessToken() {

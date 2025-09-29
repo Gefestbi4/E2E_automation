@@ -11,12 +11,21 @@ class TestingManager {
         this.testProgress = 0;
         this.testStatus = 'idle'; // idle, running, completed, error
 
-        this.init();
+        // Инициализация после загрузки всех скриптов
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.init());
+        } else {
+            // Если DOM уже загружен, ждем немного для загрузки других скриптов
+            setTimeout(() => this.init(), 100);
+        }
     }
 
     init() {
         console.log('🧪 Initializing testing system...');
-        this.loadTestResults();
+        // Ждем загрузки токена перед отправкой запросов
+        setTimeout(() => {
+            this.loadTestResults();
+        }, 500);
         this.setupEventListeners();
         console.log('🧪 Testing system initialized successfully');
     }
@@ -63,6 +72,10 @@ class TestingManager {
     }
 
     async callTestAPI(testType) {
+        if (!window.ApiService) {
+            throw new Error('ApiService not available');
+        }
+
         const endpoints = {
             'unit': '/api/testing/run/unit',
             'integration': '/api/testing/run/integration',
@@ -391,6 +404,11 @@ class TestingManager {
 
     async loadTestResults() {
         try {
+            if (!window.ApiService) {
+                console.warn('ApiService not available, skipping test results load');
+                return;
+            }
+
             const response = await window.ApiService.request('/api/testing/results', {
                 method: 'GET',
                 headers: {
@@ -408,6 +426,11 @@ class TestingManager {
 
     async loadTestSuites() {
         try {
+            if (!window.ApiService) {
+                console.warn('ApiService not available, skipping test suites load');
+                return;
+            }
+
             const response = await window.ApiService.request('/api/testing/suites', {
                 method: 'GET',
                 headers: {
@@ -425,6 +448,11 @@ class TestingManager {
 
     async getTestStatistics() {
         try {
+            if (!window.ApiService) {
+                console.warn('ApiService not available, skipping test statistics load');
+                return null;
+            }
+
             const response = await window.ApiService.request('/api/testing/statistics', {
                 method: 'GET',
                 headers: {

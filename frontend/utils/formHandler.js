@@ -1,6 +1,6 @@
-import { validateEmail, validatePassword, validateForm } from './validation.js';
+// Import validation functions from global scope
 
-export class FormHandler {
+class FormHandler {
     constructor(formId, validationRules, submitCallback) {
         this.form = document.getElementById(formId);
         this.validationRules = validationRules;
@@ -47,7 +47,7 @@ export class FormHandler {
         const data = Object.fromEntries(formData.entries());
 
         // Валидация всей формы
-        const validation = validateForm(data, this.validationRules);
+        const validation = window.validateForm(data, this.validationRules);
 
         if (!validation.isValid) {
             // Показываем все ошибки
@@ -93,3 +93,6 @@ export class FormHandler {
         errorElement.style.display = 'block';
     }
 }
+
+// Export for global access
+window.FormHandler = FormHandler;

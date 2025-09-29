@@ -340,4 +340,4 @@ errorHandler.loadErrorLog();
 window.ErrorHandler = errorHandler;
 
 // Also export the class for testing
-export { ErrorHandler };
+window.ErrorHandler = ErrorHandler;

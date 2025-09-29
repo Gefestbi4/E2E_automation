@@ -1,4 +1,6 @@
 // Main Application
+console.log('🚀 App.js loading...');
+
 class App {
     constructor() {
         this.currentPage = this.getStoredPage() || 'dashboard';
@@ -47,19 +49,19 @@ class App {
             // Инициализируем расширенную аналитику
             this.initAdvancedAnalytics();
 
-            // Инициализируем систему интеграций
+            // Инициализируем систему интеграций (нужно для авторизации)
             this.initIntegrations();
 
-            // Инициализируем расширенные уведомления
+            // Инициализируем расширенные уведомления (нужно для авторизации)
             this.initAdvancedNotifications();
 
-            // Инициализируем систему ролей и разрешений
+            // Инициализируем систему ролей и разрешений (нужно для авторизации)
             this.initRoles();
 
             // Инициализируем систему оптимизации производительности
             this.initPerformanceOptimizer();
 
-            // Инициализируем систему безопасности
+            // Инициализируем систему безопасности (нужно для авторизации)
             this.initSecurity();
 
             // Инициализируем систему мониторинга
@@ -830,7 +832,10 @@ class App {
 }
 
 // Initialize app when DOM is loaded
+console.log('🚀 Setting up DOMContentLoaded listener...');
+
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 DOMContentLoaded fired!');
 
     // Проверяем, что все необходимые скрипты загружены
     const requiredScripts = [
@@ -849,7 +854,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (missingScripts.length > 0) {
             console.warn('Waiting for scripts:', missingScripts.map(s => s.name).join(', '));
-            setTimeout(checkScripts, 100);
+            console.log('Available modules:', {
+                TestModule: typeof window.TestModule,
+                SocialModule: typeof window.SocialModule,
+                TasksModule: typeof window.TasksModule,
+                AnalyticsModule: typeof window.AnalyticsModule
+            });
+            setTimeout(checkScripts, 200);
             return;
         }
 

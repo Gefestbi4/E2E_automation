@@ -213,8 +213,9 @@ class AuthService {
 
             const data = await response.json();
 
-            // Сохраняем токен
+            // Сохраняем токены
             localStorage.setItem('auth_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
             localStorage.setItem('token_expires', (Date.now() + 30 * 60 * 1000).toString());
 
             // Получаем данные пользователя
@@ -302,11 +303,17 @@ class AuthService {
      */
     async refreshAccessToken() {
         try {
+            const refreshToken = localStorage.getItem('refresh_token');
+            console.log('Refreshing token with:', refreshToken);
+
             const response = await fetch(`${this.apiBase}/api/auth/refresh`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                }
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    refresh_token: refreshToken
+                })
             });
 
             if (!response.ok) {
@@ -315,8 +322,9 @@ class AuthService {
 
             const data = await response.json();
 
-            // Обновляем токен
+            // Обновляем токены
             localStorage.setItem('auth_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
             localStorage.setItem('token_expires', (Date.now() + 30 * 60 * 1000).toString());
 
             console.log('Token refreshed successfully');
