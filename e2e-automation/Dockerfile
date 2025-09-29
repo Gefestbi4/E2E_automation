@@ -16,14 +16,11 @@ RUN mkdir -p /app/allure-results /app/screenshots
 # Копирование кода E2E
 COPY ./e2e-automation/ .
 
-# Копирование API модулей из корневой директории
-COPY ./api ./api
-
-# Установка curl для проверки Allure
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Установка curl только для health check
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
 # Делаем скрипты исполняемыми
 RUN chmod +x run_tests_with_delay.sh run_tests_smart.sh
 
 # Команда по умолчанию
-RUN ["pytest", "tests/test_login_page.py"]
+CMD ["pytest", "tests/test_login_page.py"]

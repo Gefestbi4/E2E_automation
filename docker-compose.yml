@@ -26,7 +26,7 @@ services:
     ports:
       - "5000:5000"
     env_file:
-      - ./backend/.env
+      - ./.env
     environment:
       - DATABASE_URL=postgresql://my_user:my_password@postgres:5432/my_database
       - MONGO_URL=mongodb://my_user:my_password@mongodb:27017/my_database
