@@ -6,11 +6,11 @@
 class Logger {
     constructor() {
         this.logs = [];
-        this.maxLogs = 1000; // Максимальное количество логов в памяти
-        this.logLevel = 'debug'; // debug, info, warn, error
-        this.enableConsole = true;
-        this.enableStorage = true;
-        this.enableNetwork = true;
+        this.maxLogs = 100; // Уменьшено с 1000 до 100
+        this.logLevel = 'warn'; // Изменено с debug на warn
+        this.enableConsole = false; // Отключено для production
+        this.enableStorage = false; // Отключено для production
+        this.enableNetwork = false; // Отключено для production
 
         // Уровни логирования
         this.levels = {
@@ -209,59 +209,61 @@ class Logger {
         }, true);
     }
 
-    // Перехват пользовательских действий
+    // Перехват пользовательских действий (упрощен)
     interceptUserActions() {
-        const events = ['click', 'input', 'change', 'submit', 'focus', 'blur'];
+        // Отключаем детальное логирование для предотвращения out of memory
+        // const events = ['click', 'input', 'change', 'submit', 'focus', 'blur'];
 
-        events.forEach(eventType => {
-            document.addEventListener(eventType, (event) => {
-                const target = event.target;
+        // events.forEach(eventType => {
+        //     document.addEventListener(eventType, (event) => {
+        //         const target = event.target;
 
-                // Игнорируем системные события
-                if (target.tagName === 'SCRIPT' || target.tagName === 'STYLE') {
-                    return;
-                }
+        //         // Игнорируем системные события
+        //         if (target.tagName === 'SCRIPT' || target.tagName === 'STYLE') {
+        //             return;
+        //         }
 
-                this.debug('USER_ACTION', `${eventType} on ${target.tagName}`, {
-                    eventType: eventType,
-                    tagName: target.tagName,
-                    id: target.id,
-                    className: target.className,
-                    value: target.value,
-                    testId: target.getAttribute('test-id'),
-                    xpath: this.getXPath(target)
-                });
-            }, true);
-        });
+        //         this.debug('USER_ACTION', `${eventType} on ${target.tagName}`, {
+        //             eventType: eventType,
+        //             tagName: target.tagName,
+        //             id: target.id,
+        //             className: target.className,
+        //             value: target.value,
+        //             testId: target.getAttribute('test-id'),
+        //             xpath: this.getXPath(target)
+        //         });
+        //     }, true);
+        // });
     }
 
-    // Перехват изменений DOM
+    // Перехват изменений DOM (отключен для производительности)
     interceptDOMChanges() {
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList') {
-                    this.debug('DOM_CHANGE', 'DOM nodes added/removed', {
-                        addedNodes: mutation.addedNodes.length,
-                        removedNodes: mutation.removedNodes.length,
-                        target: mutation.target.tagName
-                    });
-                } else if (mutation.type === 'attributes') {
-                    this.debug('DOM_ATTR_CHANGE', 'DOM attribute changed', {
-                        attributeName: mutation.attributeName,
-                        target: mutation.target.tagName,
-                        oldValue: mutation.oldValue,
-                        newValue: mutation.target.getAttribute(mutation.attributeName)
-                    });
-                }
-            });
-        });
+        // Отключено для предотвращения out of memory
+        // const observer = new MutationObserver((mutations) => {
+        //     mutations.forEach((mutation) => {
+        //         if (mutation.type === 'childList') {
+        //             this.debug('DOM_CHANGE', 'DOM nodes added/removed', {
+        //                 addedNodes: mutation.addedNodes.length,
+        //                 removedNodes: mutation.removedNodes.length,
+        //                 target: mutation.target.tagName
+        //             });
+        //         } else if (mutation.type === 'attributes') {
+        //             this.debug('DOM_ATTR_CHANGE', 'DOM attribute changed', {
+        //                 attributeName: mutation.attributeName,
+        //                 target: mutation.target.tagName,
+        //                 oldValue: mutation.oldValue,
+        //                 newValue: mutation.target.getAttribute(mutation.attributeName)
+        //             });
+        //         }
+        //     });
+        // });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeOldValue: true
-        });
+        // observer.observe(document.body, {
+        //     childList: true,
+        //     subtree: true,
+        //     attributes: true,
+        //     attributeOldValue: true
+        // });
     }
 
     // Перехват навигации

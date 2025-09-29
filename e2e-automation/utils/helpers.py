@@ -26,7 +26,7 @@ class TestHelpers:
         return screenshot_path
 
     @staticmethod
-    def wait_for_page_load(driver: WebDriver, timeout: int = 30) -> bool:
+    def wait_for_page_load(driver: WebDriver, timeout: int = 10) -> bool:
         """Wait for page to fully load"""
         try:
             WebDriverWait(driver, timeout).until(

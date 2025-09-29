@@ -6,27 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Вход - Automation Learning Platform</title>
   <meta name="description" content="Вход в систему обучения автоматизаторов">
-  <meta name="api-base" content="http://localhost:8000">
+  <meta name="api-base" content="http://localhost:5000">
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="styles/components.css">
-  <link rel="stylesheet" href="styles/themes.css">
-
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  <!-- CSS - оптимизированные стили -->
   <style>
-    .auth-container {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 20px;
     }
 
-    .auth-card {
+    .auth-container {
       background: white;
       border-radius: 16px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -203,61 +203,97 @@
     .demo-value:hover {
       background-color: #e2e8f0;
     }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      color: white;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.success {
+      background: #38a169;
+    }
+
+    .toast.error {
+      background: #e53e3e;
+    }
+
+    .toast.warning {
+      background: #f39c12;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
   </style>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
   <div class="auth-container">
-    <div class="auth-card">
-      <div class="auth-header">
-        <div class="auth-logo">
-          <i class="fas fa-robot"></i>
-        </div>
-        <h1 class="auth-title">Добро пожаловать!</h1>
-        <p class="auth-subtitle">Войдите в систему обучения автоматизаторов</p>
+    <div class="auth-header">
+      <div class="auth-logo">
+        <i class="fas fa-robot"></i>
+      </div>
+      <h1 class="auth-title">Добро пожаловать!</h1>
+      <p class="auth-subtitle">Войдите в систему обучения автоматизаторов</p>
+    </div>
+
+    <form class="auth-form" id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="email" name="email" class="form-input" placeholder="your@email.com" required
+          test-id="email-input">
+        <div class="form-error" id="email-error"></div>
       </div>
 
-      <form class="auth-form" id="login-form">
-        <div class="form-group">
-          <label class="form-label" for="email">Email</label>
-          <input type="email" id="email" name="email" class="form-input" placeholder="your@email.com" required
-            test-id="email-input">
-          <div class="form-error" id="email-error"></div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="password">Пароль</label>
-          <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required
-            test-id="password-input">
-          <div class="form-error" id="password-error"></div>
-        </div>
-
-        <div class="auth-actions">
-          <button type="submit" class="btn-login" id="login-btn" test-id="login-submit-btn">
-            <span id="login-text">Войти</span>
-            <span id="login-loading" style="display: none;">
-              <span class="loading-spinner"></span>
-              Вход...
-            </span>
-          </button>
-        </div>
-      </form>
-
-      <div class="auth-links">
-        <p>Нет аккаунта? <a href="register.html" class="auth-link" test-id="register-link">Зарегистрироваться</a></p>
+      <div class="form-group">
+        <label class="form-label" for="password">Пароль</label>
+        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required
+          test-id="password-input">
+        <div class="form-error" id="password-error"></div>
       </div>
 
-      <!-- Демо-данные для тестирования -->
-      <div class="demo-credentials">
-        <h4>Демо-данные для тестирования:</h4>
-        <div class="demo-credential">
-          <span class="demo-label">Email:</span>
-          <span class="demo-value" onclick="fillDemoCredentials('test@example.com')">test@example.com</span>
-        </div>
-        <div class="demo-credential">
-          <span class="demo-label">Пароль:</span>
-          <span class="demo-value" onclick="fillDemoCredentials('testpassword123')">testpassword123</span>
-        </div>
+      <div class="auth-actions">
+        <button type="submit" class="btn-login" id="login-btn" test-id="login-submit-btn">
+          <span id="login-text">Войти</span>
+          <span id="login-loading" style="display: none;">
+            <span class="loading-spinner"></span>
+            Вход...
+          </span>
+        </button>
+      </div>
+    </form>
+
+    <div class="auth-links">
+      <p>Нет аккаунта? <a href="register.html" class="auth-link" test-id="register-link">Зарегистрироваться</a></p>
+    </div>
+
+    <!-- Демо-данные для тестирования -->
+    <div class="demo-credentials">
+      <h4>Демо-данные для тестирования:</h4>
+      <div class="demo-credential">
+        <span class="demo-label">Email:</span>
+        <span class="demo-value" onclick="fillDemoCredentials('test@example.com')">test@example.com</span>
+      </div>
+      <div class="demo-credential">
+        <span class="demo-label">Пароль:</span>
+        <span class="demo-value" onclick="fillDemoCredentials('testpassword123')">testpassword123</span>
       </div>
     </div>
   </div>
@@ -265,29 +301,16 @@
   <!-- Toast Container -->
   <div id="toast-container"></div>
 
-  <!-- Logger -->
-  <script src="utils/logger.js"></script>
+  <!-- Logger - минимальная версия -->
+  <script src="utils/logger-minimal.js"></script>
 
   <script>
     // Простая система уведомлений
     class Toast {
       static show(message, type = 'info') {
         const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
+        toast.className = `toast ${type}`;
         toast.textContent = message;
-        toast.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: ${type === 'error' ? '#e53e3e' : type === 'success' ? '#38a169' : '#667eea'};
-                    color: white;
-                    padding: 12px 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 1000;
-                    animation: slideIn 0.3s ease;
-                `;
-
         document.body.appendChild(toast);
 
         setTimeout(() => {
@@ -300,7 +323,7 @@
     // Система авторизации
     class AuthManager {
       constructor() {
-        this.apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:8000').replace(/\/?$/, '');
+        this.apiBase = (document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000').replace(/\/?$/, '');
         this.init();
       }
 
@@ -410,13 +433,6 @@
         loginLoading.style.display = 'inline';
 
         try {
-          // Логируем начало входа
-          if (window.Logger) {
-            window.Logger.info('AUTH_LOGIN', 'Login attempt started', {
-              email: emailInput.value.trim()
-            });
-          }
-
           // Добавляем задержку для предотвращения rate limiting
           await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -434,11 +450,6 @@
           const data = await response.json();
 
           if (response.status === 429) {
-            if (window.Logger) {
-              window.Logger.warn('AUTH_LOGIN', 'Rate limit exceeded', {
-                email: emailInput.value.trim()
-              });
-            }
             Toast.show('Слишком много попыток. Подождите 1 минуту.', 'warning');
             return;
           }
@@ -449,38 +460,15 @@
             localStorage.setItem('refresh_token', data.refresh_token);
             localStorage.setItem('token_expires', Date.now() + (data.expires_in * 1000));
 
-            // Логируем успешный вход
-            if (window.Logger) {
-              window.Logger.info('AUTH_LOGIN', 'Login successful', {
-                email: emailInput.value.trim(),
-                username: data.username
-              });
-            }
-
             Toast.show('Успешная авторизация! Переходим в приложение...', 'success');
 
             setTimeout(() => {
               window.location.href = 'index.html';
             }, 1500);
           } else {
-            // Логируем ошибку входа
-            if (window.Logger) {
-              window.Logger.error('AUTH_LOGIN', 'Login failed', {
-                email: emailInput.value.trim(),
-                status: response.status,
-                error: data.detail
-              });
-            }
             Toast.show(data.detail || 'Ошибка авторизации', 'error');
           }
         } catch (error) {
-          // Логируем исключение
-          if (window.Logger) {
-            window.Logger.error('AUTH_LOGIN', 'Login exception', {
-              email: emailInput.value.trim(),
-              error: error.message
-            });
-          }
           console.error('Ошибка авторизации:', error);
           Toast.show('Сетевая ошибка. Проверьте подключение.', 'error');
         } finally {
@@ -519,19 +507,6 @@
       }
     });
 
-    // CSS анимации для toast
-    const style = document.createElement('style');
-    style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-    document.head.appendChild(style);
   </script>
 </body>
 

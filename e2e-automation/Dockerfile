@@ -26,4 +26,4 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 RUN chmod +x run_tests_with_delay.sh run_tests_smart.sh
 
 # Команда по умолчанию
-CMD ["./run_tests_with_delay.sh"]
+RUN ["pytest", "tests/test_login_page.py"]

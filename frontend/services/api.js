@@ -4,17 +4,17 @@ class ApiService {
         // Ждем готовности DOM
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
-                this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:8000';
+                this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000';
             });
         } else {
-            this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:8000';
+            this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000';
         }
     }
 
     async request(endpoint, options = {}) {
         // Убеждаемся, что baseURL установлен
         if (!this.baseURL) {
-            this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:8000';
+            this.baseURL = document.querySelector('meta[name="api-base"]')?.content || 'http://localhost:5000';
         }
 
         const url = `${this.baseURL}${endpoint}`;

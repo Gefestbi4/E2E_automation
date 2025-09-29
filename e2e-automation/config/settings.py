@@ -22,7 +22,7 @@ class Settings:
     # Browser settings
     BROWSER_NAME = os.getenv("BROWSER_NAME", "chrome")
     IMPLICIT_WAIT = int(os.getenv("IMPLICIT_WAIT", "15"))
-    PAGE_LOAD_TIMEOUT = int(os.getenv("PAGE_LOAD_TIMEOUT", "30"))
+    PAGE_LOAD_TIMEOUT = int(os.getenv("PAGE_LOAD_TIMEOUT", "10"))
 
     # Test execution
     HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"
