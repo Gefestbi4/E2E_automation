@@ -6,7 +6,13 @@ class FormUtils {
     }
 
     static validatePassword(password) {
-        return password.length >= 8;
+        if (!password) return false;
+        if (password.length < 8) return false;
+        if (!/(?=.*[a-z])/.test(password)) return false;
+        if (!/(?=.*[A-Z])/.test(password)) return false;
+        if (!/(?=.*\d)/.test(password)) return false;
+        if (!/(?=.*[@$!%*?&])/.test(password)) return false;
+        return true;
     }
 
     static validateRequired(value) {
@@ -79,6 +85,115 @@ class FormUtils {
         return isValid;
     }
 }
+
+// Form templates
+FormUtils.createLoginForm = function () {
+    return `
+        <form id="loginForm" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    Запомнить меня
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Войти</button>
+            <div class="form-links">
+                <a href="#" id="forgotPasswordLink">Забыли пароль?</a>
+                <a href="#" id="registerLink">Нет аккаунта? Зарегистрироваться</a>
+            </div>
+        </form>
+    `;
+};
+
+FormUtils.createRegisterForm = function () {
+    return `
+        <form id="registerForm" class="auth-form">
+            <div class="form-group">
+                <label for="firstName">Имя</label>
+                <input type="text" id="firstName" name="firstName" required>
+                <div class="error-message" id="firstNameError"></div>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Фамилия</label>
+                <input type="text" id="lastName" name="lastName" required>
+                <div class="error-message" id="lastNameError"></div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Подтвердите пароль</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    Я согласен с <a href="#" id="termsLink">условиями использования</a>
+                </label>
+                <div class="error-message" id="agreeTermsError"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            <div class="form-links">
+                <a href="#" id="loginLink">Уже есть аккаунт? Войти</a>
+            </div>
+        </form>
+    `;
+};
+
+FormUtils.createForgotPasswordForm = function () {
+    return `
+        <form id="forgotPasswordForm" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить ссылку для сброса</button>
+            <div class="form-links">
+                <a href="#" id="loginLink">Вернуться к входу</a>
+            </div>
+        </form>
+    `;
+};
+
+FormUtils.createResetPasswordForm = function () {
+    return `
+        <form id="resetPasswordForm" class="auth-form">
+            <div class="form-group">
+                <label for="password">Новый пароль</label>
+                <input type="password" id="password" name="password" required>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Подтвердите новый пароль</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Сбросить пароль</button>
+            <div class="form-links">
+                <a href="#" id="loginLink">Вернуться к входу</a>
+            </div>
+        </form>
+    `;
+};
 
 // Export for global access
 window.FormUtils = FormUtils;

@@ -4,15 +4,27 @@ class ValidationUtils {
     static PASSWORD_MIN_LENGTH = 8;
 
     static validateEmail(email) {
-        if (!email) return 'Email is required';
-        if (!this.EMAIL_REGEX.test(email)) return 'Invalid email format';
+        if (!email) return 'Email обязателен';
+        if (!this.EMAIL_REGEX.test(email)) return 'Введите корректный email адрес';
         return null;
     }
 
     static validatePassword(password) {
-        if (!password) return 'Password is required';
+        if (!password) return 'Пароль обязателен';
         if (password.length < this.PASSWORD_MIN_LENGTH) {
-            return `Password must be at least ${this.PASSWORD_MIN_LENGTH} characters long`;
+            return `Пароль должен содержать минимум ${this.PASSWORD_MIN_LENGTH} символов`;
+        }
+        if (!/(?=.*[a-z])/.test(password)) {
+            return 'Пароль должен содержать минимум одну строчную букву';
+        }
+        if (!/(?=.*[A-Z])/.test(password)) {
+            return 'Пароль должен содержать минимум одну заглавную букву';
+        }
+        if (!/(?=.*\d)/.test(password)) {
+            return 'Пароль должен содержать минимум одну цифру';
+        }
+        if (!/(?=.*[@$!%*?&])/.test(password)) {
+            return 'Пароль должен содержать минимум один специальный символ (@$!%*?&)';
         }
         return null;
     }
@@ -134,3 +146,51 @@ const errorStyles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = errorStyles;
 document.head.appendChild(styleSheet);
+
+// Export functions for use in other modules
+export function validateEmail(email) {
+    return ValidationUtils.validateEmail(email);
+}
+
+export function validatePassword(password) {
+    return ValidationUtils.validatePassword(password);
+}
+
+export function validateRequired(value, fieldName) {
+    return ValidationUtils.validateRequired(value, fieldName);
+}
+
+export function validateMinLength(value, minLength, fieldName) {
+    return ValidationUtils.validateMinLength(value, minLength, fieldName);
+}
+
+export function validateMaxLength(value, maxLength, fieldName) {
+    return ValidationUtils.validateMaxLength(value, maxLength, fieldName);
+}
+
+export function validateNumber(value, fieldName) {
+    return ValidationUtils.validateNumber(value, fieldName);
+}
+
+export function validatePositiveNumber(value, fieldName) {
+    return ValidationUtils.validatePositiveNumber(value, fieldName);
+}
+
+export function validateUrl(value, fieldName) {
+    return ValidationUtils.validateUrl(value, fieldName);
+}
+
+export function validateForm(formData, rules) {
+    return ValidationUtils.validateForm(formData, rules);
+}
+
+export function showFieldError(fieldElement, error) {
+    return ValidationUtils.showFieldError(fieldElement, error);
+}
+
+export function clearFieldError(fieldElement) {
+    return ValidationUtils.clearFieldError(fieldElement);
+}
+
+// Export the class as well
+export { ValidationUtils };

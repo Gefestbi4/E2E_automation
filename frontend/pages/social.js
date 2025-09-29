@@ -1,497 +1,332 @@
-// Social network page module
-class SocialModule {
+// Social page module
+class SocialPage {
     constructor() {
-        console.log('SocialModule constructor - SocialService available:', !!window.SocialService);
-        this.socialService = null;
-        this.isInitialized = false;
+        this.posts = [];
+        this.currentUser = null;
+        this.init();
     }
 
     async init() {
-        if (this.isInitialized) return;
+        await this.loadUser();
+        await this.loadPosts();
+        this.setupEventListeners();
+    }
 
-        console.log('Initializing Social module...');
-
-        // Инициализируем сервис
-        if (!this.socialService && window.SocialService) {
-            this.socialService = window.SocialService;
-            console.log('SocialService initialized:', !!this.socialService);
-        }
-
-        if (!this.socialService) {
-            console.error('SocialService not available');
-            throw new Error('SocialService not available');
-        }
-
+    async loadUser() {
         try {
-            await this.loadPosts();
-            this.bindEvents();
-            this.isInitialized = true;
-            console.log('Social module initialized successfully');
+            const user = await window.ApiService.getProfile();
+            this.currentUser = user;
         } catch (error) {
-            console.error('Failed to initialize Social module:', error);
-            throw error;
+            console.error('Failed to load user:', error);
         }
     }
 
     async loadPosts() {
         try {
-            console.log('Loading posts from API...');
-
-            // Проверяем, что сервис доступен
-            if (!this.socialService) {
-                console.error('SocialService not available');
-                throw new Error('SocialService not available');
-            }
-
-            console.log('👥 SocialService type:', typeof this.socialService);
-            console.log('👥 SocialService constructor:', this.socialService.constructor.name);
-            console.log('👥 SocialService methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(this.socialService)));
-
-            const response = await this.socialService.getPosts();
-            console.log('Posts loaded:', response);
-
-            // Если API возвращает объект с items, используем его, иначе используем response напрямую
-            const posts = response.items || response.posts || response || [];
-
-            // Если нет постов, используем mock data
-            if (posts.length === 0) {
-                console.log('No posts found, using fallback mock data...');
-                const mockPosts = [
-                    {
-                        id: 1,
-                        content: 'Добро пожаловать в социальную сеть! Это демо-пост для тестирования функциональности.',
-                        author: {
-                            name: 'Demo User',
-                            avatar: typeof AvatarUtils !== 'undefined' ? AvatarUtils.createInitialsAvatar('Demo User') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNFNUU3RUIiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE2IDQ4QzE2IDQwIDIyIDM0IDMyIDM0QzQyIDM0IDQ4IDQwIDQ4IDQ4VjUySDE2VjQ4WiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'
-                        },
-                        created_at: new Date().toISOString(),
-                        likes_count: 5,
-                        comments_count: 2
-                    },
-                    {
-                        id: 2,
-                        content: 'Второй демо-пост для демонстрации ленты новостей.',
-                        author: {
-                            name: 'Test User',
-                            avatar: typeof AvatarUtils !== 'undefined' ? AvatarUtils.createInitialsAvatar('Test User') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNFNUU3RUIiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE2IDQ4QzE2IDQwIDIyIDM0IDMyIDM0QzQyIDM0IDQ4IDQwIDQ4IDQ4VjUySDE2VjQ4WiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'
-                        },
-                        created_at: new Date(Date.now() - 3600000).toISOString(),
-                        likes_count: 3,
-                        comments_count: 1
-                    }
-                ];
-                this.renderPosts(mockPosts);
-            } else {
-                this.renderPosts(posts);
-            }
+            this.showLoading();
+            const posts = await window.ApiService.getPosts();
+            this.posts = posts;
+            this.renderPosts();
         } catch (error) {
             console.error('Failed to load posts:', error);
-
-            // Fallback на mock data при ошибке API
-            console.log('Using fallback mock data due to API error...');
-            const posts = [
-                {
-                    id: 1,
-                    content: 'Добро пожаловать в социальную сеть! Это демо-пост для тестирования функциональности.',
-                    author: {
-                        name: 'Demo User',
-                        avatar: typeof AvatarUtils !== 'undefined' ? AvatarUtils.createInitialsAvatar('Demo User') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNFNUU3RUIiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE2IDQ4QzE2IDQwIDIyIDM0IDMyIDM0QzQyIDM0IDQ4IDQwIDQ4IDQ4VjUySDE2VjQ4WiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'
-                    },
-                    created_at: new Date().toISOString(),
-                    likes_count: 5,
-                    comments_count: 2
-                },
-                {
-                    id: 2,
-                    content: 'Второй демо-пост для демонстрации ленты новостей.',
-                    author: {
-                        name: 'Test User',
-                        avatar: typeof AvatarUtils !== 'undefined' ? AvatarUtils.createInitialsAvatar('Test User') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNFNUU3RUIiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNCIgcj0iMTAiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTE2IDQ4QzE2IDQwIDIyIDM0IDMyIDM0QzQyIDM0IDQ4IDQwIDQ4IDQ4VjUySDE2VjQ4WiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'
-                    },
-                    created_at: new Date(Date.now() - 3600000).toISOString(),
-                    likes_count: 3,
-                    comments_count: 1
-                }
-            ];
-            this.renderPosts(posts);
+            this.showError('Не удалось загрузить посты');
+        } finally {
+            this.hideLoading();
         }
     }
 
-    renderPosts(posts) {
-        const socialElement = document.getElementById('social-page');
-        if (!socialElement) return;
+    renderPosts() {
+        const container = document.getElementById('social-container');
+        if (!container) return;
 
-        // Скрываем skeleton loader если он есть
-        if (window.Loading) {
-            const postsContainer = socialElement.querySelector('.posts-feed');
-            if (postsContainer) {
-                window.Loading.hideSkeleton(postsContainer);
-            }
-        }
-
-        socialElement.innerHTML = `
-            <div class="page-header">
-                <h1>Social Network</h1>
-                <p>Социальная сеть с постами и чатами</p>
-            </div>
-            
-            <div class="user-search-container">
-                <input type="text" class="user-search-input" placeholder="Поиск пользователей...">
+        container.innerHTML = `
+            <div class="social-header">
+                <h1>Социальная лента</h1>
+                <button class="btn btn-primary" onclick="socialPage.showCreatePostModal()">
+                    Создать пост
+                </button>
             </div>
 
-            <div class="social-content">
-                <div class="create-post-section">
-                    <div class="create-post-card">
-                        <div class="create-post-header">
-                            <img src="https://via.placeholder.com/40x40?text=U" alt="User Avatar" class="user-avatar" id="create-post-avatar">
-                            <div class="user-info">
-                                <h4 id="create-post-username">Test User</h4>
-                            </div>
+            <div class="posts-feed">
+                ${this.posts.map(post => this.renderPost(post)).join('')}
+            </div>
+        `;
+
+        this.setupPostEventListeners();
+    }
+
+    renderPost(post) {
+        const isLiked = post.likes?.some(like => like.userId === this.currentUser?.id);
+        const isFollowing = post.author?.followers?.some(follower => follower.id === this.currentUser?.id);
+
+        return `
+            <div class="post-card" data-post-id="${post.id}">
+                <div class="post-header">
+                    <div class="post-author">
+                        <img src="${post.author?.avatar || '/default-avatar.png'}" 
+                             alt="${post.author?.name}" class="author-avatar">
+                        <div class="author-info">
+                            <h4>${post.author?.name || 'Неизвестный пользователь'}</h4>
+                            <span class="post-time">${this.formatTime(post.createdAt)}</span>
                         </div>
-                        <div class="create-post-form">
-                            <textarea id="new-post-content" placeholder="Что у вас нового?" rows="3"></textarea>
-                            <div class="create-post-actions">
-                                <button class="btn btn-primary hover-lift click-ripple" id="publish-post-btn">Опубликовать</button>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="post-actions">
+                        ${!isFollowing ? `
+                            <button class="btn btn-sm btn-outline" onclick="socialPage.followUser('${post.author?.id}')">
+                                Подписаться
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-sm btn-outline" onclick="socialPage.showPostOptions('${post.id}')">
+                            ⋯
+                        </button>
                     </div>
                 </div>
 
-                <div class="posts-feed">
-                    ${posts.map(post => `
-                        <div class="post-card hover-lift animate-on-scroll" data-post-id="${post.id}" data-animation="slideInUp">
-                            <div class="post-header">
-                                <div class="post-author">
-                                    <img src="${post.author.avatar || 'https://via.placeholder.com/40x40?text=U'}" alt="${post.author.name}" class="author-avatar">
-                                    <div class="author-info">
-                                        <h4>${post.author.name}</h4>
-                                        <span class="post-time">${this.formatTime(post.created_at)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="post-content">
-                                <p>${post.content}</p>
-                            </div>
-                            <div class="post-actions">
-                                <button class="btn btn-secondary btn-sm post-action-btn like-btn" data-post-id="${post.id}">
-                                    <i class="far fa-heart"></i>
-                                    <span class="like-count">${post.likes_count || 0}</span>
-                                </button>
-                                <button class="btn btn-secondary btn-sm post-action-btn comment-btn" data-post-id="${post.id}">
-                                    <i class="far fa-comment"></i>
-                                    <span class="comment-count">${post.comments_count || 0}</span>
-                                </button>
-                                <button class="btn btn-secondary btn-sm post-action-btn share-btn" data-post-id="${post.id}">
-                                    <i class="fas fa-share"></i>
-                                    <span>Поделиться</span>
-                                </button>
-                            </div>
-                            <div class="comments-container" data-post-id="${post.id}" style="display: none;">
-                                <!-- Комментарии будут загружены динамически -->
-                            </div>
-                        </div>
-                    `).join('')}
+                <div class="post-content">
+                    <p>${post.content}</p>
+                    ${post.image ? `<img src="${post.image}" alt="Post image" class="post-image">` : ''}
+                </div>
+
+                <div class="post-stats">
+                    <div class="post-engagement">
+                        <button class="engagement-btn ${isLiked ? 'liked' : ''}" 
+                                onclick="socialPage.toggleLike('${post.id}')">
+                            <span class="icon">❤️</span>
+                            <span class="count">${post.likes?.length || 0}</span>
+                        </button>
+                        <button class="engagement-btn" onclick="socialPage.showComments('${post.id}')">
+                            <span class="icon">💬</span>
+                            <span class="count">${post.comments?.length || 0}</span>
+                        </button>
+                        <button class="engagement-btn" onclick="socialPage.sharePost('${post.id}')">
+                            <span class="icon">📤</span>
+                            <span class="count">Поделиться</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="post-comments" id="comments-${post.id}" style="display: none;">
+                    <div class="comments-list">
+                        ${post.comments?.map(comment => this.renderComment(comment)).join('') || ''}
+                    </div>
+                    <div class="add-comment">
+                        <input type="text" placeholder="Добавить комментарий..." 
+                               class="comment-input" data-post-id="${post.id}">
+                        <button class="btn btn-sm btn-primary" 
+                                onclick="socialPage.addComment('${post.id}')">
+                            Отправить
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
     }
 
-    formatTime(timestamp) {
-        const now = new Date();
-        const postTime = new Date(timestamp);
-        const diffInMinutes = Math.floor((now - postTime) / (1000 * 60));
-
-        if (diffInMinutes < 1) return 'только что';
-        if (diffInMinutes < 60) return `${diffInMinutes} мин назад`;
-
-        const diffInHours = Math.floor(diffInMinutes / 60);
-        if (diffInHours < 24) return `${diffInHours} ч назад`;
-
-        const diffInDays = Math.floor(diffInHours / 24);
-        return `${diffInDays} дн назад`;
-    }
-
-    renderError(message) {
-        const socialElement = document.getElementById('social-page');
-        if (!socialElement) return;
-
-        socialElement.innerHTML = `
-            <div class="page-header">
-                <h1>Social Network</h1>
-                <p>Социальная сеть с постами и чатами</p>
-            </div>
-            <div class="error-message">
-                <p>${message}</p>
-                <button class="btn btn-primary" onclick="window.App.modules.social.loadPosts()">Попробовать снова</button>
+    renderComment(comment) {
+        return `
+            <div class="comment">
+                <img src="${comment.author?.avatar || '/default-avatar.png'}" 
+                     alt="${comment.author?.name}" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-author">${comment.author?.name}</span>
+                        <span class="comment-time">${this.formatTime(comment.createdAt)}</span>
+                    </div>
+                    <p>${comment.content}</p>
+                </div>
             </div>
         `;
     }
 
-    bindEvents() {
-        // Publish post
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'publish-post-btn') {
-                this.publishPost();
-            }
+    setupPostEventListeners() {
+        // Comment input handlers
+        document.querySelectorAll('.comment-input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const postId = e.target.dataset.postId;
+                    this.addComment(postId);
+                }
+            });
+        });
+    }
 
-            if (e.target.id === 'create-post-btn') {
-                this.showCreatePostModal();
+    setupEventListeners() {
+        // Global event listeners
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.post-card')) {
+                // Handle post interactions
+            } else {
+                // Close any open modals
+                this.hideCreatePostModal();
             }
         });
+    }
 
-        // Like post
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('like-btn')) {
-                const postId = e.target.dataset.postId;
-                this.likePost(postId);
-            }
-        });
+    async toggleLike(postId) {
+        try {
+            await window.ApiService.likePost(postId);
+            await this.loadPosts(); // Refresh posts
+        } catch (error) {
+            console.error('Failed to toggle like:', error);
+            this.showError('Не удалось поставить лайк');
+        }
+    }
+
+    async followUser(userId) {
+        try {
+            await window.ApiService.followUser(userId);
+            await this.loadPosts(); // Refresh posts
+        } catch (error) {
+            console.error('Failed to follow user:', error);
+            this.showError('Не удалось подписаться на пользователя');
+        }
+    }
+
+    async addComment(postId) {
+        const input = document.querySelector(`input[data-post-id="${postId}"]`);
+        const content = input.value.trim();
+
+        if (!content) return;
+
+        try {
+            await window.ApiService.commentOnPost(postId, content);
+            input.value = '';
+            await this.loadPosts(); // Refresh posts
+        } catch (error) {
+            console.error('Failed to add comment:', error);
+            this.showError('Не удалось добавить комментарий');
+        }
+    }
+
+    showComments(postId) {
+        const commentsDiv = document.getElementById(`comments-${postId}`);
+        if (commentsDiv) {
+            commentsDiv.style.display = commentsDiv.style.display === 'none' ? 'block' : 'none';
+        }
     }
 
     showCreatePostModal() {
-        console.log('👥 Opening create post modal...');
-
-        // Создаем продвинутое модальное окно для создания поста
-        const modal = new AdvancedModal('create-post-modal', {
-            closable: true,
-            backdrop: true,
-            keyboard: true,
-            size: 'large',
-            animation: 'slide',
-            autoFocus: true,
-            trapFocus: true
-        });
-
-        const content = {
-            title: 'Создать новый пост',
-            body: `
-                <form id="create-post-form" class="post-form">
-                    <div class="form-group">
-                        <label for="post-content">Содержание поста *</label>
-                        <textarea id="post-content" name="content" rows="6" required 
-                                  placeholder="Что у вас на уме?"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="post-tags">Теги (через запятую)</label>
-                        <input type="text" id="post-tags" name="tags" 
-                               placeholder="автоматизация, тестирование, python">
-                    </div>
-                    <div class="form-group">
-                        <label for="post-image">URL изображения</label>
-                        <input type="url" id="post-image" name="image_url" 
-                               placeholder="https://example.com/image.jpg">
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="post-public" name="is_public" checked>
-                            Публичный пост
-                        </label>
-                    </div>
-                </form>
-            `,
-            footer: `
-                <button type="button" class="btn btn-secondary" onclick="window.AdvancedModal.close('create-post-modal')">Отмена</button>
-                <button type="button" class="btn btn-primary" onclick="window.SocialModule.publishPost()">Опубликовать</button>
-            `
-        };
-
-        modal.show(content);
-
-        // Инициализируем продвинутую форму
-        setTimeout(() => {
-            const form = document.getElementById('create-post-form');
-            if (form && window.AdvancedForm) {
-                new AdvancedForm(form, {
-                    validateOnChange: true,
-                    validateOnBlur: true,
-                    showErrorsInline: true,
-                    autoSave: false
-                });
-            }
-        }, 100);
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Создать пост</h3>
+                    <button class="modal-close" onclick="socialPage.hideCreatePostModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="createPostForm">
+                        <div class="form-group">
+                            <textarea id="postContent" placeholder="Что у вас нового?" 
+                                      class="form-control" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="file" id="postImage" accept="image/*" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="socialPage.hideCreatePostModal()">
+                        Отмена
+                    </button>
+                    <button class="btn btn-primary" onclick="socialPage.createPost()">
+                        Опубликовать
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
     }
 
-    async publishPost() {
+    hideCreatePostModal() {
+        const modal = document.querySelector('.modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    async createPost() {
+        const content = document.getElementById('postContent').value.trim();
+        const imageInput = document.getElementById('postImage');
+
+        if (!content) return;
+
         try {
-            console.log('👥 Publishing post...');
+            const postData = { content };
 
-            const form = document.getElementById('create-post-form');
-            if (!form) {
-                // Fallback to inline form
-                const content = document.getElementById('new-post-content')?.value?.trim();
-                if (!content) {
-                    if (window.Toast && typeof window.Toast.warning === 'function') {
-                        window.Toast.warning('Введите текст поста');
-                    } else {
-                        alert('Введите текст поста');
-                    }
-                    return;
-                }
-
-                // Use inline form
-                await this.publishInlinePost(content);
-                return;
+            if (imageInput.files[0]) {
+                const imageUrl = await window.ApiService.uploadMedia(imageInput.files[0]);
+                postData.image = imageUrl;
             }
 
-            // Валидация формы
-            const formData = new FormData(form);
-            const postData = {
-                content: formData.get('content')?.trim(),
-                tags: formData.get('tags')?.trim(),
-                image_url: formData.get('image_url')?.trim(),
-                is_public: formData.get('is_public') === 'on'
-            };
-
-            // Дополнительная валидация
-            if (!postData.content) {
-                throw new Error('Содержание поста обязательно');
-            }
-
-            console.log('Post data:', postData);
-
-            // Показываем индикатор загрузки
-            const submitBtn = form.querySelector('button[onclick*="publishPost"]');
-            let originalText = 'Опубликовать';
-            if (submitBtn) {
-                originalText = submitBtn.textContent;
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Публикация...';
-            }
-
-            try {
-                // Здесь должен быть вызов API для создания поста
-                // const response = await this.socialService.createPost(postData);
-
-                // Пока симулируем API вызов
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                console.log('Post published:', postData);
-
-                if (window.Toast && typeof window.Toast.success === 'function') {
-                    window.Toast.success('Пост успешно опубликован!');
-                } else {
-                    alert('Пост успешно опубликован!');
-                }
-
-                if (window.AdvancedModal) {
-                    window.AdvancedModal.close('create-post-modal');
-                }
-
-                // Перезагружаем список постов
-                await this.loadPosts();
-
-            } finally {
-                // Восстанавливаем кнопку
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                }
-            }
-
+            await window.ApiService.createPost(postData);
+            this.hideCreatePostModal();
+            await this.loadPosts(); // Refresh posts
         } catch (error) {
-            console.error('Failed to publish post:', error);
-
-            if (window.Toast && typeof window.Toast.error === 'function') {
-                window.Toast.error('Ошибка при публикации поста: ' + error.message);
-            } else {
-                alert('Ошибка при публикации поста: ' + error.message);
-            }
+            console.error('Failed to create post:', error);
+            this.showError('Не удалось создать пост');
         }
     }
 
-    async publishInlinePost(content) {
-        try {
-            if (window.Toast && typeof window.Toast.info === 'function') {
-                window.Toast.info('Пост публикуется...');
-            }
-
-            // Симулируем API вызов
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            if (window.Toast && typeof window.Toast.success === 'function') {
-                window.Toast.success('Пост опубликован!');
-            }
-
-            // Очищаем форму
-            const contentInput = document.getElementById('new-post-content');
-            if (contentInput) {
-                contentInput.value = '';
-            }
-
-            // Перезагружаем посты
-            await this.loadPosts();
-
-        } catch (error) {
-            console.error('Failed to publish inline post:', error);
-            if (window.Toast && typeof window.Toast.error === 'function') {
-                window.Toast.error('Ошибка при публикации поста');
-            } else {
-                alert('Ошибка при публикации поста');
-            }
+    sharePost(postId) {
+        const post = this.posts.find(p => p.id === postId);
+        if (post) {
+            const shareUrl = `${window.location.origin}/post/${postId}`;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                this.showSuccess('Ссылка скопирована в буфер обмена');
+            }).catch(() => {
+                this.showError('Не удалось скопировать ссылку');
+            });
         }
     }
 
-    async likePost(postId) {
-        try {
-            if (window.Toast && typeof window.Toast.info === 'function') {
-                window.Toast.info('Лайк добавлен!');
-            } else {
-                alert('Лайк добавлен!');
-            }
-            // Simulate API call
-        } catch (error) {
-            console.error('Failed to like post:', error);
-            if (window.Toast && typeof window.Toast.error === 'function') {
-                window.Toast.error('Ошибка при добавлении лайка');
-            } else {
-                alert('Ошибка при добавлении лайка');
-            }
+    showPostOptions(postId) {
+        // Show post options modal
+        console.log('Show post options for:', postId);
+    }
+
+    formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+
+        if (diff < 60000) return 'только что';
+        if (diff < 3600000) return `${Math.floor(diff / 60000)} мин назад`;
+        if (diff < 86400000) return `${Math.floor(diff / 3600000)} ч назад`;
+        return date.toLocaleDateString();
+    }
+
+    showLoading() {
+        const container = document.getElementById('social-container');
+        if (container) {
+            container.innerHTML = '<div class="loading">Загрузка постов...</div>';
         }
     }
 
-    onPageShow() {
-        console.log('Social page shown');
-        if (!this.isInitialized) {
-            this.init();
-        }
-
-        // Set user avatar in create post section
-        this.setCreatePostUserInfo();
+    hideLoading() {
+        // Loading will be replaced by actual content
     }
 
-    setCreatePostUserInfo() {
-        const createPostAvatar = document.getElementById('create-post-avatar');
-        const createPostUsername = document.getElementById('create-post-username');
+    showError(message) {
+        // Show error message
+        console.error(message);
+        // You can implement a toast notification system here
+    }
 
-        if (createPostAvatar && createPostUsername) {
-            // Get current user data from AuthService
-            if (window.AuthService && window.AuthService.getStoredUserData) {
-                const userData = window.AuthService.getStoredUserData();
-                if (userData) {
-                    createPostUsername.textContent = userData.full_name || userData.email || 'Test User';
-
-                    // Set avatar
-                    if (userData.avatar_url) {
-                        createPostAvatar.src = userData.avatar_url;
-                        createPostAvatar.onerror = () => {
-                            AvatarUtils.handleAvatarError(createPostAvatar, userData.full_name || userData.email);
-                        };
-                    } else {
-                        AvatarUtils.setInitialsAvatar(createPostAvatar, userData.full_name || userData.email || 'Test User');
-                    }
-                } else {
-                    // Fallback to default
-                    createPostUsername.textContent = 'Test User';
-                    AvatarUtils.setInitialsAvatar(createPostAvatar, 'Test User');
-                }
-            } else {
-                // Fallback to default
-                createPostUsername.textContent = 'Test User';
-                AvatarUtils.setInitialsAvatar(createPostAvatar, 'Test User');
-            }
-        }
+    showSuccess(message) {
+        // Show success message
+        console.log(message);
+        // You can implement a toast notification system here
     }
 }
 
+// Initialize social page
+let socialPage;
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('social-container')) {
+        socialPage = new SocialPage();
+    }
+});
+
 // Export for global access
-window.SocialModule = new SocialModule();
+window.SocialPage = SocialPage;

@@ -1,272 +1,280 @@
 // Analytics page module
-class AnalyticsModule {
+class AnalyticsPage {
     constructor() {
-        this.analyticsService = new AnalyticsService();
-        this.isInitialized = false;
+        this.currentFilters = {};
+        this.charts = {};
+        this.init();
     }
 
     async init() {
-        if (this.isInitialized) return;
+        await this.loadDashboard();
+        this.setupEventListeners();
+    }
 
-        console.log('Initializing Analytics module...');
-
+    async loadDashboard() {
         try {
-            await this.loadAnalyticsData();
-            this.bindEvents();
-            this.isInitialized = true;
-            console.log('Analytics module initialized successfully');
+            this.showLoading();
+            const data = await window.ApiService.getAnalyticsDashboard();
+            this.renderDashboard(data);
         } catch (error) {
-            console.error('Failed to initialize Analytics module:', error);
-            throw error;
+            console.error('Failed to load analytics dashboard:', error);
+            this.showError('Не удалось загрузить данные аналитики');
+        } finally {
+            this.hideLoading();
         }
     }
 
-    async loadAnalyticsData() {
-        try {
-            // Mock data for demo
-            const analyticsData = {
-                overview: {
-                    totalUsers: 1250,
-                    activeUsers: 890,
-                    totalRevenue: 125000,
-                    conversionRate: 3.2
-                },
-                charts: {
-                    userGrowth: [100, 150, 200, 250, 300, 350, 400],
-                    revenue: [12000, 15000, 18000, 22000, 25000, 28000, 30000],
-                    pageViews: [5000, 5500, 6000, 6500, 7000, 7500, 8000]
-                },
-                topPages: [
-                    { path: '/dashboard', views: 1250, uniqueViews: 890 },
-                    { path: '/ecommerce', views: 980, uniqueViews: 650 },
-                    { path: '/social', views: 750, uniqueViews: 520 },
-                    { path: '/tasks', views: 620, uniqueViews: 450 }
-                ],
-                recentEvents: [
-                    { type: 'user_registration', user: 'John Doe', timestamp: new Date().toISOString() },
-                    { type: 'purchase', user: 'Jane Smith', amount: 299.99, timestamp: new Date(Date.now() - 3600000).toISOString() },
-                    { type: 'page_view', user: 'Bob Johnson', page: '/ecommerce', timestamp: new Date(Date.now() - 7200000).toISOString() }
-                ]
-            };
+    renderDashboard(data) {
+        const container = document.getElementById('analytics-container');
+        if (!container) return;
 
-            this.renderAnalytics(analyticsData);
-        } catch (error) {
-            console.error('Failed to load analytics data:', error);
-            this.renderError('Failed to load analytics data');
-        }
-    }
-
-    renderAnalytics(data) {
-        const analyticsElement = document.getElementById('analytics-page');
-        if (!analyticsElement) return;
-
-        analyticsElement.innerHTML = `
-            <div class="page-header">
-                <h1>Analytics & Dashboard</h1>
-                <p>Аналитика и отчеты системы</p>
+        container.innerHTML = `
+            <div class="analytics-header">
+                <h1>Аналитика</h1>
+                <div class="analytics-filters">
+                    <select id="timeRange" class="form-control">
+                        <option value="7d">Последние 7 дней</option>
+                        <option value="30d" selected>Последние 30 дней</option>
+                        <option value="90d">Последние 90 дней</option>
+                        <option value="1y">Последний год</option>
+                    </select>
+                    <select id="metricType" class="form-control">
+                        <option value="all" selected>Все метрики</option>
+                        <option value="users">Пользователи</option>
+                        <option value="revenue">Доходы</option>
+                        <option value="conversion">Конверсия</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="analytics-content">
-                <div class="analytics-overview">
-                    <div class="overview-stats">
-                        <div class="stat-card">
-                            <div class="stat-icon">👥</div>
-                            <div class="stat-content">
-                                <h3>${data.overview.totalUsers.toLocaleString()}</h3>
-                                <p>Всего пользователей</p>
-                                <span class="stat-change positive">+12%</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">🟢</div>
-                            <div class="stat-content">
-                                <h3>${data.overview.activeUsers.toLocaleString()}</h3>
-                                <p>Активных пользователей</p>
-                                <span class="stat-change positive">+8%</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">💰</div>
-                            <div class="stat-content">
-                                <h3>$${data.overview.totalRevenue.toLocaleString()}</h3>
-                                <p>Общий доход</p>
-                                <span class="stat-change positive">+15%</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">📈</div>
-                            <div class="stat-content">
-                                <h3>${data.overview.conversionRate}%</h3>
-                                <p>Конверсия</p>
-                                <span class="stat-change negative">-2%</span>
-                            </div>
+            <div class="analytics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">👥</div>
+                    <div class="metric-content">
+                        <h3>Всего пользователей</h3>
+                        <div class="metric-value">${data.totalUsers || 0}</div>
+                        <div class="metric-change ${data.usersChange >= 0 ? 'positive' : 'negative'}">
+                            ${data.usersChange >= 0 ? '+' : ''}${data.usersChange || 0}%
                         </div>
                     </div>
                 </div>
 
-                <div class="analytics-charts">
-                    <div class="chart-section">
-                        <h2>Графики</h2>
-                        <div class="charts-grid">
-                            <div class="chart-card">
-                                <h3>Рост пользователей</h3>
-                                <div class="chart-placeholder">
-                                    <canvas id="userGrowthChart" width="400" height="200"></canvas>
-                                </div>
-                            </div>
-                            <div class="chart-card">
-                                <h3>Доходы</h3>
-                                <div class="chart-placeholder">
-                                    <canvas id="revenueChart" width="400" height="200"></canvas>
-                                </div>
-                            </div>
-                            <div class="chart-card">
-                                <h3>Просмотры страниц</h3>
-                                <div class="chart-placeholder">
-                                    <canvas id="pageViewsChart" width="400" height="200"></canvas>
-                                </div>
-                            </div>
+                <div class="metric-card">
+                    <div class="metric-icon">💰</div>
+                    <div class="metric-content">
+                        <h3>Общий доход</h3>
+                        <div class="metric-value">$${data.totalRevenue || 0}</div>
+                        <div class="metric-change ${data.revenueChange >= 0 ? 'positive' : 'negative'}">
+                            ${data.revenueChange >= 0 ? '+' : ''}${data.revenueChange || 0}%
                         </div>
                     </div>
                 </div>
 
-                <div class="analytics-details">
-                    <div class="details-grid">
-                        <div class="detail-card">
-                            <h3>Топ страницы</h3>
-                            <div class="top-pages-list">
-                                ${data.topPages.map((page, index) => `
-                                    <div class="page-item">
-                                        <div class="page-rank">${index + 1}</div>
-                                        <div class="page-info">
-                                            <div class="page-path">${page.path}</div>
-                                            <div class="page-stats">
-                                                <span>${page.views} просмотров</span>
-                                                <span>${page.uniqueViews} уникальных</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <div class="detail-card">
-                            <h3>Последние события</h3>
-                            <div class="events-list">
-                                ${data.recentEvents.map(event => `
-                                    <div class="event-item">
-                                        <div class="event-icon">${this.getEventIcon(event.type)}</div>
-                                        <div class="event-content">
-                                            <p>${this.formatEvent(event)}</p>
-                                            <span class="event-time">${this.formatTime(event.timestamp)}</span>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📈</div>
+                    <div class="metric-content">
+                        <h3>Конверсия</h3>
+                        <div class="metric-value">${data.conversionRate || 0}%</div>
+                        <div class="metric-change ${data.conversionChange >= 0 ? 'positive' : 'negative'}">
+                            ${data.conversionChange >= 0 ? '+' : ''}${data.conversionChange || 0}%
                         </div>
                     </div>
                 </div>
 
-                <div class="analytics-actions">
-                    <button class="btn btn-primary" id="generate-report-btn">Создать отчет</button>
-                    <button class="btn btn-secondary" id="export-data-btn">Экспорт данных</button>
-                    <button class="btn btn-secondary" id="configure-alerts-btn">Настроить уведомления</button>
+                <div class="metric-card">
+                    <div class="metric-icon">🛒</div>
+                    <div class="metric-content">
+                        <h3>Заказы</h3>
+                        <div class="metric-value">${data.totalOrders || 0}</div>
+                        <div class="metric-change ${data.ordersChange >= 0 ? 'positive' : 'negative'}">
+                            ${data.ordersChange >= 0 ? '+' : ''}${data.ordersChange || 0}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>Динамика пользователей</h3>
+                    <canvas id="usersChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Динамика доходов</h3>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <div class="reports-section">
+                <h3>Отчеты</h3>
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h4>Отчет по пользователям</h4>
+                        <p>Детальная аналитика поведения пользователей</p>
+                        <button class="btn btn-primary" onclick="analyticsPage.generateReport('users')">
+                            Создать отчет
+                        </button>
+                    </div>
+                    <div class="report-card">
+                        <h4>Отчет по продажам</h4>
+                        <p>Анализ продаж и доходности</p>
+                        <button class="btn btn-primary" onclick="analyticsPage.generateReport('sales')">
+                            Создать отчет
+                        </button>
+                    </div>
+                    <div class="report-card">
+                        <h4>Отчет по конверсии</h4>
+                        <p>Анализ воронки конверсии</p>
+                        <button class="btn btn-primary" onclick="analyticsPage.generateReport('conversion')">
+                            Создать отчет
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
+
+        this.renderCharts(data);
     }
 
-    getEventIcon(type) {
-        const icons = {
-            'user_registration': '👤',
-            'purchase': '🛒',
-            'page_view': '👁️',
-            'default': '📝'
-        };
-        return icons[type] || icons.default;
-    }
+    renderCharts(data) {
+        // Render users chart
+        const usersCtx = document.getElementById('usersChart');
+        if (usersCtx && data.usersChart) {
+            this.charts.users = new Chart(usersCtx, {
+                type: 'line',
+                data: data.usersChart,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Количество пользователей по дням'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
 
-    formatEvent(event) {
-        switch (event.type) {
-            case 'user_registration':
-                return `Новый пользователь: ${event.user}`;
-            case 'purchase':
-                return `Покупка от ${event.user}: $${event.amount}`;
-            case 'page_view':
-                return `${event.user} посетил ${event.page}`;
-            default:
-                return 'Неизвестное событие';
+        // Render revenue chart
+        const revenueCtx = document.getElementById('revenueChart');
+        if (revenueCtx && data.revenueChart) {
+            this.charts.revenue = new Chart(revenueCtx, {
+                type: 'bar',
+                data: data.revenueChart,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Доходы по дням'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
     }
 
-    formatTime(timestamp) {
-        const now = new Date();
-        const eventTime = new Date(timestamp);
-        const diffInMinutes = Math.floor((now - eventTime) / (1000 * 60));
+    setupEventListeners() {
+        // Time range filter
+        const timeRange = document.getElementById('timeRange');
+        if (timeRange) {
+            timeRange.addEventListener('change', (e) => {
+                this.currentFilters.timeRange = e.target.value;
+                this.loadDashboard();
+            });
+        }
 
-        if (diffInMinutes < 1) return 'только что';
-        if (diffInMinutes < 60) return `${diffInMinutes} мин назад`;
-
-        const diffInHours = Math.floor(diffInMinutes / 60);
-        if (diffInHours < 24) return `${diffInHours} ч назад`;
-
-        const diffInDays = Math.floor(diffInHours / 24);
-        return `${diffInDays} дн назад`;
+        // Metric type filter
+        const metricType = document.getElementById('metricType');
+        if (metricType) {
+            metricType.addEventListener('change', (e) => {
+                this.currentFilters.metricType = e.target.value;
+                this.loadDashboard();
+            });
+        }
     }
 
-    renderError(message) {
-        const analyticsElement = document.getElementById('analytics-page');
-        if (!analyticsElement) return;
+    async generateReport(type) {
+        try {
+            this.showLoading();
+            const report = await window.ApiService.getAnalyticsReports({
+                type: type,
+                ...this.currentFilters
+            });
 
-        analyticsElement.innerHTML = `
-            <div class="page-header">
-                <h1>Analytics & Dashboard</h1>
-                <p>Аналитика и отчеты системы</p>
-            </div>
-            <div class="error-message">
-                <p>${message}</p>
-                <button class="btn btn-primary" data-action="retry-load">Попробовать снова</button>
-            </div>
-        `;
+            // Create and download report
+            this.downloadReport(report, type);
+        } catch (error) {
+            console.error('Failed to generate report:', error);
+            this.showError('Не удалось создать отчет');
+        } finally {
+            this.hideLoading();
+        }
     }
 
-    bindEvents() {
-        // Analytics actions
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'generate-report-btn') {
-                this.generateReport();
-            } else if (e.target.id === 'export-data-btn') {
-                this.exportData();
-            } else if (e.target.id === 'configure-alerts-btn') {
-                this.configureAlerts();
-            } else if (e.target.dataset.action === 'retry-load') {
-                this.loadAnalyticsData();
-            }
+    downloadReport(report, type) {
+        const blob = new Blob([JSON.stringify(report, null, 2)], {
+            type: 'application/json'
         });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analytics-report-${type}-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 
-    generateReport() {
-        console.log('Generating report...');
-        Toast.info('Функция создания отчетов будет реализована в следующих версиях');
+    showLoading() {
+        const container = document.getElementById('analytics-container');
+        if (container) {
+            container.innerHTML = '<div class="loading">Загрузка аналитики...</div>';
+        }
     }
 
-    exportData() {
-        console.log('Exporting data...');
-        Toast.info('Функция экспорта данных будет реализована в следующих версиях');
+    hideLoading() {
+        // Loading will be replaced by actual content
     }
 
-    configureAlerts() {
-        console.log('Configuring alerts...');
-        Toast.info('Функция настройки уведомлений будет реализована в следующих версиях');
-    }
-
-    onPageShow() {
-        console.log('Analytics page shown');
-        if (!this.isInitialized) {
-            this.init();
+    showError(message) {
+        const container = document.getElementById('analytics-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="error-message">
+                    <h3>Ошибка</h3>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="analyticsPage.loadDashboard()">
+                        Попробовать снова
+                    </button>
+                </div>
+            `;
         }
     }
 }
 
+// Initialize analytics page
+let analyticsPage;
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('analytics-container')) {
+        analyticsPage = new AnalyticsPage();
+    }
+});
+
 // Export for global access
-window.AnalyticsModule = AnalyticsModule;
+window.AnalyticsPage = AnalyticsPage;
