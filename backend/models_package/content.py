@@ -27,6 +27,7 @@ class Category(Base):
     name = Column(String(255), nullable=False)
     description = Column(Text)
     slug = Column(String(255), unique=True, nullable=False)
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
@@ -44,6 +45,8 @@ class Article(Base):
     category_id = Column(Integer, ForeignKey("categories.id"))
     status = Column(Enum(ArticleStatus), default=ArticleStatus.DRAFT)
     featured_image = Column(String(500))
+    meta_title = Column(String(60))
+    meta_description = Column(String(160))
     slug = Column(String(255), unique=True, nullable=False)
     views_count = Column(Integer, default=0)
     likes_count = Column(Integer, default=0)

@@ -46,9 +46,9 @@ class TasksService:
         query = self.db.query(tasks_models.Board)
 
         if filters:
-            # Фильтр по владельцу
-            if filters.user_id:
-                query = query.filter(tasks_models.Board.user_id == filters.user_id)
+            # Фильтр по владельцу (используем текущего пользователя)
+            if user:
+                query = query.filter(tasks_models.Board.user_id == user.id)
 
             # Фильтр по публичности
             if filters.is_public is not None:
@@ -355,10 +355,12 @@ class TasksService:
             board_id=card_data.board_id,
             title=card_data.title,
             description=card_data.description,
-            status=card_data.status,
-            priority=card_data.priority,
+            status=card_data.status.upper(),  # Конвертируем в uppercase для enum
+            priority=card_data.priority.upper(),  # Конвертируем в uppercase для enum
             assigned_to_id=card_data.assigned_to_id,
-            due_date=card_data.due_date,
+            due_date=getattr(
+                card_data, "due_date", None
+            ),  # due_date может отсутствовать
         )
         self.db.add(card)
         self.db.commit()

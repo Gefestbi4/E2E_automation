@@ -69,14 +69,16 @@ class ContentService:
                     query = query.filter(content_models.Article.tags.contains([tag]))
 
             # Фильтр по дате публикации
-            if filters.published_from:
+            if filters.date_from:
                 query = query.filter(
-                    content_models.Article.published_at >= filters.published_from
+                    content_models.Article.published_at >= filters.date_from
                 )
-            if filters.published_to:
+            if filters.date_to:
                 query = query.filter(
-                    content_models.Article.published_at <= filters.published_to
+                    content_models.Article.published_at <= filters.date_to
                 )
+            if filters.published_only:
+                query = query.filter(content_models.Article.status == "PUBLISHED")
 
             # Поиск
             if filters.search:
@@ -89,13 +91,13 @@ class ContentService:
 
         # Если пользователь не указан, показываем только опубликованные статьи
         if not user:
-            query = query.filter(content_models.Article.status == "published")
+            query = query.filter(content_models.Article.status == "PUBLISHED")
         else:
             # Показываем статьи пользователя и опубликованные статьи
             query = query.filter(
                 or_(
                     content_models.Article.author_id == user.id,
-                    content_models.Article.status == "published",
+                    content_models.Article.status == "PUBLISHED",
                 )
             )
 
@@ -137,11 +139,11 @@ class ContentService:
             query = query.filter(
                 or_(
                     content_models.Article.author_id == user.id,
-                    content_models.Article.status == "published",
+                    content_models.Article.status == "PUBLISHED",
                 )
             )
         else:
-            query = query.filter(content_models.Article.status == "published")
+            query = query.filter(content_models.Article.status == "PUBLISHED")
 
         article = query.first()
 
@@ -172,13 +174,13 @@ class ContentService:
             excerpt=article_data.excerpt,
             content=article_data.content,
             slug=article_data.slug,
-            status=article_data.status,
+            status=article_data.status.upper(),  # Конвертируем в uppercase для enum
             author_id=user.id,
             category_id=article_data.category_id,
             tags=article_data.tags or [],
-            featured_image_url=article_data.featured_image_url,
-            meta_title=article_data.meta_title,
-            meta_description=article_data.meta_description,
+            featured_image=article_data.featured_image,
+            meta_title=getattr(article_data, "meta_title", None),
+            meta_description=getattr(article_data, "meta_description", None),
         )
         self.db.add(article)
         self.db.commit()
@@ -226,7 +228,7 @@ class ContentService:
         if article.author_id != user.id:
             raise NotFoundError("Article", str(article_id))
 
-        article.status = "published"
+        article.status = "PUBLISHED"
         article.published_at = datetime.now()
         self.db.commit()
         self.db.refresh(article)
@@ -241,7 +243,7 @@ class ContentService:
         if article.author_id != user.id:
             raise NotFoundError("Article", str(article_id))
 
-        article.status = "draft"
+        article.status = "DRAFT"
         self.db.commit()
         self.db.refresh(article)
         return article
@@ -343,8 +345,7 @@ class ContentService:
             name=category_data.name,
             description=category_data.description,
             slug=category_data.slug,
-            parent_id=category_data.parent_id,
-            is_active=category_data.is_active,
+            is_active=getattr(category_data, "is_active", True),
         )
         self.db.add(category)
         self.db.commit()
@@ -519,7 +520,7 @@ class ContentService:
             .filter(
                 and_(
                     content_models.Article.author_id == user.id,
-                    content_models.Article.status == "published",
+                    content_models.Article.status == "PUBLISHED",
                 )
             )
             .count()
@@ -530,7 +531,7 @@ class ContentService:
             .filter(
                 and_(
                     content_models.Article.author_id == user.id,
-                    content_models.Article.status == "draft",
+                    content_models.Article.status == "DRAFT",
                 )
             )
             .count()
@@ -559,7 +560,7 @@ class ContentService:
             .filter(
                 and_(
                     content_models.Article.author_id == user.id,
-                    content_models.Article.status == "published",
+                    content_models.Article.status == "PUBLISHED",
                 )
             )
             .order_by(content_models.Article.views_count.desc())
@@ -600,7 +601,7 @@ class ContentService:
         query = (
             self.db.query(content_models.Article)
             .filter(content_models.Article.category_id == category_id)
-            .filter(content_models.Article.status == "published")
+            .filter(content_models.Article.status == "PUBLISHED")
             .order_by(content_models.Article.published_at.desc())
         )
 

@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     PORT: str = "5000"
     HOST: str = "0.0.0.0"
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 settings = Settings()

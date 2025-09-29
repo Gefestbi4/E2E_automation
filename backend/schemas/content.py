@@ -12,6 +12,7 @@ from enum import Enum
 
 class ArticleStatus(str, Enum):
     """Статусы статьи"""
+
     DRAFT = "draft"
     PUBLISHED = "published"
     ARCHIVED = "archived"
@@ -32,7 +33,7 @@ class CategoryBase(BaseSchema):
 class CategoryCreate(CategoryBase):
     """Схема создания категории"""
 
-    pass
+    is_active: bool = Field(True, description="Активна ли категория")
 
 
 class CategoryUpdate(BaseSchema):
@@ -87,7 +88,12 @@ class ArticleBase(BaseSchema):
 class ArticleCreate(ArticleBase):
     """Схема создания статьи"""
 
-    pass
+    meta_title: Optional[str] = Field(
+        None, max_length=60, description="Meta заголовок для SEO"
+    )
+    meta_description: Optional[str] = Field(
+        None, max_length=160, description="Meta описание для SEO"
+    )
 
 
 class ArticleUpdate(BaseSchema):

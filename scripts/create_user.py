@@ -8,6 +8,13 @@ import os
 # Добавляем путь к backend в PYTHONPATH
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 
+# Импортируем все модели для правильной инициализации
+import models_package.ecommerce
+import models_package.social
+import models_package.tasks
+import models_package.content
+import models_package.analytics
+
 from sqlalchemy.orm import Session
 from models import User, SessionLocal
 from security import get_password_hash
@@ -18,8 +25,17 @@ def create_user(email: str, password: str, username: str = None):
     if not username:
         username = email.split("@")[0]
 
-    # Создаем сессию базы данных
-    db = SessionLocal()
+    # Создаем сессию базы данных (используем localhost для внешнего подключения)
+    from config import settings
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+
+    # Создаем новое подключение с localhost
+    localhost_db_url = settings.DATABASE_URL.replace("postgres:", "localhost:")
+    engine = create_engine(localhost_db_url)
+    SessionLocalLocalhost = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+    db = SessionLocalLocalhost()
 
     try:
         # Проверяем, существует ли пользователь

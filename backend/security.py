@@ -367,3 +367,18 @@ def get_remaining_requests(request: Request) -> int:
     """Получение количества оставшихся запросов"""
     ip = get_client_ip(request)
     return rate_limiter.get_remaining_requests(ip)
+
+
+# Создаем экземпляр для удобства использования
+security_utils = SecurityUtils()
+
+
+# Экспортируем основные функции
+def get_password_hash(password: str) -> str:
+    """Хеширование пароля"""
+    return security_utils.get_password_hash(password)
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Проверка пароля"""
+    return security_utils.verify_password(plain_password, hashed_password)

@@ -43,7 +43,21 @@ def get_dashboard_data(
 ):
     """Получить данные для главного дашборда"""
     service = AnalyticsService(db)
-    dashboard_data = service.get_dashboard_data(current_user)
+    # Создаем дашборд по умолчанию если не существует
+    dashboards = service.get_dashboards(skip=0, limit=1, user=current_user)
+    if dashboards["total"] == 0:
+        # Создаем дашборд по умолчанию
+        default_dashboard = DashboardCreate(
+            name="Default Dashboard",
+            description="Default dashboard for user",
+            is_public=False,
+        )
+        dashboard = service.create_dashboard(default_dashboard, current_user)
+        dashboard_data = service.get_dashboard(dashboard.id, current_user)
+    else:
+        dashboard_data = service.get_dashboard(
+            dashboards["items"][0]["id"], current_user
+        )
     return dashboard_data
 
 
@@ -357,7 +371,7 @@ def delete_alert(
 
 
 # Events tracking
-@router.post("/api/analytics/events", response_model=EventResponse)
+@router.post("/api/analytics/events")
 def track_event(
     event_data: EventCreate,
     current_user: models.User = Depends(get_current_user),
@@ -366,7 +380,7 @@ def track_event(
     """Отслеживание событий"""
     service = AnalyticsService(db)
     event = service.track_event(event_data, current_user)
-    return EventResponse.from_orm(event)
+    return event  # Возвращаем dict напрямую
 
 
 @router.get("/api/analytics/events")

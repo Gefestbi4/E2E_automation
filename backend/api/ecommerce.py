@@ -285,6 +285,7 @@ def get_order(
                 "price": item.price,
                 "total_price": item.price * item.quantity,
                 "created_at": item.created_at,
+                "updated_at": item.created_at,  # OrderItem не имеет updated_at
             }
         )
 
@@ -321,6 +322,7 @@ def create_order(
                 "price": item.price,
                 "total_price": item.price * item.quantity,
                 "created_at": item.created_at,
+                "updated_at": item.created_at,  # OrderItem не имеет updated_at
             }
         )
 
@@ -358,6 +360,7 @@ def update_order(
                 "price": item.price,
                 "total_price": item.price * item.quantity,
                 "created_at": item.created_at,
+                "updated_at": item.created_at,  # OrderItem не имеет updated_at
             }
         )
 
@@ -394,6 +397,7 @@ def cancel_order(
                 "price": item.price,
                 "total_price": item.price * item.quantity,
                 "created_at": item.created_at,
+                "updated_at": item.created_at,  # OrderItem не имеет updated_at
             }
         )
 

@@ -19,10 +19,11 @@ from auth import get_password_hash, get_db
 
 
 # Тестовая база данных
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test_performance.db"
+SQLALCHEMY_DATABASE_URL = (
+    "postgresql://my_user:my_password@localhost:5432/test_database"
+)
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -44,6 +45,13 @@ client = TestClient(app)
 @pytest.fixture(scope="module")
 def setup_database():
     """Настройка тестовой базы данных"""
+    # Импортируем все модели для создания таблиц
+    import models_package.ecommerce
+    import models_package.social
+    import models_package.tasks
+    import models_package.content
+    import models_package.analytics
+
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
