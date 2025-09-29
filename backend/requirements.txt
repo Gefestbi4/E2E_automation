@@ -21,3 +21,9 @@ python-multipart==0.0.9  # File uploads
 pillow==10.4.0  # Image processing
 aiofiles==24.1.0  # Async file operations
 aiohttp==3.9.1  # HTTP client for integrations
+
+# Testing dependencies
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1  # For testing FastAPI
+pytest-cov==6.0.0  # Coverage reporting

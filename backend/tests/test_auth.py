@@ -14,9 +14,7 @@ from models import Base, User
 from auth import get_password_hash, get_db
 
 # Создаем тестовую БД PostgreSQL
-SQLALCHEMY_DATABASE_URL = (
-    "postgresql://my_user:my_password@localhost:5432/test_database"
-)
+SQLALCHEMY_DATABASE_URL = "postgresql://my_user:my_password@postgres:5432/test_database"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     poolclass=StaticPool,
@@ -317,6 +315,38 @@ class TestUserUpdate:
         response = client.put("/api/auth/me", json=update_data)
 
         assert response.status_code == 403
+
+
+class TestLogout:
+    """Тесты для logout endpoint"""
+
+    def test_successful_logout(self, test_user):
+        """Успешный выход из системы"""
+        # Сначала логинимся
+        login_data = {"email": test_user.email, "password": "testpassword123"}
+        login_response = client.post("/api/auth/login", json=login_data)
+        access_token = login_response.json()["access_token"]
+
+        # Выходим из системы
+        headers = {"Authorization": f"Bearer {access_token}"}
+        response = client.post("/api/auth/logout", headers=headers)
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["message"] == "Successfully logged out"
+
+    def test_logout_without_token(self):
+        """Выход из системы без токена"""
+        response = client.post("/api/auth/logout")
+
+        assert response.status_code == 403
+
+    def test_logout_with_invalid_token(self):
+        """Выход из системы с невалидным токеном"""
+        headers = {"Authorization": "Bearer invalid_token"}
+        response = client.post("/api/auth/logout", headers=headers)
+
+        assert response.status_code == 401
 
 
 if __name__ == "__main__":

@@ -19,9 +19,7 @@ from auth import get_password_hash, get_db
 
 
 # Тестовая база данных
-SQLALCHEMY_DATABASE_URL = (
-    "postgresql://my_user:my_password@localhost:5432/test_database"
-)
+SQLALCHEMY_DATABASE_URL = "postgresql://my_user:my_password@postgres:5432/test_database"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     poolclass=StaticPool,
