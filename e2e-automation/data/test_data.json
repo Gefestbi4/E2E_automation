@@ -1,52 +1,626 @@
 {
     "users": {
-        "valid_user": {
+        "regular_user": {
             "email": "test@example.com",
             "password": "testpassword123",
-            "expected_redirect": "/tests.html"
+            "username": "test",
+            "full_name": "Test User",
+            "permissions": [
+                "full_access"
+            ],
+            "description": "Regular user for testing"
         },
-        "invalid_user": {
-            "email": "test@example.com",
-            "password": "wrongpassword",
-            "expected_error": "Incorrect password"
+        "admin_user": {
+            "email": "admin@example.com",
+            "password": "adminpassword123",
+            "username": "admin",
+            "full_name": "Admin User",
+            "permissions": [
+                "admin_access",
+                "moderation",
+                "analytics"
+            ],
+            "description": "Admin user for testing"
         },
-        "new_user": {
-            "email": "newuser2@example.com",
-            "password": "newpass123",
-            "expected_redirect": "/tests.html"
+        "guest_user": {
+            "type": "guest",
+            "permissions": [
+                "view_public_content"
+            ],
+            "description": "Guest user with limited access"
         }
     },
-    "urls": {
-        "login_page": "/login.html",
-        "tests_page": "/tests.html",
-        "api_login": "/api/auth/login"
+    "products": {
+        "sample_products": [
+            {
+                "id": 1,
+                "name": "Laptop Pro 15",
+                "price": 1299.99,
+                "category": "Electronics",
+                "description": "High-performance laptop for professionals",
+                "image_url": "/images/laptop-pro-15.jpg",
+                "in_stock": true,
+                "rating": 4.8
+            },
+            {
+                "id": 2,
+                "name": "Wireless Headphones",
+                "price": 199.99,
+                "category": "Audio",
+                "description": "Premium wireless headphones with noise cancellation",
+                "image_url": "/images/headphones.jpg",
+                "in_stock": true,
+                "rating": 4.6
+            },
+            {
+                "id": 3,
+                "name": "Smartphone X",
+                "price": 899.99,
+                "category": "Electronics",
+                "description": "Latest smartphone with advanced features",
+                "image_url": "/images/smartphone-x.jpg",
+                "in_stock": false,
+                "rating": 4.7
+            }
+        ],
+        "categories": [
+            "Electronics",
+            "Audio",
+            "Books",
+            "Clothing",
+            "Home & Garden"
+        ]
+    },
+    "social_posts": {
+        "sample_posts": [
+            {
+                "id": 1,
+                "content": "Привет! Это мой первый пост в социальной сети.",
+                "author": "test@example.com",
+                "visibility": "public",
+                "has_image": false,
+                "likes_count": 5,
+                "comments_count": 2
+            },
+            {
+                "id": 2,
+                "content": "Отличный день для изучения новых технологий! #программирование #обучение",
+                "author": "user@example.com",
+                "visibility": "public",
+                "has_image": true,
+                "image_url": "/images/coding-setup.jpg",
+                "likes_count": 12,
+                "comments_count": 8
+            }
+        ],
+        "search_queries": [
+            "путешествия",
+            "еда",
+            "спорт",
+            "работа",
+            "программирование",
+            "тестирование"
+        ]
+    },
+    "tasks": {
+        "sample_boards": [
+            {
+                "id": 1,
+                "name": "Мой проект",
+                "description": "Описание проекта для управления задачами",
+                "visibility": "private",
+                "user_id": 1,
+                "created_at": "2025-09-27T10:00:00Z"
+            },
+            {
+                "id": 2,
+                "name": "Автоматизация тестирования",
+                "description": "Проект по внедрению автоматизированного тестирования",
+                "visibility": "public",
+                "user_id": 1,
+                "created_at": "2025-09-26T15:30:00Z"
+            }
+        ],
+        "sample_tasks": [
+            {
+                "id": 1,
+                "title": "Изучить документацию",
+                "description": "Изучить документацию по API и написать тесты",
+                "priority": "high",
+                "status": "To Do",
+                "deadline": "2025-10-01T18:00:00Z",
+                "board_id": 1,
+                "assignee_id": 1
+            },
+            {
+                "id": 2,
+                "title": "Написать unit тесты",
+                "description": "Создать unit тесты для основных функций",
+                "priority": "medium",
+                "status": "In Progress",
+                "deadline": "2025-10-05T17:00:00Z",
+                "board_id": 1,
+                "assignee_id": 1
+            }
+        ],
+        "priorities": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+        ],
+        "statuses": [
+            "To Do",
+            "In Progress",
+            "Review",
+            "Done"
+        ]
+    },
+    "content": {
+        "sample_articles": [
+            {
+                "id": 1,
+                "title": "Как писать качественные тесты",
+                "excerpt": "Руководство по написанию эффективных автоматизированных тестов",
+                "content": "<p>В этой статье мы рассмотрим основные принципы написания качественных автоматизированных тестов...</p>",
+                "category": "Тестирование",
+                "tags": [
+                    "тестирование",
+                    "автоматизация",
+                    "QA"
+                ],
+                "status": "published",
+                "author_id": 1,
+                "created_at": "2025-09-27T09:00:00Z",
+                "views_count": 150
+            }
+        ],
+        "categories": [
+            "Тестирование",
+            "Разработка",
+            "DevOps",
+            "Обучение",
+            "Новости"
+        ],
+        "tags": [
+            "тестирование",
+            "автоматизация",
+            "QA",
+            "API",
+            "REST",
+            "программирование",
+            "DevOps",
+            "CI/CD"
+        ]
+    },
+    "analytics": {
+        "dashboard_metrics": {
+            "users": {
+                "total_users": 1250,
+                "new_users_this_month": 45,
+                "active_users": 890,
+                "growth_rate": "12.5%"
+            },
+            "ecommerce": {
+                "total_products": 89,
+                "total_orders": 456,
+                "total_revenue": 125000,
+                "average_order_value": 274.12
+            },
+            "social": {
+                "total_posts": 2340,
+                "total_likes": 15600,
+                "total_comments": 8900,
+                "engagement_rate": "8.7%"
+            }
+        },
+        "recent_activity": [
+            {
+                "type": "user_registration",
+                "message": "New user: John Doe",
+                "timestamp": "2 minutes ago"
+            },
+            {
+                "type": "order",
+                "message": "Order from Jane Smith: $299.99",
+                "timestamp": "5 minutes ago"
+            },
+            {
+                "type": "post_created",
+                "message": "New post by Mike Johnson",
+                "timestamp": "10 minutes ago"
+            }
+        ],
+        "chart_data": {
+            "user_growth": {
+                "labels": [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May"
+                ],
+                "data": [
+                    100,
+                    150,
+                    200,
+                    250,
+                    300
+                ]
+            },
+            "revenue": {
+                "labels": [
+                    "Q1",
+                    "Q2",
+                    "Q3",
+                    "Q4"
+                ],
+                "data": [
+                    25000,
+                    30000,
+                    35000,
+                    35000
+                ]
+            }
+        },
+        "export_formats": [
+            "PDF",
+            "Excel",
+            "CSV",
+            "JSON"
+        ]
+    },
+    "profile_data": {
+        "profile_update": {
+            "full_name": "Иван Петров",
+            "email": "ivan.petrov@example.com",
+            "username": "ivan_petrov"
+        },
+        "password_change": {
+            "current_password": "oldpassword123",
+            "new_password": "newpassword456",
+            "confirm_password": "newpassword456"
+        },
+        "password_reset": {
+            "email": "user@example.com",
+            "new_password": "newpassword123",
+            "confirm_password": "newpassword123"
+        }
+    },
+    "ecommerce_cart": {
+        "promo_codes": {
+            "valid": "SAVE10",
+            "invalid": "INVALID",
+            "expired": "EXPIRED20"
+        },
+        "cart_scenarios": {
+            "add_item": {
+                "product_name": "Laptop Pro 15",
+                "expected_notification": "Товар добавлен в корзину"
+            },
+            "change_quantity": {
+                "product_name": "Wireless Headphones",
+                "new_quantity": 3
+            },
+            "remove_item": {
+                "product_name": "Office Chair"
+            }
+        }
+    },
+    "social_interactions": {
+        "comments": [
+            {
+                "content": "Отличный пост! Спасибо за информацию.",
+                "post_id": 1
+            },
+            {
+                "content": "Согласен с вами!",
+                "post_id": 1
+            }
+        ],
+        "image_formats": [
+            "jpg",
+            "jpeg",
+            "png",
+            "gif",
+            "webp"
+        ],
+        "max_file_size": "5MB"
+    },
+    "task_comments": [
+        {
+            "content": "Начал работу над задачей. Ожидаю завершения к концу недели.",
+            "task_id": 1
+        }
+    ],
+    "content_rich_text": {
+        "features": [
+            "bold",
+            "italic",
+            "underline",
+            "heading1",
+            "heading2",
+            "bullet_list",
+            "numbered_list",
+            "link",
+            "image"
+        ]
+    },
+    "api_endpoints": {
+        "authentication": [
+            "POST /api/auth/register",
+            "POST /api/auth/login",
+            "POST /api/auth/refresh",
+            "POST /api/auth/logout",
+            "GET /api/auth/me",
+            "PUT /api/auth/me",
+            "POST /api/auth/change-password"
+        ],
+        "ecommerce": [
+            "GET /api/ecommerce/products",
+            "GET /api/ecommerce/products/{id}",
+            "POST /api/ecommerce/products",
+            "GET /api/ecommerce/cart",
+            "POST /api/ecommerce/cart",
+            "GET /api/ecommerce/orders",
+            "POST /api/ecommerce/orders"
+        ],
+        "social": [
+            "GET /api/social/posts",
+            "POST /api/social/posts",
+            "GET /api/social/posts/{id}",
+            "POST /api/social/posts/{id}/like",
+            "POST /api/social/posts/{id}/comment",
+            "GET /api/social/users",
+            "POST /api/social/users/{id}/follow"
+        ],
+        "tasks": [
+            "GET /api/tasks/boards",
+            "POST /api/tasks/boards",
+            "GET /api/tasks/boards/{id}",
+            "GET /api/tasks/boards/{id}/cards",
+            "POST /api/tasks/cards",
+            "PUT /api/tasks/cards/{id}",
+            "POST /api/tasks/cards/{id}/assign"
+        ],
+        "content": [
+            "GET /api/content/articles",
+            "POST /api/content/articles",
+            "PUT /api/content/articles/{id}",
+            "POST /api/content/upload",
+            "GET /api/content/categories",
+            "POST /api/content/articles/{id}/publish"
+        ],
+        "analytics": [
+            "GET /api/analytics/dashboard",
+            "GET /api/analytics/metrics",
+            "POST /api/analytics/reports",
+            "GET /api/analytics/export"
+        ]
+    },
+    "error_codes": {
+        "400": "Bad Request - Неверные данные запроса",
+        "401": "Unauthorized - Неавторизован",
+        "403": "Forbidden - Доступ запрещен",
+        "404": "Not Found - Ресурс не найден",
+        "409": "Conflict - Конфликт данных",
+        "422": "Validation Error - Ошибка валидации",
+        "500": "Internal Server Error - Внутренняя ошибка сервера"
+    },
+    "validation_rules": {
+        "email": {
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "message": "Введите корректный email адрес"
+        },
+        "password": {
+            "min_length": 8,
+            "message": "Пароль должен содержать минимум 8 символов"
+        },
+        "username": {
+            "min_length": 3,
+            "max_length": 20,
+            "pattern": "^[a-zA-Z0-9_]+$",
+            "message": "Имя пользователя должно содержать 3-20 символов (буквы, цифры, _)"
+        }
+    },
+    "test_environment": {
+        "base_url": "http://frontend:80",
+        "api_url": "http://backend:5000",
+        "database": {
+            "postgres": "postgres:5432",
+            "mongodb": "mongodb:27017",
+            "redis": "redis:6379"
+        },
+        "selenium": {
+            "hub": "selenium-hub:4444",
+            "chrome": "selenium-chrome:5900",
+            "firefox": "selenium-firefox:5901"
+        },
+        "allure": "http://allure:5050"
+    },
+    "performance_metrics": {
+        "page_load_time": "< 2 seconds",
+        "api_response_time": "< 500ms",
+        "success_rate": "> 99%",
+        "cpu_usage": "< 80%",
+        "memory_usage": "< 2GB"
     },
     "test_scenarios": {
-        "successful_login": {
-            "description": "User successfully logs in with valid credentials",
-            "priority": "high",
-            "tags": [
-                "smoke",
-                "login",
-                "positive"
-            ]
+        "authentication": {
+            "successful_login": {
+                "description": "User successfully logs in with valid credentials",
+                "priority": "critical",
+                "tags": [
+                    "smoke",
+                    "login",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to login page",
+                    "Enter valid email and password",
+                    "Click login button",
+                    "Verify successful login and redirect"
+                ]
+            },
+            "invalid_credentials": {
+                "description": "User cannot login with invalid credentials",
+                "priority": "high",
+                "tags": [
+                    "smoke",
+                    "login",
+                    "negative"
+                ],
+                "steps": [
+                    "Navigate to login page",
+                    "Enter invalid email or password",
+                    "Click login button",
+                    "Verify error message is displayed"
+                ]
+            },
+            "form_validation": {
+                "description": "Login form validation works correctly",
+                "priority": "medium",
+                "tags": [
+                    "validation",
+                    "form"
+                ],
+                "steps": [
+                    "Navigate to login page",
+                    "Try to submit empty form",
+                    "Verify validation errors",
+                    "Test email format validation"
+                ]
+            }
         },
-        "invalid_credentials": {
-            "description": "User cannot login with invalid credentials",
-            "priority": "high",
-            "tags": [
-                "smoke",
-                "login",
-                "negative"
-            ]
+        "ecommerce": {
+            "product_catalog": {
+                "description": "User can view and search products",
+                "priority": "critical",
+                "tags": [
+                    "smoke",
+                    "ecommerce",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to ecommerce page",
+                    "Verify products are displayed",
+                    "Test product search functionality",
+                    "Test category filtering"
+                ]
+            },
+            "shopping_cart": {
+                "description": "User can add products to cart",
+                "priority": "critical",
+                "tags": [
+                    "smoke",
+                    "ecommerce",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to ecommerce page",
+                    "Add product to cart",
+                    "Verify product appears in cart",
+                    "Test cart quantity updates"
+                ]
+            }
         },
-        "form_validation": {
-            "description": "Login form validation works correctly",
-            "priority": "medium",
-            "tags": [
-                "validation",
-                "form"
-            ]
+        "social_network": {
+            "create_post": {
+                "description": "User can create a new post",
+                "priority": "high",
+                "tags": [
+                    "smoke",
+                    "social",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to social page",
+                    "Click create post button",
+                    "Enter post content",
+                    "Submit post and verify it appears"
+                ]
+            },
+            "like_post": {
+                "description": "User can like posts",
+                "priority": "medium",
+                "tags": [
+                    "smoke",
+                    "social",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to social page",
+                    "Find a post",
+                    "Click like button",
+                    "Verify like count increases"
+                ]
+            }
+        },
+        "task_management": {
+            "create_board": {
+                "description": "User can create a new task board",
+                "priority": "high",
+                "tags": [
+                    "smoke",
+                    "tasks",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to tasks page",
+                    "Click create board button",
+                    "Enter board details",
+                    "Submit and verify board is created"
+                ]
+            },
+            "create_task": {
+                "description": "User can create a new task",
+                "priority": "high",
+                "tags": [
+                    "smoke",
+                    "tasks",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to tasks page",
+                    "Select a board",
+                    "Click create task button",
+                    "Enter task details and submit"
+                ]
+            }
+        },
+        "content_management": {
+            "create_article": {
+                "description": "User can create a new article",
+                "priority": "high",
+                "tags": [
+                    "smoke",
+                    "content",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to content page",
+                    "Click create article button",
+                    "Enter article details",
+                    "Save and verify article is created"
+                ]
+            }
+        },
+        "analytics": {
+            "view_dashboard": {
+                "description": "User can view analytics dashboard",
+                "priority": "medium",
+                "tags": [
+                    "smoke",
+                    "analytics",
+                    "positive"
+                ],
+                "steps": [
+                    "Navigate to analytics page",
+                    "Verify dashboard loads",
+                    "Check metrics are displayed",
+                    "Test chart interactions"
+                ]
+            }
         }
     }
 }

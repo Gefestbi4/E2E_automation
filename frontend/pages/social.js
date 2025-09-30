@@ -322,11 +322,7 @@ class SocialPage {
 
 // Initialize social page
 let socialPage;
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('social-container')) {
-        socialPage = new SocialPage();
-    }
-});
+// SocialPage will be initialized by app.js
 
 // Export for global access
 window.SocialPage = SocialPage;

@@ -270,11 +270,7 @@ class AnalyticsPage {
 
 // Initialize analytics page
 let analyticsPage;
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('analytics-container')) {
-        analyticsPage = new AnalyticsPage();
-    }
-});
+// AnalyticsPage will be initialized by app.js
 
 // Export for global access
 window.AnalyticsPage = AnalyticsPage;

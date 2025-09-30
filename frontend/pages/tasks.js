@@ -97,10 +97,6 @@ class TasksPage {
 
 // Initialize
 let tasksPage;
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('tasks-container')) {
-        tasksPage = new TasksPage();
-    }
-});
+// TasksPage will be initialized by app.js
 
 window.TasksPage = TasksPage;

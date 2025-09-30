@@ -3,13 +3,20 @@ console.log('🚀 App.js loading...');
 
 class App {
     constructor() {
-        this.currentPage = this.getStoredPage() || 'dashboard';
+        const storedPage = this.getStoredPage();
+        console.log('🔍 Stored page from localStorage:', storedPage);
+        this.currentPage = storedPage || 'dashboard';
+        console.log('🎯 Initial current page:', this.currentPage);
         this.modules = {};
         this.isInitialized = false;
     }
 
     async init() {
         try {
+            // Clear any cached page state to avoid conflicts
+            this.clearStoredPage();
+            console.log('🧹 Cleared stored page state');
+
             // Инициализируем утилиты
             this.initUtils();
 
@@ -81,8 +88,10 @@ class App {
 
             this.isInitialized = true;
 
-            // Show stored page or default after everything is initialized
+            // Force show dashboard page to avoid conflicts
+            this.currentPage = 'dashboard';
             this.showPage(this.currentPage);
+            console.log('🏠 Forced dashboard page display');
 
             // Update active navigation item
             if (this.navigation) {
@@ -604,10 +613,11 @@ class App {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = item.dataset.page;
+                console.log('🖱️ Navigation click:', page);
                 if (page && this.navigation) {
                     this.navigation.goToPage(page);
                 } else {
-                    console.error('Navigation not available or page not set');
+                    console.error('❌ Navigation not available or page not set:', page);
                 }
             });
         });
@@ -660,16 +670,21 @@ class App {
     }
 
     showPage(pageName) {
+        console.log('🔄 Showing page:', pageName);
+
         // Hide all pages
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
+            console.log('🔍 Hiding page:', page.id);
         });
 
         // Show target page
         const targetPage = document.getElementById(`${pageName}-page`);
+        console.log('🎯 Target page element:', targetPage);
 
         if (targetPage) {
             targetPage.classList.add('active');
+            console.log('✅ Page activated:', pageName);
 
             // Save current page to localStorage
             this.setStoredPage(pageName);
@@ -679,7 +694,7 @@ class App {
                 this.modules[pageName].onPageShow();
             }
         } else {
-            console.error('Page element not found:', `${pageName}-page`);
+            console.error('❌ Page element not found:', `${pageName}-page`);
             // Fallback to dashboard if page not found
             if (pageName !== 'dashboard') {
                 this.showPage('dashboard');
@@ -790,7 +805,14 @@ class App {
     // State management methods
     getStoredPage() {
         try {
-            return localStorage.getItem('app_current_page');
+            // Check if localStorage is available
+            if (typeof Storage === 'undefined' || !localStorage) {
+                console.warn('localStorage not available (incognito mode?)');
+                return null;
+            }
+            const page = localStorage.getItem('app_current_page');
+            console.log('📦 Retrieved from localStorage:', page);
+            return page;
         } catch (error) {
             console.warn('Failed to get stored page:', error);
             return null;
@@ -799,7 +821,13 @@ class App {
 
     setStoredPage(page) {
         try {
+            // Check if localStorage is available
+            if (typeof Storage === 'undefined' || !localStorage) {
+                console.warn('localStorage not available (incognito mode?) - cannot save page');
+                return;
+            }
             localStorage.setItem('app_current_page', page);
+            console.log('💾 Saved page to localStorage:', page);
         } catch (error) {
             console.warn('Failed to store page:', error);
         }

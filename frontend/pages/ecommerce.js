@@ -769,13 +769,5 @@ class EcommerceModule {
     }
 }
 
-// Initialize ecommerce module
-let ecommerceModule;
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('ecommerce-container')) {
-        ecommerceModule = new EcommerceModule();
-    }
-});
-
 // Export for global access
 window.EcommerceModule = EcommerceModule;
